@@ -1,0 +1,311 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Lasyc の Blog</title><meta name="author" content="Lasyc"><meta name="copyright" content="Lasyc"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta property="og:type" content="website">
+<meta property="og:title" content="Lasyc の Blog">
+<meta property="og:url" content="http://example.com/page/2/index.html">
+<meta property="og:site_name" content="Lasyc の Blog">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/avatar.jpg">
+<meta property="article:author" content="Lasyc">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/avatar.jpg"><script type="application/ld+json"></script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/page/2/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.7.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.3.1/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        const data = { value }
+
+        if (ttl != null) {
+          data.expiry = Date.now() + ttl * 86400000
+        }
+
+        localStorage.setItem(key, JSON.stringify(data))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return
+
+        try {
+          const data = JSON.parse(itemStr)
+
+          if (data.expiry && Date.now() > data.expiry) {
+            localStorage.removeItem(key)
+            return
+          }
+
+          return data.value
+        } catch {
+          localStorage.removeItem(key)
+        }
+      }
+    }
+
+    const scriptCache = new Map()
+    const cssCache = new Map()
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => {
+        if (scriptCache.has(url)) {
+          return scriptCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+
+          script.src = url
+          script.async = true
+
+          for (const key in attr) {
+            script.setAttribute(key, attr[key])
+          }
+
+          script.onload = resolve
+          script.onerror = reject
+
+          document.head.appendChild(script)
+        })
+
+        scriptCache.set(url, promise)
+
+        return promise
+      },
+      getCSS: (url, id) => {
+        if (cssCache.has(url)) {
+          return cssCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const link = document.createElement('link')
+
+          link.rel = 'stylesheet'
+          link.href = url
+
+          if (id) {
+            link.id = id
+          }
+
+          link.onload = resolve
+          link.onerror = reject
+
+          document.head.appendChild(link)
+        })
+
+        cssCache.set(url, promise)
+
+        return promise
+      },
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+      const activateDarkMode = () => {
+        document.documentElement.dataset.theme = 'dark'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.dataset.theme = 'light'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Lasyc の Blog',
+  isHighlightShrink: false,
+  isToc: false,
+  pageType: 'home'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">123</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div></div></div></div><div class="page" id="body-wrap"><header class="full_page" id="page-header" style="background-image: url(/img/1.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Lasyc の Blog</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="site-info"><h1 id="site-title">Lasyc の Blog</h1><div id="site-subtitle"><span id="subtitle"></span></div></div><div id="scroll-down"><i class="fas fa-angle-down scroll-down-effects"></i></div></header><main class="layout" id="content-inner"><div class="recent-posts nc" id="recent-posts"><div class="recent-post-items"><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2026/08/15/springboot/SpringBoot04/" title="SpringBoot 配置文件">SpringBoot 配置文件</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2026-08-15T08:06:43.000Z" title="发表于 2026-08-15 16:06:43">2026-08-15</time></span></div><div class="content">文件类型propertiesproperties 是 Spring Boot 默认支持的配置文件类型。 yaml简介Spring Boot 还支持另一种格式的配置文件 yaml（后缀也可以是 yml），它是一种以缩进来表示层级结构的标记语言。 12# propertiesserver.port=8080  123# ymlserver:  port: 8080  基本语法key: value，注意冒号后面必须有空格。 数据类型 一个值 1k: v  对象：Obj、Map 1234k:  k1: v1  k2: v2  k3: v3  数组：Array、List、Queue 1234k:  - v1  - v2  - v3  示例12345678910111213141516@Data@ToString@Component@ConfigurationProperties(prefix = &quot;user&quot;)public class User &#123;    private String name;    private Boolean adult;    pri...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2026/08/11/springboot/SpringBoot03/" title="SpringBoot 自动配置">SpringBoot 自动配置</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2026-08-11T12:16:00.000Z" title="发表于 2026-08-11 20:16:00">2026-08-11</time></span></div><div class="content">SpringBoot 特点依赖管理父项目做依赖管理在之前开发的时候，我们经常通过创建父子项目，在父项目的 pom.xml 文件定义各个依赖的版本号，子项目只需要引入依赖即可 同理 SpringBoot 也为我们提供了绝大部分依赖的版本号，当我们使用 spring-boot-starter-parent 作为父工程时，只需要引入依赖即可 123456789101112&lt;parent&gt;    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;    &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;    &lt;version&gt;4.1.0&lt;/version&gt;&lt;/parent&gt;&lt;dependencies&gt;    &lt;dependency&gt;        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;        &lt;a...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2026/08/10/springboot/SpringBoot02/" title="SpringBoot 入门">SpringBoot 入门</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2026-08-10T12:36:38.000Z" title="发表于 2026-08-10 20:36:38">2026-08-10</time></span></div><div class="content">maven 设置本系列默认 Maven 环境已经就绪（使用 IDEA 自带的 Maven 或自行安装均可）。如果下载依赖较慢，可以配置阿里云镜像仓库，在 Maven 的 settings.xml 中添加如下配置： 123456&lt;mirror&gt;    &lt;id&gt;aliyunmaven&lt;/id&gt;    &lt;mirrorOf&gt;central&lt;/mirrorOf&gt;    &lt;name&gt;阿里云公共仓库&lt;/name&gt;    &lt;url&gt;https://maven.aliyun.com/repository/public&lt;/url&gt;&lt;/mirror&gt;  Hello World创建 maven 工程在 IDEA 中新建一个普通的 Maven 工程即可（不需要勾选骨架）。为了看清整个配置过程，本系列采用手动方式：先创建空 Maven 工程，再逐步添加父工程、依赖和启动类。 导入依赖Spring Boot 将常用依赖的版本都统一管理好了，所以使用 Spring Boot 开发时，只需要让当...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2026/08/10/springboot/SpringBoot01/" title="Spring 与 SpringBoot">Spring 与 SpringBoot</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2026-08-10T11:37:34.000Z" title="发表于 2026-08-10 19:37:34">2026-08-10</time></span></div><div class="content">Spring 能做什么Spring 是一个开源框架，它为简化 Java 企业级开发而生。Spring 框架的诞生解决了传统 JavaEE 开发中存在的诸多痛点，如代码耦合度高、配置繁琐、可测试性差等问题。 Spring 的能力Spring 提供了丰富的功能，其主要能力包括：  IoC 容器：控制反转（Inversion of Control），将对象的创建和依赖关系的管理交给 Spring 容器，实现代码的松耦合 AOP 切面：面向切面编程（Aspect-Oriented Programming），将日志、事务、权限等横切关注点从业务逻辑中剥离，提高代码的模块化程度 事务管理：提供声明式事务和编程式事务两种方式，屏蔽底层数据库事务的差异 数据访问：对 JDBC、MyBatis、Hibernate、JPA 等数据访问技术进行整合与封装，简化持久层开发 Web 开发：提供 Spring MVC 框架，帮助开发者快速构建 Web 应用程序 消息服务：支持 JMS、AMQP 等消息中间件，实现应用间的异步通信 测试支持：提供完善的单元测试和集成测试支持，如 Spring TestCont...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2026/08/08/ssm/SSM02/" title="SSM 整合实战">SSM 整合实战</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2026-08-08T14:01:35.000Z" title="发表于 2026-08-08 22:01:35">2026-08-08</time></span></div><div class="content">添加依赖这些依赖大部分都是重复的，比如 spring-webmvc 中就包含了 spring-context、spring-aop、spring-web 等等，但为了能一眼看出项目使用了哪些依赖，所以还是全部写明。 12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364656667686970717273747576777879808182838485868788899091929394959697989910010110210310410510610710810911011111211311411511611711811912012112212312412512612712812913013113213313413513613713813914014114214314414514614714814915015115215315415515615715815916016116216316416516...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2026/08/08/ssm/SSM01/" title="SSM 整合">SSM 整合</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2026-08-08T12:28:21.000Z" title="发表于 2026-08-08 20:28:21">2026-08-08</time></span></div><div class="content">什么是整合SSM 整合，就是将 Spring、Spring MVC、MyBatis 集成到一个项目中。  Spring 负责框架整体和业务层的事务管理 Spring MVC 负责控制层的请求分发、接收、响应 MyBatis 负责数据库访问层  整合核心问题一、整合需要几个 IoC 容器两个容器 前面讲 Spring MVC 全注解配置的时候就说过，一个父容器（Root）和一个子容器（Servlet），到了 Spring Boot 阶段就是一个容器了，这里先不讨论。 使用两个容器也是有好处的：  两个容器可以各司其职 解耦 灵活配置  二、每个容器负责哪些东西 Servlet 容器只负责 Controller Root 容器负责其它（Service、Mapper、AOP、DataSource、MyBatis 等等）  三、两个容器如何配合子容器可以&quot;看到&quot;父容器中的 Bean，所以在 Controller 中可以自动注入 Service 对象。 四、一共几个配置类 RootConfig.java 用于配置父容器 ServletConfig.java 用于配置子容...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2026/08/08/mybatis/MyBatis12/" title="MyBatis 分页插件">MyBatis 分页插件</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2026-08-08T07:26:40.000Z" title="发表于 2026-08-08 15:26:40">2026-08-08</time></span></div><div class="content">分页在实际开发中，当数据量过大时，我们通常会采用分页查询。这里以常用的分页插件 PageHelper 为例，借助它我们可以不手动编写 LIMIT 等分页 SQL，就能实现分页功能。 具体实现 引入依赖 1234567&lt;!-- pom.xml --&gt;&lt;dependency&gt;    &lt;groupId&gt;com.github.pagehelper&lt;/groupId&gt;    &lt;artifactId&gt;pagehelper&lt;/artifactId&gt;    &lt;version&gt;6.1.1&lt;/version&gt;    &lt;scope&gt;compile&lt;/scope&gt;&lt;/dependency&gt;  配置分页插件 1234567891011121314151617181920212223242526272829&lt;!-- 注意：plugins 标签必须在 environments 之前 --&gt;&lt;plugins&gt;    &lt;plugin intercepto...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2026/08/08/mybatis/MyBatis11/" title="MyBatis 代码生成器">MyBatis 代码生成器</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2026-08-08T06:08:32.000Z" title="发表于 2026-08-08 14:08:32">2026-08-08</time></span></div><div class="content">逆向工程 正向工程：根据 Java 实体类信息创建对应的表结构以及 SQL 语句，Hibernate 支持 逆向工程：根据表结构创建对应的 Java 实体类以及 SQL 语句，MyBatis 支持  具体实现 引入依赖 123456&lt;!-- MyBatis Generator --&gt;&lt;dependency&gt;    &lt;groupId&gt;org.mybatis.generator&lt;/groupId&gt;    &lt;artifactId&gt;mybatis-generator-core&lt;/artifactId&gt;    &lt;version&gt;1.4.2&lt;/version&gt;&lt;/dependency&gt;  引入 maven 插件 12345678910111213141516171819202122232425&lt;plugin&gt;    &lt;groupId&gt;org.mybatis.generator&lt;/groupId&gt;    &lt;artifactId&gt;mybati...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2026/08/07/mybatis/MyBatis10/" title="MyBatis 一级缓存">MyBatis 一级缓存</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2026-08-07T13:50:01.000Z" title="发表于 2026-08-07 21:50:01">2026-08-07</time></span></div><div class="content">缓存MyBatis 为我们提供了缓存功能，也就是把查询出来的数据缓存起来，下次查询时直接读取缓存，不会再次访问数据库。 MyBatis 中的缓存分为一级缓存和二级缓存，两者的作用范围不同。    缓存 作用范围    一级缓存 同一个 SqlSession   二级缓存 同一个 SqlSessionFactory   一级缓存一级缓存是 SqlSession 级别的，在同一个 SqlSession 下查询出来的数据会被缓存，一级缓存默认是开启的。 缓存并不是一直生效的，下面四种情况会让一级缓存失效：  不同的 SqlSession 同一个 SqlSession，但是查询条件改变了 同一个 SqlSession，两次查询之间执行了增删改操作 同一个 SqlSession，手动清空了缓存  Mapper 映射文件的编写这里省略。在测试代码中执行两次查询（同一个 SqlSession），可以看到 MyBatis 只执行了一次 SQL。 12345678910111213141516@Testpublic void selectOne() &#123;    SqlSession sql...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2026/08/06/mybatis/MyBatis09/" title="MyBatis 动态 SQL">MyBatis 动态 SQL</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2026-08-06T13:37:26.000Z" title="发表于 2026-08-06 21:37:26">2026-08-06</time></span></div><div class="content">动态 SQL参考文档 在实际开发中，SQL 有时并不是固定的，而是动态的，比如某个查询字段，存在就作为查询条件，不存在就不作为条件。在 JDBC 阶段，我们可以通过分支判断、循环等语法来动态地生成 SQL 语句，而 MyBatis 也为我们提供了对应的标签来实现这些功能。 if 标签if 标签同 Java 中的 if 语句逻辑一样：在 test 属性中编写表达式，表达式结果为 true 就拼接标签内的 SQL，反之则不拼接。 创建一个查询员工信息的 SQL 语句，根据传入的参数动态拼接 SQL。 1List&lt;Emp&gt; selectAllByCondition(Emp emp);  123456789101112131415&lt;select id=&quot;selectAllByCondition&quot; resultType=&quot;Emp&quot;&gt;    SELECT * FROM t_emp WHERE    &lt;if test=&quot;empName != null and empName != &#x27;&#x27;&quot...</div></div></div></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="/"><i class="fas fa-chevron-left fa-fw"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/#content-inner">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/13/#content-inner">13</a><a class="extend next" rel="next" href="/page/3/#content-inner"><i class="fas fa-chevron-right fa-fw"></i></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Lasyc</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">123</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/03/springboot/SpringBoot14/" title="数据访问">数据访问</a><time datetime="2026-09-03T13:29:49.000Z" title="发表于 2026-09-03 21:29:49">2026-09-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/03/springboot/SpringBoot13/" title="定制化原理">定制化原理</a><time datetime="2026-09-03T13:09:18.000Z" title="发表于 2026-09-03 21:09:18">2026-09-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/03/springboot/SpringBoot12/" title="嵌入式 Servlet 容器">嵌入式 Servlet 容器</a><time datetime="2026-09-03T12:42:15.000Z" title="发表于 2026-09-03 20:42:15">2026-09-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/02/springboot/SpringBoot11/" title="原生组件注入">原生组件注入</a><time datetime="2026-09-02T13:28:30.000Z" title="发表于 2026-09-02 21:28:30">2026-09-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/02/springboot/SpringBoot10/" title="错误处理">错误处理</a><time datetime="2026-09-02T11:10:15.000Z" title="发表于 2026-09-02 19:10:15">2026-09-02</time></div></div></div></div><div class="card-widget card-tags"><div class="item-headline"><i class="fas fa-tags"></i><span>标签</span></div><div class="card-tag-cloud"><a href="/tags/SSM/" style="font-size: 1.1em; color: #999">SSM</a> <a href="/tags/MyBatis/" style="font-size: 1.21em; color: #999ea4">MyBatis</a> <a href="/tags/SpringBoot2/" style="font-size: 1.27em; color: #99a0a9">SpringBoot2</a> <a href="/tags/MySQL/" style="font-size: 1.39em; color: #99a4b4">MySQL</a> <a href="/tags/Java/" style="font-size: 1.5em; color: #99a9bf">Java</a> <a href="/tags/Java-Web/" style="font-size: 1.44em; color: #99a7ba">Java Web</a> <a href="/tags/Spring/" style="font-size: 1.16em; color: #999b9e">Spring</a> <a href="/tags/JDBC/" style="font-size: 1.16em; color: #999b9e">JDBC</a> <a href="/tags/Spring-MVC/" style="font-size: 1.33em; color: #99a2af">Spring MVC</a></div></div><div class="card-widget card-archives">
+    <div class="item-headline"><i class="fas fa-archive"></i><span>归档</span><a class="card-more-btn" href="/archives/"
+            title="查看更多">
+            <i class="fas fa-angle-right"></i>
+          </a></div>
+  
+    <ul class="card-archive-list">
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/09/">
+            <span class="card-archive-list-date">
+              九月 2026
+            </span>
+            <span class="card-archive-list-count">7</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/08/">
+            <span class="card-archive-list-date">
+              八月 2026
+            </span>
+            <span class="card-archive-list-count">27</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/07/">
+            <span class="card-archive-list-date">
+              七月 2026
+            </span>
+            <span class="card-archive-list-count">14</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/06/">
+            <span class="card-archive-list-date">
+              六月 2026
+            </span>
+            <span class="card-archive-list-count">9</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/04/">
+            <span class="card-archive-list-date">
+              四月 2026
+            </span>
+            <span class="card-archive-list-count">5</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/03/">
+            <span class="card-archive-list-date">
+              三月 2026
+            </span>
+            <span class="card-archive-list-count">7</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/01/">
+            <span class="card-archive-list-date">
+              一月 2026
+            </span>
+            <span class="card-archive-list-count">1</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2025/12/">
+            <span class="card-archive-list-date">
+              十二月 2025
+            </span>
+            <span class="card-archive-list-count">15</span>
+          </a>
+        </li>
+      
+    </ul>
+  </div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>网站信息</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">123</div></div><div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">本站总浏览量 :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2026-09-03T14:14:28.206Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/1.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Lasyc</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.7.0</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.7.0"></script><script src="/js/main.js?v=5.7.0"></script><div class="js-pjax"><script>window.typedJSFn = {
+  init: str => {
+    window.typed = new Typed('#subtitle', Object.assign({
+      strings: str,
+      startDelay: 300,
+      typeSpeed: 150,
+      loop: true,
+      backSpeed: 50,
+    }, null))
+  },
+  run: subtitleType => {
+    if (true) {
+      if (typeof Typed === 'function') {
+        subtitleType()
+      } else {
+        btf.getScript('https://cdn.jsdelivr.net/npm/typed.js@3.0.0/dist/typed.umd.min.js').then(subtitleType)
+      }
+    } else {
+      subtitleType()
+    }
+  },
+  processSubtitle: (content, extraContents = []) => {
+    if (true) {
+      const sub = ["玲珑骰子安红豆，入骨相思知不知"].slice()
+
+      if (extraContents.length > 0) {
+        sub.unshift(...extraContents)
+      }
+
+      if (typeof content === 'string') {
+        sub.unshift(content)
+      } else if (Array.isArray(content)) {
+        sub.unshift(...content)
+      }
+
+      sub.length > 0 && typedJSFn.init(sub)
+    } else {
+      document.getElementById('subtitle').textContent = typeof content === 'string' ? content :
+        (Array.isArray(content) && content.length > 0 ? content[0] : '')
+    }
+  }
+}
+btf.addGlobalFn('pjaxSendOnce', () => { typed && typed.destroy() }, 'typedDestroy')
+</script><script>function subtitleType () {
+  typedJSFn.processSubtitle(["玲珑骰子安红豆，入骨相思知不知"])
+}
+typedJSFn.run(subtitleType)</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

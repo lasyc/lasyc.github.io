@@ -1,0 +1,341 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Java 集合 | Lasyc の Blog</title><meta name="author" content="Lasyc"><meta name="copyright" content="Lasyc"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="集合的基本使用为什么要有集合当我们需要存储多个同一类型的数据时，可以使用数组，但 数组的长度是固定 的，无法动态调整。集合可以根据需要动态扩展，提供了更灵活的数据存储方式。不过相比于数组，集合无法直接存储基本数据类型，通常要用包装类来存储。 ArrayListArrayList 是 Java 中最常用的集合类之一，它实现了 List 接口，允许存储重复的元素，并且元素有序（大致按添加顺序排列）。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java 集合">
+<meta property="og:url" content="http://example.com/2025/09/01/java/Java12/index.html">
+<meta property="og:site_name" content="Lasyc の Blog">
+<meta property="og:description" content="集合的基本使用为什么要有集合当我们需要存储多个同一类型的数据时，可以使用数组，但 数组的长度是固定 的，无法动态调整。集合可以根据需要动态扩展，提供了更灵活的数据存储方式。不过相比于数组，集合无法直接存储基本数据类型，通常要用包装类来存储。 ArrayListArrayList 是 Java 中最常用的集合类之一，它实现了 List 接口，允许存储重复的元素，并且元素有序（大致按添加顺序排列）。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/avatar.jpg">
+<meta property="article:published_time" content="2025-09-01T13:16:17.000Z">
+<meta property="article:modified_time" content="2026-09-03T14:11:49.944Z">
+<meta property="article:author" content="Lasyc">
+<meta property="article:tag" content="Java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/avatar.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Java 集合",
+  "url": "http://example.com/2025/09/01/java/Java12/",
+  "image": "http://example.com/img/avatar.jpg",
+  "datePublished": "2025-09-01T13:16:17.000Z",
+  "dateModified": "2026-09-03T14:11:49.944Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Lasyc",
+      "url": "http://example.com"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2025/09/01/java/Java12/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.7.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.3.1/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        const data = { value }
+
+        if (ttl != null) {
+          data.expiry = Date.now() + ttl * 86400000
+        }
+
+        localStorage.setItem(key, JSON.stringify(data))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return
+
+        try {
+          const data = JSON.parse(itemStr)
+
+          if (data.expiry && Date.now() > data.expiry) {
+            localStorage.removeItem(key)
+            return
+          }
+
+          return data.value
+        } catch {
+          localStorage.removeItem(key)
+        }
+      }
+    }
+
+    const scriptCache = new Map()
+    const cssCache = new Map()
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => {
+        if (scriptCache.has(url)) {
+          return scriptCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+
+          script.src = url
+          script.async = true
+
+          for (const key in attr) {
+            script.setAttribute(key, attr[key])
+          }
+
+          script.onload = resolve
+          script.onerror = reject
+
+          document.head.appendChild(script)
+        })
+
+        scriptCache.set(url, promise)
+
+        return promise
+      },
+      getCSS: (url, id) => {
+        if (cssCache.has(url)) {
+          return cssCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const link = document.createElement('link')
+
+          link.rel = 'stylesheet'
+          link.href = url
+
+          if (id) {
+            link.id = id
+          }
+
+          link.onload = resolve
+          link.onerror = reject
+
+          document.head.appendChild(link)
+        })
+
+        cssCache.set(url, promise)
+
+        return promise
+      },
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+      const activateDarkMode = () => {
+        document.documentElement.dataset.theme = 'dark'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.dataset.theme = 'light'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Java 集合',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">123</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/1.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Lasyc の Blog</span></a><a class="nav-page-title" href="/"><span class="site-name">Java 集合</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Java 集合</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-09-01T13:16:17.000Z" title="发表于 2025-09-01 21:16:17">2025-09-01</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-09-03T14:11:49.944Z" title="更新于 2026-09-03 22:11:49">2026-09-03</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h2 id="集合的基本使用"><a href="#集合的基本使用" class="headerlink" title="集合的基本使用"></a>集合的基本使用</h2><h3 id="为什么要有集合"><a href="#为什么要有集合" class="headerlink" title="为什么要有集合"></a>为什么要有集合</h3><p>当我们需要存储多个同一类型的数据时，可以使用数组，但 <code>数组的长度是固定</code> 的，无法动态调整。<code>集合</code>可以根据需要动态扩展，提供了更灵活的数据存储方式。不过相比于数组，<code>集合无法直接存储基本数据类型</code>，通常要用包装类来存储。</p>
+<h3 id="ArrayList"><a href="#ArrayList" class="headerlink" title="ArrayList"></a>ArrayList</h3><p><code>ArrayList</code> 是 Java 中最常用的集合类之一，它实现了 <code>List</code> 接口，允许存储<code>重复</code>的元素，并且元素<code>有序</code>（大致按添加顺序排列）。</p>
+<blockquote>
+<p>提示：<code>ArrayList</code> 位于 <code>java.util</code> 包，使用前需要 <code>import java.util.ArrayList;</code>。尖括号 <code>&lt;&gt;</code> 里写的是集合要存储的元素类型，这种写法叫<code>泛型</code>；<code>new</code> 后面 <code>&lt;&gt;</code> 里的类型可以省略（钻石语法）。</p>
+</blockquote>
+<h3 id="代码示例"><a href="#代码示例" class="headerlink" title="代码示例"></a>代码示例</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建一个 ArrayList 对象，只能存储 String 类型的数据</span></span><br><span class="line"><span class="type">ArrayList</span>&lt;String&gt; <span class="variable">arrayList</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;String&gt;();</span><br><span class="line"><span class="comment">// 第二个 &lt;&gt; 内的泛型可省略</span></span><br><span class="line"><span class="type">ArrayList</span>&lt;String&gt; <span class="variable">arrayList2</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line"><span class="comment">// 直接打印集合，会以 [元素1, 元素2, ...] 的形式输出内容</span></span><br><span class="line">System.out.println(arrayList);  <span class="comment">// []</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="成员方法"><a href="#成员方法" class="headerlink" title="成员方法"></a>成员方法</h3><table>
+<thead>
+<tr>
+<th>方法名</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>add(E e)</td>
+<td>将指定元素添加到列表的末尾</td>
+</tr>
+<tr>
+<td>remove(E e)</td>
+<td>移除列表中指定元素</td>
+</tr>
+<tr>
+<td>remove(int index)</td>
+<td>移除列表中指定位置的元素</td>
+</tr>
+<tr>
+<td>set(int index, E e)</td>
+<td>将列表中指定位置的元素替换为指定元素</td>
+</tr>
+<tr>
+<td>get(int index)</td>
+<td>返回列表中指定位置的元素</td>
+</tr>
+<tr>
+<td>size()</td>
+<td>返回列表中元素的数量</td>
+</tr>
+<tr>
+<td>clear()</td>
+<td>移除列表中所有元素</td>
+</tr>
+<tr>
+<td>isEmpty()</td>
+<td>判断列表是否为空</td>
+</tr>
+<tr>
+<td>contains(Object o)</td>
+<td>判断列表中是否包含指定元素</td>
+</tr>
+<tr>
+<td>indexOf(Object o)</td>
+<td>返回指定元素在列表中第一次出现的位置</td>
+</tr>
+<tr>
+<td>lastIndexOf(Object o)</td>
+<td>返回指定元素在列表中最后一次出现的位置</td>
+</tr>
+<tr>
+<td>subList(int fromIndex, int toIndex)</td>
+<td>返回列表中指定范围的子列表</td>
+</tr>
+<tr>
+<td>sort(Comparator&lt;? super E&gt; c)</td>
+<td>对列表中的元素进行排序</td>
+</tr>
+</tbody></table>
+<h3 id="常用操作示例"><a href="#常用操作示例" class="headerlink" title="常用操作示例"></a>常用操作示例</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">ArrayList</span>&lt;String&gt; <span class="variable">arrayList</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">System.out.println(arrayList);  <span class="comment">// []</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 添加元素：add(E e) 把元素追加到列表末尾</span></span><br><span class="line">arrayList.add(<span class="string">&quot;Hello&quot;</span>);</span><br><span class="line">arrayList.add(<span class="string">&quot;World&quot;</span>);</span><br><span class="line">arrayList.add(<span class="string">&quot;!!!&quot;</span>);</span><br><span class="line">System.out.println(arrayList);  <span class="comment">// [Hello, World, !!!]</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 移除元素：remove(&quot;World&quot;) 按内容删；remove(1) 按下标删</span></span><br><span class="line">arrayList.remove(<span class="string">&quot;World&quot;</span>);</span><br><span class="line">arrayList.remove(<span class="number">1</span>);</span><br><span class="line">System.out.println(arrayList);  <span class="comment">// [Hello]</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 修改元素：set(下标, 新值) 替换指定位置的元素</span></span><br><span class="line">arrayList.set(<span class="number">0</span>, <span class="string">&quot;hello&quot;</span>);</span><br><span class="line">System.out.println(arrayList);  <span class="comment">// [hello]</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 获取元素：get(下标) 取出指定位置的元素</span></span><br><span class="line"><span class="type">String</span> <span class="variable">s</span> <span class="operator">=</span> arrayList.get(<span class="number">0</span>);</span><br><span class="line">System.out.println(s);          <span class="comment">// hello</span></span><br><span class="line"></span><br><span class="line">arrayList.add(<span class="string">&quot;Hello&quot;</span>);</span><br><span class="line">arrayList.add(<span class="string">&quot;World&quot;</span>);</span><br><span class="line">arrayList.add(<span class="string">&quot;!!!&quot;</span>);</span><br><span class="line">System.out.println(arrayList);  <span class="comment">// [hello, Hello, World, !!!]</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 获取元素个数：size() 返回集合中元素的数量</span></span><br><span class="line">System.out.println(arrayList.size()); <span class="comment">// 4</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 清空集合</span></span><br><span class="line">arrayList.clear();</span><br><span class="line">System.out.println(arrayList);  <span class="comment">// []</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="练习-遍历"><a href="#练习-遍历" class="headerlink" title="练习-遍历"></a>练习-遍历</h2><p>需求：创建一个存有 4 个字符串的集合，遍历取出每个元素，用 <code>StringJoiner</code> 把它们拼接成 <code>[a, b, c, d]</code> 的格式输出。</p>
+<blockquote>
+<p>提示：需要 <code>import java.util.ArrayList;</code> 和 <code>import java.util.StringJoiner;</code>。遍历集合与遍历数组类似，用 <code>size()</code> 取长度、<code>get(i)</code> 按下标取元素。</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">ArrayList</span>&lt;String&gt; <span class="variable">arrayList</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">arrayList.add(<span class="string">&quot;a&quot;</span>);</span><br><span class="line">arrayList.add(<span class="string">&quot;b&quot;</span>);</span><br><span class="line">arrayList.add(<span class="string">&quot;c&quot;</span>);</span><br><span class="line">arrayList.add(<span class="string">&quot;d&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="type">StringJoiner</span> <span class="variable">stringJoiner</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringJoiner</span>(<span class="string">&quot;, &quot;</span>, <span class="string">&quot;[&quot;</span>, <span class="string">&quot;]&quot;</span>);</span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; arrayList.size(); i++) &#123;</span><br><span class="line">    stringJoiner.add(arrayList.get(i));</span><br><span class="line">&#125;</span><br><span class="line">System.out.println(stringJoiner);</span><br></pre></td></tr></table></figure>
+
+<h2 id="包装类"><a href="#包装类" class="headerlink" title="包装类"></a>包装类</h2><p>前面提到，集合无法直接存储基本数据类型的数据（数组可以，集合不行），因此<code>包装类</code>应运而生。<code>包装类</code>就是基本数据类型对应的引用数据类型形式，例如 <code>byte</code> 的包装类是 <code>Byte</code>。需要存储数字时，集合里放的是对应的包装类对象。</p>
+<table>
+<thead>
+<tr>
+<th align="left">基本数据类型</th>
+<th align="left">包装类</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">byte</td>
+<td align="left">Byte</td>
+</tr>
+<tr>
+<td align="left">short</td>
+<td align="left">Short</td>
+</tr>
+<tr>
+<td align="left">int</td>
+<td align="left">Integer</td>
+</tr>
+<tr>
+<td align="left">long</td>
+<td align="left">Long</td>
+</tr>
+<tr>
+<td align="left">float</td>
+<td align="left">Float</td>
+</tr>
+<tr>
+<td align="left">double</td>
+<td align="left">Double</td>
+</tr>
+<tr>
+<td align="left">char</td>
+<td align="left">Character</td>
+</tr>
+<tr>
+<td align="left">boolean</td>
+<td align="left">Boolean</td>
+</tr>
+</tbody></table>
+<h3 id="代码示例-1"><a href="#代码示例-1" class="headerlink" title="代码示例"></a>代码示例</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">ArrayList</span>&lt;Integer&gt; <span class="variable">arrayList</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line"><span class="comment">// 直接 add 基本类型 int 也能编译通过：编译器会自动把 int 包装成 Integer（自动装箱）</span></span><br><span class="line">arrayList.add(<span class="number">1</span>);</span><br><span class="line">arrayList.add(<span class="number">2</span>);</span><br><span class="line">arrayList.add(<span class="number">3</span>);</span><br><span class="line">arrayList.add(<span class="number">4</span>);</span><br><span class="line"></span><br><span class="line">System.out.println(arrayList);  <span class="comment">// [1, 2, 3, 4]</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="练习-自定义类型"><a href="#练习-自定义类型" class="headerlink" title="练习-自定义类型"></a>练习-自定义类型</h2><p>需求：按 JavaBean 规范定义一个学生类 <code>Student</code>（<code>private</code> 成员变量 + getter&#x2F;setter + 无参构造），把 4 个学生对象存入 <code>ArrayList&lt;Student&gt;</code>。</p>
+<blockquote>
+<p>提示：<code>Student</code> 写在单独的 <code>Student.java</code> 文件中；使用集合的代码需要 <code>import java.util.ArrayList;</code>。<br>说明：<code>Student</code> 没有重写 <code>toString</code>，所以直接打印集合时，集合内部实际调用每个元素的 <code>toString()</code>，输出的是一串”类名@哈希值”形式的地址值，而不是属性内容。想让打印更直观，可在 <code>Student</code> 中重写 <code>toString</code>。</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Student.java</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Student</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> age;</span><br><span class="line"></span><br><span class="line">    <span class="type">public</span> <span class="title function_">Student</span><span class="params">()</span> &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="type">public</span> <span class="title function_">Student</span><span class="params">(String name, <span class="type">int</span> age)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.name = name;</span><br><span class="line">        <span class="built_in">this</span>.age = age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">String</span> <span class="title function_">getName</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">void</span> <span class="title function_">setName</span><span class="params">(String name)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">getAge</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">void</span> <span class="title function_">setAge</span><span class="params">(<span class="type">int</span> age)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.age = age;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">ArrayList</span>&lt;Student&gt; <span class="variable">studentList</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line"></span><br><span class="line">studentList.add(<span class="keyword">new</span> <span class="title class_">Student</span>(<span class="string">&quot;张三&quot;</span>, <span class="number">15</span>));</span><br><span class="line">studentList.add(<span class="keyword">new</span> <span class="title class_">Student</span>(<span class="string">&quot;李四&quot;</span>, <span class="number">15</span>));</span><br><span class="line">studentList.add(<span class="keyword">new</span> <span class="title class_">Student</span>(<span class="string">&quot;王五&quot;</span>, <span class="number">15</span>));</span><br><span class="line">studentList.add(<span class="keyword">new</span> <span class="title class_">Student</span>(<span class="string">&quot;赵六&quot;</span>, <span class="number">15</span>));</span><br><span class="line"></span><br><span class="line">System.out.println(studentList);  <span class="comment">// 直接打印的话都是地址值</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="练习-学生是否存在"><a href="#练习-学生是否存在" class="headerlink" title="练习-学生是否存在"></a>练习-学生是否存在</h2><p>需求：在学生集合中按姓名查找，找到就返回对应的 <code>Student</code> 对象，找不到返回 <code>null</code>（main 中做非空判断后再使用）。</p>
+<blockquote>
+<p>承接上文：需要前面”练习-自定义类型”定义的 <code>Student</code> 类，并 <code>import java.util.ArrayList;</code>。</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="type">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">    <span class="type">ArrayList</span>&lt;Student&gt; <span class="variable">studentList</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    studentList.add(<span class="keyword">new</span> <span class="title class_">Student</span>(<span class="string">&quot;张三&quot;</span>, <span class="number">15</span>));</span><br><span class="line">    studentList.add(<span class="keyword">new</span> <span class="title class_">Student</span>(<span class="string">&quot;李四&quot;</span>, <span class="number">15</span>));</span><br><span class="line">    studentList.add(<span class="keyword">new</span> <span class="title class_">Student</span>(<span class="string">&quot;王五&quot;</span>, <span class="number">15</span>));</span><br><span class="line">    studentList.add(<span class="keyword">new</span> <span class="title class_">Student</span>(<span class="string">&quot;赵六&quot;</span>, <span class="number">15</span>));</span><br><span class="line"></span><br><span class="line">    System.out.println(studentList);   <span class="comment">// Student 未重写 toString，打印的是地址值</span></span><br><span class="line"></span><br><span class="line">    <span class="type">Student</span> <span class="variable">student</span> <span class="operator">=</span> getStudentByName(studentList, <span class="string">&quot;张三&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span> (student != <span class="literal">null</span>) &#123;</span><br><span class="line">        System.out.println(student.getName());  <span class="comment">// 张三</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="type">Student</span> <span class="title function_">getStudentByName</span><span class="params">(ArrayList&lt;Student&gt; studentList, String name)</span> &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; studentList.size(); i++) &#123;</span><br><span class="line">        <span class="type">Student</span> <span class="variable">student</span> <span class="operator">=</span> studentList.get(i);</span><br><span class="line">        <span class="keyword">if</span> (student.getName().equals(name)) &#123;</span><br><span class="line">            <span class="keyword">return</span> student;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="练习-返回多条数据"><a href="#练习-返回多条数据" class="headerlink" title="练习-返回多条数据"></a>练习-返回多条数据</h2><p>需求：集合里存在多个同名学生（如三个”张三”），把所有姓名为”张三”的学生都找出来放到新集合里返回，再遍历打印。</p>
+<blockquote>
+<p>承接上文：需要前面定义的 <code>Student</code> 类。注意：本方法与上一练习中返回 <code>Student</code> 的方法同名，两个练习各自独立运行即可，不要把它们放进同一个类里——仅返回值不同不构成方法重载，会编译报错。<br>提示：需要 <code>import java.util.ArrayList;</code> 和 <code>import java.util.List;</code>。返回值类型写 <code>List&lt;Student&gt;</code>（接口）而不是 <code>ArrayList&lt;Student&gt;</code>，好处是接收方只需依赖接口，后续换实现类也不用改方法签名。</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="type">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">    <span class="type">ArrayList</span>&lt;Student&gt; <span class="variable">studentList</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    studentList.add(<span class="keyword">new</span> <span class="title class_">Student</span>(<span class="string">&quot;张三&quot;</span>, <span class="number">15</span>));</span><br><span class="line">    studentList.add(<span class="keyword">new</span> <span class="title class_">Student</span>(<span class="string">&quot;李四&quot;</span>, <span class="number">15</span>));</span><br><span class="line">    studentList.add(<span class="keyword">new</span> <span class="title class_">Student</span>(<span class="string">&quot;王五&quot;</span>, <span class="number">15</span>));</span><br><span class="line">    studentList.add(<span class="keyword">new</span> <span class="title class_">Student</span>(<span class="string">&quot;赵六&quot;</span>, <span class="number">15</span>));</span><br><span class="line">    studentList.add(<span class="keyword">new</span> <span class="title class_">Student</span>(<span class="string">&quot;张三&quot;</span>, <span class="number">16</span>));</span><br><span class="line">    studentList.add(<span class="keyword">new</span> <span class="title class_">Student</span>(<span class="string">&quot;张三&quot;</span>, <span class="number">18</span>));</span><br><span class="line"></span><br><span class="line">    System.out.println(studentList);</span><br><span class="line"></span><br><span class="line">    <span class="type">List</span>&lt;Student&gt; <span class="variable">resultList</span> <span class="operator">=</span> getStudentByName(studentList, <span class="string">&quot;张三&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span> (!resultList.isEmpty()) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; resultList.size(); i++) &#123;</span><br><span class="line">            <span class="type">Student</span> <span class="variable">student</span> <span class="operator">=</span> resultList.get(i);</span><br><span class="line">            System.out.println(student.getName() + student.getAge());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="type">List</span>&lt;Student&gt; <span class="title function_">getStudentByName</span><span class="params">(ArrayList&lt;Student&gt; studentList, String name)</span> &#123;</span><br><span class="line">    <span class="type">List</span>&lt;Student&gt; <span class="variable">result</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; studentList.size(); i++) &#123;</span><br><span class="line">        <span class="type">Student</span> <span class="variable">student</span> <span class="operator">=</span> studentList.get(i);</span><br><span class="line">        <span class="keyword">if</span> (student.getName().equals(name)) &#123;</span><br><span class="line">            result.add(student);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://example.com">Lasyc</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2025/09/01/java/Java12/">http://example.com/2025/09/01/java/Java12/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="http://example.com" target="_blank">Lasyc の Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Java/">Java</a></div><div class="post-share"><div class="social-share" data-image="/img/avatar.jpg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/09/01/java/Java13/" title="Java 学生管理系统"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">Java 学生管理系统</div></div><div class="info-2"><div class="info-item-1">业务分析并搭建主菜单学生管理系统的核心功能一般包括：  添加学生 删除学生 修改学生 查询学生 显示全部学生 退出系统  这类题目通常会结合 集合 和 面向对象 的知识，让我们把多个功能拆分成多个方法，结构会更清晰。  整体约定（下文所有代码片段最终都会拼进同一个类，如 Main）：需要 import java.util.ArrayList;（注册登录部分还要用到 java.util.List、java.util.Scanner、java.util.Random）；菜单中调用的 insertStudent、deleteStudent 等方法会在后续小节逐个给出；此外还要用到几个”类成员变量”：studentList（存学生）、userList（存注册用户）、id（自动生成学号用，初始为 1）、loginStatus（登录状态），演示时把它们声明在类中、方法外。  123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051// Student.javapa...</div></div></div></a><a class="pagination-related" href="/2025/08/28/java/Java11/" title="Java 字符串"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Java 字符串</div></div><div class="info-2"><div class="info-item-1">API 和 API 文档API（Application Programming Interface，应用程序编程接口）可以理解成别人已经封装好的一套”功能清单”：它提供了许多现成类和方法，告诉我们每个类&#x2F;方法能做什么、参数怎么传、返回什么，我们直接调用即可，不必关心内部实现。通过查阅官方 API 文档，可以了解 Java 自带类库的完整功能与用法。 String 概述String 是引用数据类型，所以 String 对象通常需要通过 new 关键字创建，例如：String str = new String(&quot;hello world&quot;);。不过我们之前常见的写法是 String str = &quot;hello world&quot;;，这是因为 Java 对字符串做了优化处理。 String 对象的值是 不可修改 的。即使执行 str = &quot;abc&quot;;，也只是让变量指向了一个新的字符串对象，并没有修改原字符串本身。 创建字符串的两种方式直接赋值1String str = &quot;Hello World&quot;;  使用 ...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/08/26/java/Java08/" title="Java 综合练习"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-26</div><div class="info-item-2">Java 综合练习</div></div><div class="info-2"><div class="info-item-1">买飞机票下面这道题是典型的分支判断 + 方法封装练习。重点要掌握：  根据月份判断淡旺季 根据舱位类型计算不同折扣 将计算逻辑封装成独立方法   提示：本练习需要 import java.util.Scanner;，下面几个键盘录入的练习同理。  12345678910111213141516171819202122232425262728293031323334public static void main(String[] args) &#123;    Scanner scanner = new Scanner(System.in);    System.out.print(&quot;请输入机票原价：&quot;);    double price = scanner.nextDouble();    System.out.print(&quot;请输入月份：&quot;);    int month = scanner.nextInt();    System.out.print(&quot;请选择舱位（0:头等舱，1:经济舱）：&quot;);    int type...</div></div></div></a><a class="pagination-related" href="/2025/10/18/java/Java25/" title="Java IO 流"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-10-18</div><div class="info-item-2">Java IO 流</div></div><div class="info-2"><div class="info-item-1">IO 流IO 流是 Java 中用于处理输入和输出操作的核心概念。Java 提供了丰富的 IO 类库，支持文件操作、网络通信等多种场景。 分类IO 流可以从两个维度分类：  按照流的方向：输入流和输出流。输入流用于读取数据（从文件等数据源读进来），输出流用于写入数据（写到文件等目标去）。 按照流的数据类型：字节流和字符流。字节流可以处理所有类型的数据，而字符流专门用于处理文本数据。  字节流字节流是 Java 中用于处理字节数据的流。字节流可以处理所有类型的数据，如图片、音频、视频、文本等（一切数据在计算机底层都是字节），并提供了一系列方法用于读取、写入字节数据。 字节流有两个顶层接口：InputStream 和 OutputStream。InputStream 用于读取字节数据，OutputStream 用于写入字节数据。但是我们不需要直接使用这两个接口，而是使用它们的子类，分别是：FileInputStream（文件字节输入流）和 FileOutputStream（文件字节输出流）。 FileOutputStreamFileOutputStream 构造方法   构造方法 描...</div></div></div></a><a class="pagination-related" href="/2025/08/18/java/Java01/" title="Java 入门"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-18</div><div class="info-item-2">Java 入门</div></div><div class="info-2"><div class="info-item-1">Java 学习介绍本系列笔记以 Java 后端开发为主线，内容按以下路径逐步推进，从零基础到能独立完成一个 Web 项目：  基础语法篇：变量与数据类型、运算符、流程控制（分支&#x2F;循环）、方法、数组 面向对象篇：类与对象、封装、继承、多态、抽象类与接口 常用 API 篇：常用类（String、包装类、日期时间）、集合、异常、IO 流 进阶实战篇：多线程、网络编程、反射与注解，以及 MySQL、JDBC、JavaWeb、SSM&#x2F;SpringBoot 等后续内容   说明：本篇是入门总览，先建立整体认知即可，具体知识点会在后续各篇笔记中逐一展开。  人机交互-图形化界面的小故事 最初的计算机并没有图形化的操作界面，人机交互主要依靠命令行：用户在一个只能输入命令的”黑框”（终端）中敲入指令，计算机执行后再把结果显示在屏幕上。 1973 年，美国施乐公司（Xerox）在帕洛阿尔托研究中心（PARC）研发出了世界上第一款采用图形用户界面（GUI）的计算机 Xerox Alto。它用”窗口 + 图标 + 鼠标”取代了纯命令行交互，这一设计理念后来被 Apple、Micros...</div></div></div></a><a class="pagination-related" href="/2025/08/23/java/Java05/" title="Java 循环高级综合练习"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-23</div><div class="info-item-2">Java 循环高级综合练习</div></div><div class="info-2"><div class="info-item-1">无限循环和跳转控制语句无限循环无限循环（也称死循环）指循环条件永远成立（或没有条件）而无法自行结束的循环。无限循环本身不是错误，很多场景（如猜数字游戏、消息监听）都会刻意使用它，再借助 break 在合适的时机跳出。 代码案例1234// forfor (;;) &#123;    System.out.println(&quot;死循环&quot;);&#125;  1234// whilewhile (true) &#123;    System.out.println(&quot;死循环&quot;);&#125;  1234// do...whiledo &#123;    System.out.println(&quot;死循环&quot;);&#125; while (true);  跳转控制语句在循环中，可以使用跳转控制语句来控制循环的执行：  continue：跳过当前循环的剩余部分，直接进入下一次循环 break：结束当前循环，跳出整个循环结构   这两个关键字都非常常用，尤其在筛选条件、查找目标值、结束循环等场景中。  代码示例12345678// conti...</div></div></div></a><a class="pagination-related" href="/2025/08/28/java/Java11/" title="Java 字符串"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-28</div><div class="info-item-2">Java 字符串</div></div><div class="info-2"><div class="info-item-1">API 和 API 文档API（Application Programming Interface，应用程序编程接口）可以理解成别人已经封装好的一套”功能清单”：它提供了许多现成类和方法，告诉我们每个类&#x2F;方法能做什么、参数怎么传、返回什么，我们直接调用即可，不必关心内部实现。通过查阅官方 API 文档，可以了解 Java 自带类库的完整功能与用法。 String 概述String 是引用数据类型，所以 String 对象通常需要通过 new 关键字创建，例如：String str = new String(&quot;hello world&quot;);。不过我们之前常见的写法是 String str = &quot;hello world&quot;;，这是因为 Java 对字符串做了优化处理。 String 对象的值是 不可修改 的。即使执行 str = &quot;abc&quot;;，也只是让变量指向了一个新的字符串对象，并没有修改原字符串本身。 创建字符串的两种方式直接赋值1String str = &quot;Hello World&quot;;  使用 ...</div></div></div></a><a class="pagination-related" href="/2025/08/21/java/Java04/" title="Java 判断和循环"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-21</div><div class="info-item-2">Java 判断和循环</div></div><div class="info-2"><div class="info-item-1">流程控制语句-顺序结构顺序结构是程序默认的执行方式：代码按照书写的先后顺序，从上到下逐行依次执行。只有遇到分支、循环等语句（或调用方法）时，执行流程才会发生改变。 流程控制语句-分支结构if 第一种格式1234// 当条件的值为 true 时，代码才会执行if (条件) &#123;    // 条件为真时执行的代码&#125;  代码示例12345678Scanner sc = new Scanner(System.in);System.out.print(&quot;请输入年龄：&quot;);int age = sc.nextInt();if (age &gt;= 18) &#123;    System.out.println(&quot;你已成年&quot;);&#125;System.out.println(&quot;继续执行~&quot;);sc.close();  注意事项 若大括号内只有一行代码，大括号可以省略，但不建议这样做——省略后结构不清晰，后续追加代码时容易出错 判断 boolean 类型的变量时，直接写变量名即可，例如 if (flag)；不要写成 ...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Lasyc</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">123</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9B%86%E5%90%88%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8"><span class="toc-number">1.</span> <span class="toc-text">集合的基本使用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E6%9C%89%E9%9B%86%E5%90%88"><span class="toc-number">1.1.</span> <span class="toc-text">为什么要有集合</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ArrayList"><span class="toc-number">1.2.</span> <span class="toc-text">ArrayList</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B"><span class="toc-number">1.3.</span> <span class="toc-text">代码示例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%88%90%E5%91%98%E6%96%B9%E6%B3%95"><span class="toc-number">1.4.</span> <span class="toc-text">成员方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C%E7%A4%BA%E4%BE%8B"><span class="toc-number">1.5.</span> <span class="toc-text">常用操作示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%83%E4%B9%A0-%E9%81%8D%E5%8E%86"><span class="toc-number">2.</span> <span class="toc-text">练习-遍历</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8C%85%E8%A3%85%E7%B1%BB"><span class="toc-number">3.</span> <span class="toc-text">包装类</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B-1"><span class="toc-number">3.1.</span> <span class="toc-text">代码示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%83%E4%B9%A0-%E8%87%AA%E5%AE%9A%E4%B9%89%E7%B1%BB%E5%9E%8B"><span class="toc-number">4.</span> <span class="toc-text">练习-自定义类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%83%E4%B9%A0-%E5%AD%A6%E7%94%9F%E6%98%AF%E5%90%A6%E5%AD%98%E5%9C%A8"><span class="toc-number">5.</span> <span class="toc-text">练习-学生是否存在</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%83%E4%B9%A0-%E8%BF%94%E5%9B%9E%E5%A4%9A%E6%9D%A1%E6%95%B0%E6%8D%AE"><span class="toc-number">6.</span> <span class="toc-text">练习-返回多条数据</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/03/springboot/SpringBoot14/" title="数据访问">数据访问</a><time datetime="2026-09-03T13:29:49.000Z" title="发表于 2026-09-03 21:29:49">2026-09-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/03/springboot/SpringBoot13/" title="定制化原理">定制化原理</a><time datetime="2026-09-03T13:09:18.000Z" title="发表于 2026-09-03 21:09:18">2026-09-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/03/springboot/SpringBoot12/" title="嵌入式 Servlet 容器">嵌入式 Servlet 容器</a><time datetime="2026-09-03T12:42:15.000Z" title="发表于 2026-09-03 20:42:15">2026-09-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/02/springboot/SpringBoot11/" title="原生组件注入">原生组件注入</a><time datetime="2026-09-02T13:28:30.000Z" title="发表于 2026-09-02 21:28:30">2026-09-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/02/springboot/SpringBoot10/" title="错误处理">错误处理</a><time datetime="2026-09-02T11:10:15.000Z" title="发表于 2026-09-02 19:10:15">2026-09-02</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/1.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Lasyc</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.7.0</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.7.0"></script><script src="/js/main.js?v=5.7.0"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

@@ -1,0 +1,230 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>SSM 整合 | Lasyc の Blog</title><meta name="author" content="Lasyc"><meta name="copyright" content="Lasyc"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="什么是整合SSM 整合，就是将 Spring、Spring MVC、MyBatis 集成到一个项目中。  Spring 负责框架整体和业务层的事务管理 Spring MVC 负责控制层的请求分发、接收、响应 MyBatis 负责数据库访问层  整合核心问题一、整合需要几个 IoC 容器两个容器 前面讲 Spring MVC 全注解配置的时候就说过，一个父容器（Root）和一个子容器（Servlet">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SSM 整合">
+<meta property="og:url" content="http://example.com/2026/08/08/ssm/SSM01/index.html">
+<meta property="og:site_name" content="Lasyc の Blog">
+<meta property="og:description" content="什么是整合SSM 整合，就是将 Spring、Spring MVC、MyBatis 集成到一个项目中。  Spring 负责框架整体和业务层的事务管理 Spring MVC 负责控制层的请求分发、接收、响应 MyBatis 负责数据库访问层  整合核心问题一、整合需要几个 IoC 容器两个容器 前面讲 Spring MVC 全注解配置的时候就说过，一个父容器（Root）和一个子容器（Servlet">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/avatar.jpg">
+<meta property="article:published_time" content="2026-08-08T12:28:21.000Z">
+<meta property="article:modified_time" content="2026-09-03T14:13:10.962Z">
+<meta property="article:author" content="Lasyc">
+<meta property="article:tag" content="SSM">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/avatar.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "SSM 整合",
+  "url": "http://example.com/2026/08/08/ssm/SSM01/",
+  "image": "http://example.com/img/avatar.jpg",
+  "datePublished": "2026-08-08T12:28:21.000Z",
+  "dateModified": "2026-09-03T14:13:10.962Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Lasyc",
+      "url": "http://example.com"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2026/08/08/ssm/SSM01/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.7.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.3.1/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        const data = { value }
+
+        if (ttl != null) {
+          data.expiry = Date.now() + ttl * 86400000
+        }
+
+        localStorage.setItem(key, JSON.stringify(data))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return
+
+        try {
+          const data = JSON.parse(itemStr)
+
+          if (data.expiry && Date.now() > data.expiry) {
+            localStorage.removeItem(key)
+            return
+          }
+
+          return data.value
+        } catch {
+          localStorage.removeItem(key)
+        }
+      }
+    }
+
+    const scriptCache = new Map()
+    const cssCache = new Map()
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => {
+        if (scriptCache.has(url)) {
+          return scriptCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+
+          script.src = url
+          script.async = true
+
+          for (const key in attr) {
+            script.setAttribute(key, attr[key])
+          }
+
+          script.onload = resolve
+          script.onerror = reject
+
+          document.head.appendChild(script)
+        })
+
+        scriptCache.set(url, promise)
+
+        return promise
+      },
+      getCSS: (url, id) => {
+        if (cssCache.has(url)) {
+          return cssCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const link = document.createElement('link')
+
+          link.rel = 'stylesheet'
+          link.href = url
+
+          if (id) {
+            link.id = id
+          }
+
+          link.onload = resolve
+          link.onerror = reject
+
+          document.head.appendChild(link)
+        })
+
+        cssCache.set(url, promise)
+
+        return promise
+      },
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+      const activateDarkMode = () => {
+        document.documentElement.dataset.theme = 'dark'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.dataset.theme = 'light'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'SSM 整合',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">123</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/1.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Lasyc の Blog</span></a><a class="nav-page-title" href="/"><span class="site-name">SSM 整合</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">SSM 整合</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-08-08T12:28:21.000Z" title="发表于 2026-08-08 20:28:21">2026-08-08</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-09-03T14:13:10.962Z" title="更新于 2026-09-03 22:13:10">2026-09-03</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h2 id="什么是整合"><a href="#什么是整合" class="headerlink" title="什么是整合"></a>什么是整合</h2><p><code>SSM</code> 整合，就是将 <code>Spring</code>、<code>Spring MVC</code>、<code>MyBatis</code> 集成到一个项目中。</p>
+<ol>
+<li>Spring 负责框架整体和<code>业务层的事务管理</code></li>
+<li>Spring MVC 负责<code>控制层的请求分发、接收、响应</code></li>
+<li>MyBatis 负责<code>数据库访问层</code></li>
+</ol>
+<h2 id="整合核心问题"><a href="#整合核心问题" class="headerlink" title="整合核心问题"></a>整合核心问题</h2><h3 id="一、整合需要几个-IoC-容器"><a href="#一、整合需要几个-IoC-容器" class="headerlink" title="一、整合需要几个 IoC 容器"></a>一、整合需要几个 IoC 容器</h3><p><code>两个容器</code></p>
+<p>前面讲 Spring MVC 全注解配置的时候就说过，一个<code>父容器（Root）</code>和一个<code>子容器（Servlet）</code>，到了 Spring Boot 阶段就是一个容器了，这里先不讨论。</p>
+<p>使用两个容器也是有好处的：</p>
+<ol>
+<li>两个容器可以各司其职</li>
+<li>解耦</li>
+<li>灵活配置</li>
+</ol>
+<h3 id="二、每个容器负责哪些东西"><a href="#二、每个容器负责哪些东西" class="headerlink" title="二、每个容器负责哪些东西"></a>二、每个容器负责哪些东西</h3><ol>
+<li>Servlet 容器只负责 <code>Controller</code></li>
+<li>Root 容器负责其它（Service、Mapper、AOP、DataSource、MyBatis 等等）</li>
+</ol>
+<h3 id="三、两个容器如何配合"><a href="#三、两个容器如何配合" class="headerlink" title="三、两个容器如何配合"></a>三、两个容器如何配合</h3><p><code>子容器可以&quot;看到&quot;父容器中的 Bean</code>，所以在 Controller 中可以自动注入 Service 对象。</p>
+<h3 id="四、一共几个配置类"><a href="#四、一共几个配置类" class="headerlink" title="四、一共几个配置类"></a>四、一共几个配置类</h3><ol>
+<li>RootConfig.java 用于配置父容器</li>
+<li>ServletConfig.java 用于配置子容器</li>
+<li>MyBatisConfig.java 用于配置持久层</li>
+</ol>
+<h3 id="五、如何设置配置类"><a href="#五、如何设置配置类" class="headerlink" title="五、如何设置配置类"></a>五、如何设置配置类</h3><p>在 Spring MVC 全注解配置的时候讲过，需要创建一个初始化类继承 <code>AbstractAnnotationConfigDispatcherServletInitializer</code> 类，并重写其中的方法来指定<code>父容器配置类</code>和<code>子容器配置类</code>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">WebConfig</span> <span class="keyword">extends</span> <span class="title class_">AbstractAnnotationConfigDispatcherServletInitializer</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> Class&lt;?&gt; <span class="meta">@Nullable</span> [] getRootConfigClasses() &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;RootConfig.class&#125;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> Class&lt;?&gt; <span class="meta">@Nullable</span> [] getServletConfigClasses() &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;ServletConfig.class&#125;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="meta">@NullMarked</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="type">String</span>[] <span class="title function_">getServletMappings</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">String</span>[]&#123;<span class="string">&quot;/&quot;</span>&#125;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://example.com">Lasyc</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2026/08/08/ssm/SSM01/">http://example.com/2026/08/08/ssm/SSM01/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="http://example.com" target="_blank">Lasyc の Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/SSM/">SSM</a></div><div class="post-share"><div class="social-share" data-image="/img/avatar.jpg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/08/08/ssm/SSM02/" title="SSM 整合实战"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">SSM 整合实战</div></div><div class="info-2"><div class="info-item-1">添加依赖这些依赖大部分都是重复的，比如 spring-webmvc 中就包含了 spring-context、spring-aop、spring-web 等等，但为了能一眼看出项目使用了哪些依赖，所以还是全部写明。 12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364656667686970717273747576777879808182838485868788899091929394959697989910010110210310410510610710810911011111211311411511611711811912012112212312412512612712812913013113213313413513613713813914014114214314414514614714814915015115215315415515615715815916016116216316416516...</div></div></div></a><a class="pagination-related" href="/2026/08/08/mybatis/MyBatis12/" title="MyBatis 分页插件"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">MyBatis 分页插件</div></div><div class="info-2"><div class="info-item-1">分页在实际开发中，当数据量过大时，我们通常会采用分页查询。这里以常用的分页插件 PageHelper 为例，借助它我们可以不手动编写 LIMIT 等分页 SQL，就能实现分页功能。 具体实现 引入依赖 1234567&lt;!-- pom.xml --&gt;&lt;dependency&gt;    &lt;groupId&gt;com.github.pagehelper&lt;/groupId&gt;    &lt;artifactId&gt;pagehelper&lt;/artifactId&gt;    &lt;version&gt;6.1.1&lt;/version&gt;    &lt;scope&gt;compile&lt;/scope&gt;&lt;/dependency&gt;  配置分页插件 1234567891011121314151617181920212223242526272829&lt;!-- 注意：plugins 标签必须在 environments 之前 --&gt;&lt;plugins&gt;    &lt;plugin intercepto...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/08/08/ssm/SSM02/" title="SSM 整合实战"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-08-08</div><div class="info-item-2">SSM 整合实战</div></div><div class="info-2"><div class="info-item-1">添加依赖这些依赖大部分都是重复的，比如 spring-webmvc 中就包含了 spring-context、spring-aop、spring-web 等等，但为了能一眼看出项目使用了哪些依赖，所以还是全部写明。 12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364656667686970717273747576777879808182838485868788899091929394959697989910010110210310410510610710810911011111211311411511611711811912012112212312412512612712812913013113213313413513613713813914014114214314414514614714814915015115215315415515615715815916016116216316416516...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Lasyc</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">123</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%95%B4%E5%90%88"><span class="toc-number">1.</span> <span class="toc-text">什么是整合</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B4%E5%90%88%E6%A0%B8%E5%BF%83%E9%97%AE%E9%A2%98"><span class="toc-number">2.</span> <span class="toc-text">整合核心问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E6%95%B4%E5%90%88%E9%9C%80%E8%A6%81%E5%87%A0%E4%B8%AA-IoC-%E5%AE%B9%E5%99%A8"><span class="toc-number">2.1.</span> <span class="toc-text">一、整合需要几个 IoC 容器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E6%AF%8F%E4%B8%AA%E5%AE%B9%E5%99%A8%E8%B4%9F%E8%B4%A3%E5%93%AA%E4%BA%9B%E4%B8%9C%E8%A5%BF"><span class="toc-number">2.2.</span> <span class="toc-text">二、每个容器负责哪些东西</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E4%B8%A4%E4%B8%AA%E5%AE%B9%E5%99%A8%E5%A6%82%E4%BD%95%E9%85%8D%E5%90%88"><span class="toc-number">2.3.</span> <span class="toc-text">三、两个容器如何配合</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E4%B8%80%E5%85%B1%E5%87%A0%E4%B8%AA%E9%85%8D%E7%BD%AE%E7%B1%BB"><span class="toc-number">2.4.</span> <span class="toc-text">四、一共几个配置类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E5%A6%82%E4%BD%95%E8%AE%BE%E7%BD%AE%E9%85%8D%E7%BD%AE%E7%B1%BB"><span class="toc-number">2.5.</span> <span class="toc-text">五、如何设置配置类</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/03/springboot/SpringBoot14/" title="数据访问">数据访问</a><time datetime="2026-09-03T13:29:49.000Z" title="发表于 2026-09-03 21:29:49">2026-09-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/03/springboot/SpringBoot13/" title="定制化原理">定制化原理</a><time datetime="2026-09-03T13:09:18.000Z" title="发表于 2026-09-03 21:09:18">2026-09-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/03/springboot/SpringBoot12/" title="嵌入式 Servlet 容器">嵌入式 Servlet 容器</a><time datetime="2026-09-03T12:42:15.000Z" title="发表于 2026-09-03 20:42:15">2026-09-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/02/springboot/SpringBoot11/" title="原生组件注入">原生组件注入</a><time datetime="2026-09-02T13:28:30.000Z" title="发表于 2026-09-02 21:28:30">2026-09-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/02/springboot/SpringBoot10/" title="错误处理">错误处理</a><time datetime="2026-09-02T11:10:15.000Z" title="发表于 2026-09-02 19:10:15">2026-09-02</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/1.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Lasyc</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.7.0</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.7.0"></script><script src="/js/main.js?v=5.7.0"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

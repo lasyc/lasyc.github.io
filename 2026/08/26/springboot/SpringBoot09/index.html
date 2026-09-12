@@ -1,0 +1,472 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Spring Boot 参数校验与处理原理 | Lasyc の Blog</title><meta name="author" content="Lasyc"><meta name="copyright" content="Lasyc"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="数据校验实际的开发中，我们经常需要对请求参数进行校验（非空、长度、范围等），如果手动在业务代码里一个个 if 判断，代码会非常臃肿。Spring 提供了基于 Bean Validation（JSR-303） 规范的注解校验，Spring Boot 中只需引入 spring-boot-starter-validation 1234&lt;dependency&gt;    &lt;groupId&amp;g">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring Boot 参数校验与处理原理">
+<meta property="og:url" content="http://example.com/2026/08/26/springboot/SpringBoot09/index.html">
+<meta property="og:site_name" content="Lasyc の Blog">
+<meta property="og:description" content="数据校验实际的开发中，我们经常需要对请求参数进行校验（非空、长度、范围等），如果手动在业务代码里一个个 if 判断，代码会非常臃肿。Spring 提供了基于 Bean Validation（JSR-303） 规范的注解校验，Spring Boot 中只需引入 spring-boot-starter-validation 1234&lt;dependency&gt;    &lt;groupId&amp;g">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/avatar.webp">
+<meta property="article:published_time" content="2026-08-26T11:22:08.000Z">
+<meta property="article:modified_time" content="2026-09-12T03:08:07.607Z">
+<meta property="article:author" content="Lasyc">
+<meta property="article:tag" content="文件上传">
+<meta property="article:tag" content="数据校验">
+<meta property="article:tag" content="参数解析原理">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/avatar.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Spring Boot 参数校验与处理原理",
+  "url": "http://example.com/2026/08/26/springboot/SpringBoot09/",
+  "image": "http://example.com/img/avatar.webp",
+  "datePublished": "2026-08-26T11:22:08.000Z",
+  "dateModified": "2026-09-12T03:08:07.607Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Lasyc",
+      "url": "http://example.com"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2026/08/26/springboot/SpringBoot09/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.7.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.3.1/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        const data = { value }
+
+        if (ttl != null) {
+          data.expiry = Date.now() + ttl * 86400000
+        }
+
+        localStorage.setItem(key, JSON.stringify(data))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return
+
+        try {
+          const data = JSON.parse(itemStr)
+
+          if (data.expiry && Date.now() > data.expiry) {
+            localStorage.removeItem(key)
+            return
+          }
+
+          return data.value
+        } catch {
+          localStorage.removeItem(key)
+        }
+      }
+    }
+
+    const scriptCache = new Map()
+    const cssCache = new Map()
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => {
+        if (scriptCache.has(url)) {
+          return scriptCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+
+          script.src = url
+          script.async = true
+
+          for (const key in attr) {
+            script.setAttribute(key, attr[key])
+          }
+
+          script.onload = resolve
+          script.onerror = reject
+
+          document.head.appendChild(script)
+        })
+
+        scriptCache.set(url, promise)
+
+        return promise
+      },
+      getCSS: (url, id) => {
+        if (cssCache.has(url)) {
+          return cssCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const link = document.createElement('link')
+
+          link.rel = 'stylesheet'
+          link.href = url
+
+          if (id) {
+            link.id = id
+          }
+
+          link.onload = resolve
+          link.onerror = reject
+
+          document.head.appendChild(link)
+        })
+
+        cssCache.set(url, promise)
+
+        return promise
+      },
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+      const activateDarkMode = () => {
+        document.documentElement.dataset.theme = 'dark'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.dataset.theme = 'light'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.json","preload":true,"top_n_per_article":-1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":200,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":10,"languages":{"author":"作者: Lasyc","link":"链接: ","source":"来源: Lasyc の Blog","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Spring Boot 参数校验与处理原理',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css"><style>
+#my-aplayer {
+  position: fixed;
+  bottom: 10px;
+  left: 10px;
+  width: 320px;
+  z-index: 99999;
+  border-radius: 5px;
+  overflow: hidden;
+}
+#my-aplayer .aplayer-title,
+#my-aplayer .aplayer-author {
+  color: #333 !important;
+}
+</style>
+<meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">175</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">463</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">16</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 图库</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/top_img.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Lasyc の Blog</span></a><a class="nav-page-title" href="/"><span class="site-name">Spring Boot 参数校验与处理原理</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 图库</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Spring Boot 参数校验与处理原理</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-08-26T11:22:08.000Z" title="发表于 2026-08-26 19:22:08">2026-08-26</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-09-12T03:08:07.607Z" title="更新于 2026-09-12 11:08:07">2026-09-12</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%90%8E%E7%AB%AF/">后端</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%90%8E%E7%AB%AF/%E6%A1%86%E6%9E%B6/">框架</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%90%8E%E7%AB%AF/%E6%A1%86%E6%9E%B6/Spring-Boot/">Spring Boot</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">2.3k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>10分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h2 id="数据校验"><a href="#数据校验" class="headerlink" title="数据校验"></a>数据校验</h2><p>实际的开发中，我们经常需要对请求参数进行校验（非空、长度、范围等），如果手动在业务代码里一个个 <code>if</code> 判断，代码会非常臃肿。Spring 提供了基于 <strong>Bean Validation（JSR-303）</strong> 规范的注解校验，Spring Boot 中只需引入 <code>spring-boot-starter-validation</code></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-validation<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="在实体类上声明校验规则"><a href="#在实体类上声明校验规则" class="headerlink" title="在实体类上声明校验规则"></a>在实体类上声明校验规则</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">User</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@NotBlank(message = &quot;用户名不能为空&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> String username;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@NotNull(message = &quot;年龄不能为空&quot;)</span></span><br><span class="line">    <span class="meta">@Min(value = 1, message = &quot;年龄最小为 1&quot;)</span></span><br><span class="line">    <span class="meta">@Max(value = 150, message = &quot;年龄最大为 150&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> Integer age;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Email(message = &quot;邮箱格式不正确&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> String email;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// getter、setter ……</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="在-Controller-参数上启用校验"><a href="#在-Controller-参数上启用校验" class="headerlink" title="在 Controller 参数上启用校验"></a>在 Controller 参数上启用校验</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// @RequestBody 接收 JSON，校验失败会抛 MethodArgumentNotValidException</span></span><br><span class="line"><span class="meta">@ResponseBody</span></span><br><span class="line"><span class="meta">@PostMapping(&quot;/validJson&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="type">Map</span>&lt;String, Object&gt; <span class="title function_">validJson</span><span class="params">(<span class="meta">@RequestBody</span> <span class="meta">@Validated</span> User user)</span> &#123;</span><br><span class="line">    <span class="type">Map</span>&lt;String, Object&gt; <span class="variable">result</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">    result.put(<span class="string">&quot;user&quot;</span>, user);</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 表单/查询参数也可以校验，校验失败会抛 BindException</span></span><br><span class="line"><span class="meta">@ResponseBody</span></span><br><span class="line"><span class="meta">@GetMapping(&quot;/validParam&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="type">Map</span>&lt;String, Object&gt; <span class="title function_">validParam</span><span class="params">(<span class="meta">@Validated</span> User user)</span> &#123;</span><br><span class="line">    <span class="type">Map</span>&lt;String, Object&gt; <span class="variable">result</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">    result.put(<span class="string">&quot;user&quot;</span>, user);</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="全局处理校验异常"><a href="#全局处理校验异常" class="headerlink" title="全局处理校验异常"></a>全局处理校验异常</h3><p>校验失败时 Spring 会抛出异常，默认返回 400 页面，不够友好。我们可以通过 <code>@RestControllerAdvice</code> 统一捕获并返回 JSON</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestControllerAdvice</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">GlobalExceptionHandler</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 处理 @RequestBody 校验失败</span></span><br><span class="line">    <span class="meta">@ExceptionHandler(MethodArgumentNotValidException.class)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">Map</span>&lt;String, Object&gt; <span class="title function_">handleValidException</span><span class="params">(MethodArgumentNotValidException e)</span> &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">message</span> <span class="operator">=</span> e.getBindingResult().getFieldErrors().stream()</span><br><span class="line">                .map(fieldError -&gt; fieldError.getDefaultMessage())</span><br><span class="line">                .collect(Collectors.joining(<span class="string">&quot;；&quot;</span>));</span><br><span class="line">        <span class="keyword">return</span> Map.of(<span class="string">&quot;code&quot;</span>, <span class="number">400</span>, <span class="string">&quot;message&quot;</span>, message);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 处理表单/查询参数校验失败</span></span><br><span class="line">    <span class="meta">@ExceptionHandler(BindException.class)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">Map</span>&lt;String, Object&gt; <span class="title function_">handleBindException</span><span class="params">(BindException e)</span> &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">message</span> <span class="operator">=</span> e.getBindingResult().getFieldErrors().stream()</span><br><span class="line">                .map(fieldError -&gt; fieldError.getDefaultMessage())</span><br><span class="line">                .collect(Collectors.joining(<span class="string">&quot;；&quot;</span>));</span><br><span class="line">        <span class="keyword">return</span> Map.of(<span class="string">&quot;code&quot;</span>, <span class="number">400</span>, <span class="string">&quot;message&quot;</span>, message);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="常用校验注解"><a href="#常用校验注解" class="headerlink" title="常用校验注解"></a>常用校验注解</h3><table>
+<thead>
+<tr>
+<th>注解</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>@NotBlank</td>
+<td>字符串不能为 null 且去除空格后长度必须大于 0</td>
+</tr>
+<tr>
+<td>@NotNull</td>
+<td>不能为 null（可用于包装类型）</td>
+</tr>
+<tr>
+<td>@NotEmpty</td>
+<td>不能为 null 且长度必须大于 0（可用于集合、字符串）</td>
+</tr>
+<tr>
+<td>@Size(min, max)</td>
+<td>长度必须在指定范围内（可用于字符串、集合、数组）</td>
+</tr>
+<tr>
+<td>@Min &#x2F; @Max</td>
+<td>数值必须大于等于 &#x2F; 小于等于指定值</td>
+</tr>
+<tr>
+<td>@Pattern(regexp)</td>
+<td>必须匹配指定的正则表达式</td>
+</tr>
+<tr>
+<td>@Email</td>
+<td>必须是合法的邮箱格式</td>
+</tr>
+<tr>
+<td>@Past &#x2F; @Future</td>
+<td>必须是过去 &#x2F; 未来的时间</td>
+</tr>
+</tbody></table>
+<h2 id="文件上传"><a href="#文件上传" class="headerlink" title="文件上传"></a>文件上传</h2><p>Spring Boot 默认使用 <code>StandardServletMultipartResolver</code> 处理文件上传，<strong>无需任何额外配置</strong>（对比 SpringMVC 需要配置解析器，Spring Boot 已经自动配置好了）</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">servlet:</span></span><br><span class="line">    <span class="attr">multipart:</span></span><br><span class="line">      <span class="attr">max-file-size:</span> <span class="string">10MB</span> <span class="comment"># 单个文件大小上限，默认 1MB</span></span><br><span class="line">      <span class="attr">max-request-size:</span> <span class="string">100MB</span> <span class="comment"># 一次请求总大小上限，默认 10MB</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ResponseBody</span></span><br><span class="line"><span class="meta">@PostMapping(&quot;/upload&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="type">Map</span>&lt;String, Object&gt; <span class="title function_">upload</span><span class="params">(<span class="meta">@RequestPart(&quot;file&quot;)</span> MultipartFile file,</span></span><br><span class="line"><span class="params">                                  <span class="meta">@RequestParam(&quot;username&quot;)</span> String username)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">    <span class="type">Map</span>&lt;String, Object&gt; <span class="variable">result</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">    result.put(<span class="string">&quot;username&quot;</span>, username);</span><br><span class="line">    result.put(<span class="string">&quot;fileName&quot;</span>, file.getOriginalFilename());</span><br><span class="line">    result.put(<span class="string">&quot;fileSize&quot;</span>, file.getSize());</span><br><span class="line">    <span class="comment">// 保存文件到指定目录（示例）</span></span><br><span class="line">    file.transferTo(<span class="keyword">new</span> <span class="title class_">File</span>(<span class="string">&quot;d:/upload/&quot;</span> + file.getOriginalFilename()));</span><br><span class="line">    <span class="comment">// &#123;</span></span><br><span class="line">    <span class="comment">//   &quot;fileSize&quot;: 1024,</span></span><br><span class="line">    <span class="comment">//   &quot;fileName&quot;: &quot;test.txt&quot;,</span></span><br><span class="line">    <span class="comment">//   &quot;username&quot;: &quot;admin&quot;</span></span><br><span class="line">    <span class="comment">// &#125;</span></span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 前端 form 表单：enctype 必须为 multipart/form-data --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">th:action</span>=<span class="string">&quot;@&#123;/upload&#125;&quot;</span> <span class="attr">method</span>=<span class="string">&quot;post&quot;</span> <span class="attr">enctype</span>=<span class="string">&quot;multipart/form-data&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;text&quot;</span> <span class="attr">name</span>=<span class="string">&quot;username&quot;</span> <span class="attr">value</span>=<span class="string">&quot;admin&quot;</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;file&quot;</span> <span class="attr">name</span>=<span class="string">&quot;file&quot;</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;submit&quot;</span> <span class="attr">value</span>=<span class="string">&quot;上传&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>多文件上传时，只需将参数类型改为 <code>MultipartFile[]</code> 或 <code>List&lt;MultipartFile&gt;</code>，前端表单中多个 <code>name=&quot;file&quot;</code> 的 input 即可</p>
+</blockquote>
+<h2 id="参数处理原理"><a href="#参数处理原理" class="headerlink" title="参数处理原理"></a>参数处理原理</h2><ol>
+<li>从 HandlerMapping 中找到对应的 <code>Handler</code></li>
+<li>为当前 Handler 找到对应的 <code>HandlerAdapter</code>（适配器）</li>
+<li>HandlerAdapter 执行对应的 Handler</li>
+<li>调用 <code>setHandlerMethodArgumentResolvers</code> 设置参数解析器</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="meta">@Nullable</span> <span class="type">ModelAndView</span> <span class="title function_">invokeHandlerMethod</span><span class="params">(HttpServletRequest request,</span></span><br><span class="line"><span class="params">        HttpServletResponse response, HandlerMethod handlerMethod)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line"></span><br><span class="line">    <span class="type">WebAsyncManager</span> <span class="variable">asyncManager</span> <span class="operator">=</span> WebAsyncUtils.getAsyncManager(request);</span><br><span class="line">    <span class="type">AsyncWebRequest</span> <span class="variable">asyncWebRequest</span> <span class="operator">=</span> WebAsyncUtils.createAsyncWebRequest(request, response);</span><br><span class="line">    asyncWebRequest.setTimeout(<span class="built_in">this</span>.asyncRequestTimeout);</span><br><span class="line"></span><br><span class="line">    asyncManager.setTaskExecutor(<span class="built_in">this</span>.taskExecutor);</span><br><span class="line">    asyncManager.setAsyncWebRequest(asyncWebRequest);</span><br><span class="line">    asyncManager.registerCallableInterceptors(<span class="built_in">this</span>.callableInterceptors);</span><br><span class="line">    asyncManager.registerDeferredResultInterceptors(<span class="built_in">this</span>.deferredResultInterceptors);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Obtain wrapped response to enforce lifecycle rule from Servlet spec, section 2.3.3.4</span></span><br><span class="line">    response = asyncWebRequest.getNativeResponse(HttpServletResponse.class);</span><br><span class="line"></span><br><span class="line">    <span class="type">ServletWebRequest</span> <span class="variable">webRequest</span> <span class="operator">=</span> (asyncWebRequest <span class="keyword">instanceof</span> ServletWebRequest ?</span><br><span class="line">            (ServletWebRequest) asyncWebRequest : <span class="keyword">new</span> <span class="title class_">ServletWebRequest</span>(request, response));</span><br><span class="line"></span><br><span class="line">    <span class="type">WebDataBinderFactory</span> <span class="variable">binderFactory</span> <span class="operator">=</span> getDataBinderFactory(handlerMethod);</span><br><span class="line">    <span class="type">ModelFactory</span> <span class="variable">modelFactory</span> <span class="operator">=</span> getModelFactory(handlerMethod, binderFactory);</span><br><span class="line"></span><br><span class="line">    <span class="type">ServletInvocableHandlerMethod</span> <span class="variable">invocableMethod</span> <span class="operator">=</span> createInvocableHandlerMethod(handlerMethod);</span><br><span class="line">    <span class="comment">// 设置参数处理器</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">this</span>.argumentResolvers != <span class="literal">null</span>) &#123;</span><br><span class="line">        invocableMethod.setHandlerMethodArgumentResolvers(<span class="built_in">this</span>.argumentResolvers);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 设置返回值处理器</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">this</span>.returnValueHandlers != <span class="literal">null</span>) &#123;</span><br><span class="line">        invocableMethod.setHandlerMethodReturnValueHandlers(<span class="built_in">this</span>.returnValueHandlers);</span><br><span class="line">    &#125;</span><br><span class="line">    invocableMethod.setDataBinderFactory(binderFactory);</span><br><span class="line">    invocableMethod.setParameterNameDiscoverer(<span class="built_in">this</span>.parameterNameDiscoverer);</span><br><span class="line">    invocableMethod.setMethodValidator(<span class="built_in">this</span>.methodValidator);</span><br><span class="line"></span><br><span class="line">    <span class="type">ModelAndViewContainer</span> <span class="variable">mavContainer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ModelAndViewContainer</span>();</span><br><span class="line">    mavContainer.addAllAttributes(RequestContextUtils.getInputFlashMap(request));</span><br><span class="line">    modelFactory.initModel(webRequest, mavContainer, invocableMethod);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (asyncManager.hasConcurrentResult()) &#123;</span><br><span class="line">        <span class="type">Object</span> <span class="variable">result</span> <span class="operator">=</span> asyncManager.getConcurrentResult();</span><br><span class="line">        <span class="type">Object</span>[] <span class="variable">resultContext</span> <span class="operator">=</span> asyncManager.getConcurrentResultContext();</span><br><span class="line">        Assert.state(resultContext != <span class="literal">null</span> &amp;&amp; resultContext.length &gt; <span class="number">0</span>, <span class="string">&quot;Missing result context&quot;</span>);</span><br><span class="line">        mavContainer = (ModelAndViewContainer) resultContext[<span class="number">0</span>];</span><br><span class="line">        asyncManager.clearConcurrentResult();</span><br><span class="line">        LogFormatUtils.traceDebug(logger, traceOn -&gt; &#123;</span><br><span class="line">            <span class="type">String</span> <span class="variable">formatted</span> <span class="operator">=</span> LogFormatUtils.formatValue(result, !traceOn);</span><br><span class="line">            <span class="keyword">return</span> <span class="string">&quot;Resume with async result [&quot;</span> + formatted + <span class="string">&quot;]&quot;</span>;</span><br><span class="line">        &#125;);</span><br><span class="line">        invocableMethod = invocableMethod.wrapConcurrentResult(result);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 执行目标方法</span></span><br><span class="line">    invocableMethod.invokeAndHandle(webRequest, mavContainer);</span><br><span class="line">    <span class="keyword">if</span> (asyncManager.isConcurrentHandlingStarted()) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> getModelAndView(mavContainer, modelFactory, webRequest);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们知道 Spring 通过各种的参数解析器来解析参数，那么对于 Servlet 原生的一些参数，也有对应的解析器 <code>ServletRequestMethodArgumentResolver</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ServletRequestMethodArgumentResolver</span> <span class="keyword">implements</span> <span class="title class_">HandlerMethodArgumentResolver</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 判断支持哪些参数</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="meta">@SuppressWarnings(&quot;deprecation&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">supportsParameter</span><span class="params">(MethodParameter parameter)</span> &#123;</span><br><span class="line">        <span class="type">Class</span>&lt;?&gt; <span class="variable">paramType</span> <span class="operator">=</span> parameter.getParameterType();</span><br><span class="line">        <span class="keyword">return</span> (WebRequest.class.isAssignableFrom(paramType) ||</span><br><span class="line">                ServletRequest.class.isAssignableFrom(paramType) ||</span><br><span class="line">                MultipartRequest.class.isAssignableFrom(paramType) ||</span><br><span class="line">                HttpSession.class.isAssignableFrom(paramType) ||</span><br><span class="line">                PushBuilder.class.isAssignableFrom(paramType) ||</span><br><span class="line">                (Principal.class.isAssignableFrom(paramType) &amp;&amp; !parameter.hasParameterAnnotations()) ||</span><br><span class="line">                InputStream.class.isAssignableFrom(paramType) ||</span><br><span class="line">                Reader.class.isAssignableFrom(paramType) ||</span><br><span class="line">                HttpMethod.class == paramType ||</span><br><span class="line">                Locale.class == paramType ||</span><br><span class="line">                TimeZone.class == paramType ||</span><br><span class="line">                ZoneId.class == paramType);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ......</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因此，我们可以直接在 handler 方法中，使用对应的参数，不需要任何注解，Spring 会帮我们自动注入</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ResponseBody</span></span><br><span class="line"><span class="meta">@GetMapping(&quot;/servletApi&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="type">Map</span>&lt;String, Object&gt; <span class="title function_">servletApi</span><span class="params">(HttpServletRequest request,</span></span><br><span class="line"><span class="params">                                      HttpServletResponse response,</span></span><br><span class="line"><span class="params">                                      HttpSession session,</span></span><br><span class="line"><span class="params">                                      Locale locale)</span> &#123;</span><br><span class="line">    <span class="type">Map</span>&lt;String, Object&gt; <span class="variable">result</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">    result.put(<span class="string">&quot;request&quot;</span>, request.getRequestURI());</span><br><span class="line">    result.put(<span class="string">&quot;locale&quot;</span>, locale);</span><br><span class="line">    <span class="comment">// &#123;</span></span><br><span class="line">    <span class="comment">//   &quot;locale&quot;: &quot;zh_CN&quot;,</span></span><br><span class="line">    <span class="comment">//   &quot;request&quot;: &quot;/servletApi&quot;</span></span><br><span class="line">    <span class="comment">// &#125;</span></span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="参数解析器一览"><a href="#参数解析器一览" class="headerlink" title="参数解析器一览"></a>参数解析器一览</h3><p><code>RequestMappingHandlerAdapter</code> 中通过 <code>getDefaultArgumentResolvers()</code> 注册了一系列参数解析器，按照顺序依次匹配，支持则解析，不支持则交给下一个解析器</p>
+<table>
+<thead>
+<tr>
+<th>解析器</th>
+<th>解析的参数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>RequestParamMethodArgumentResolver</td>
+<td>@RequestParam</td>
+</tr>
+<tr>
+<td>RequestParamMapMethodArgumentResolver</td>
+<td>@RequestParam + Map</td>
+</tr>
+<tr>
+<td>PathVariableMethodArgumentResolver</td>
+<td>@PathVariable</td>
+</tr>
+<tr>
+<td>PathVariableMapMethodArgumentResolver</td>
+<td>@PathVariable + Map</td>
+</tr>
+<tr>
+<td>MatrixVariableMethodArgumentResolver</td>
+<td>@MatrixVariable</td>
+</tr>
+<tr>
+<td>MatrixVariableMapMethodArgumentResolver</td>
+<td>@MatrixVariable + Map</td>
+</tr>
+<tr>
+<td>ServletModelAttributeMethodProcessor</td>
+<td>自定义对象参数</td>
+</tr>
+<tr>
+<td>RequestResponseBodyMethodProcessor</td>
+<td>@RequestBody</td>
+</tr>
+<tr>
+<td>RequestPartMethodArgumentResolver</td>
+<td>@RequestPart</td>
+</tr>
+<tr>
+<td>RequestHeaderMethodArgumentResolver</td>
+<td>@RequestHeader</td>
+</tr>
+<tr>
+<td>RequestHeaderMapMethodArgumentResolver</td>
+<td>@RequestHeader + Map</td>
+</tr>
+<tr>
+<td>ServletCookieValueMethodArgumentResolver</td>
+<td>@CookieValue</td>
+</tr>
+<tr>
+<td>ExpressionValueMethodArgumentResolver</td>
+<td>@Value</td>
+</tr>
+<tr>
+<td>SessionAttributeMethodArgumentResolver</td>
+<td>@SessionAttribute</td>
+</tr>
+<tr>
+<td>RequestAttributeMethodArgumentResolver</td>
+<td>@RequestAttribute</td>
+</tr>
+<tr>
+<td>ServletRequestMethodArgumentResolver</td>
+<td>Servlet API 原生参数</td>
+</tr>
+<tr>
+<td>ServletResponseMethodArgumentResolver</td>
+<td>ServletResponse</td>
+</tr>
+<tr>
+<td>HttpEntityMethodProcessor</td>
+<td>HttpEntity &#x2F; RequestEntity</td>
+</tr>
+<tr>
+<td>RedirectAttributesMethodArgumentResolver</td>
+<td>RedirectAttributes</td>
+</tr>
+<tr>
+<td>ModelMethodProcessor</td>
+<td>Model</td>
+</tr>
+<tr>
+<td>MapMethodProcessor</td>
+<td>Map</td>
+</tr>
+<tr>
+<td>ErrorsMethodArgumentResolver</td>
+<td>Errors &#x2F; BindingResult</td>
+</tr>
+<tr>
+<td>SessionStatusMethodArgumentResolver</td>
+<td>SessionStatus</td>
+</tr>
+<tr>
+<td>UriComponentsBuilderMethodArgumentResolver</td>
+<td>UriComponentsBuilder</td>
+</tr>
+<tr>
+<td>PrincipalMethodArgumentResolver</td>
+<td>Principal</td>
+</tr>
+<tr>
+<td>RequestParamMethodArgumentResolver</td>
+<td>简单类型（兜底）</td>
+</tr>
+<tr>
+<td>ServletModelAttributeMethodProcessor</td>
+<td>复杂类型（兜底）</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>最后两个是兜底解析器：简单类型（String、Integer 等）交给 <code>RequestParamMethodArgumentResolver</code>，复杂类型（POJO 等）交给 <code>ServletModelAttributeMethodProcessor</code></p>
+</blockquote>
+<h3 id="自定义对象参数绑定原理"><a href="#自定义对象参数绑定原理" class="headerlink" title="自定义对象参数绑定原理"></a>自定义对象参数绑定原理</h3><p>自定义对象参数由 <code>ServletModelAttributeMethodProcessor</code> 解析（它继承自 <code>ModelAttributeMethodProcessor</code>）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ServletModelAttributeMethodProcessor</span> <span class="keyword">extends</span> <span class="title class_">ModelAttributeMethodProcessor</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 判断是否支持：标注了 @ModelAttribute，或者（未强制要求注解 &amp;&amp; 不是简单类型）</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">supportsParameter</span><span class="params">(MethodParameter parameter)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> (parameter.hasParameterAnnotation(ModelAttribute.class) ||</span><br><span class="line">                (<span class="built_in">this</span>.annotationNotRequired &amp;&amp; !BeanUtils.isSimpleProperty(parameter.getParameterType())));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 通过反射创建绑定对象</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="type">Object</span> <span class="title function_">createAttribute</span><span class="params">(String attributeName, MethodParameter parameter,</span></span><br><span class="line"><span class="params">            WebDataBinderFactory binderFactory, NativeWebRequest webRequest)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line"></span><br><span class="line">        <span class="type">MethodParameter</span> <span class="variable">nestedParameter</span> <span class="operator">=</span> parameter.nestedIfOptional();</span><br><span class="line">        <span class="type">Class</span>&lt;?&gt; <span class="variable">clazz</span> <span class="operator">=</span> nestedParameter.getNestedParameterType();</span><br><span class="line">        <span class="keyword">return</span> BeanUtils.createInstance(clazz);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 将请求参数绑定到对象上</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="type">void</span> <span class="title function_">bindRequestParameters</span><span class="params">(WebDataBinder binder, NativeWebRequest request)</span> &#123;</span><br><span class="line">        <span class="type">ServletRequestDataBinder</span> <span class="variable">servletBinder</span> <span class="operator">=</span> (ServletRequestDataBinder) binder;</span><br><span class="line">        servletBinder.bind(request.getNativeRequest(ServletRequest.class));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>绑定过程大致如下：</p>
+<ol>
+<li>反射创建目标对象（<code>BeanUtils.createInstance</code>）</li>
+<li>通过 <code>ServletRequestDataBinder</code>（继承自 <code>WebDataBinder</code>）绑定请求参数</li>
+<li>绑定过程中使用 <code>ConversionService</code> 做类型转换（String → Integer、String → Date 等），也支持级联属性（<code>address.province</code>）</li>
+<li>若参数上标注了 <code>@Validated</code>，绑定后还会执行数据校验（后续章节会讲到）</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// WebDataBinder 内部通过 BeanWrapper 设置属性值，期间会经过 ConversionService 做类型转换</span></span><br><span class="line"><span class="comment">// 简单理解：BeanWrapper.setPropertyValue(&quot;age&quot;, &quot;18&quot;) -&gt; 转换器 -&gt; Integer 18 -&gt; 调用 setAge(18)</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="类型转换"><a href="#类型转换" class="headerlink" title="类型转换"></a>类型转换</h3><p>默认的 <code>ConversionService</code>（<code>ApplicationConversionService</code>）已经内置了大量常用转换器，但自定义的转换规则需要我们实现 <code>Converter</code>、<code>Formatter</code> 或 <code>GenericConverter</code> 接口</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 自定义 Converter：String → Date</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">StringToDateConverter</span> <span class="keyword">implements</span> <span class="title class_">Converter</span>&lt;String, Date&gt; &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">DateTimeFormatter</span> <span class="variable">FORMATTER</span> <span class="operator">=</span> DateTimeFormatter.ofPattern(<span class="string">&quot;yyyy-MM-dd&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">Date</span> <span class="title function_">convert</span><span class="params">(String source)</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> Date.from(LocalDate.parse(source, FORMATTER)</span><br><span class="line">                    .atStartOfDay(ZoneId.systemDefault()).toInstant());</span><br><span class="line">        &#125; <span class="keyword">catch</span> (DateTimeParseException e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;日期格式错误，应为 yyyy-MM-dd&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">WebConfig</span> <span class="keyword">implements</span> <span class="title class_">WebMvcConfigurer</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">void</span> <span class="title function_">addFormatters</span><span class="params">(FormatterRegistry registry)</span> &#123;</span><br><span class="line">        registry.addConverter(<span class="keyword">new</span> <span class="title class_">StringToDateConverter</span>());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 使用：请求 /converter?birthday=2000-01-01，会自动完成类型转换</span></span><br><span class="line"><span class="meta">@ResponseBody</span></span><br><span class="line"><span class="meta">@GetMapping(&quot;/converter&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="type">Map</span>&lt;String, Object&gt; <span class="title function_">converter</span><span class="params">(<span class="meta">@RequestParam(&quot;birthday&quot;)</span> Date birthday)</span> &#123;</span><br><span class="line">    <span class="type">Map</span>&lt;String, Object&gt; <span class="variable">result</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">    result.put(<span class="string">&quot;birthday&quot;</span>, birthday);</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="自定义参数解析器"><a href="#自定义参数解析器" class="headerlink" title="自定义参数解析器"></a>自定义参数解析器</h3><p>除了使用 Spring 提供的解析器，我们也可以实现 <code>HandlerMethodArgumentResolver</code> 接口来自定义解析规则</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 自定义注解</span></span><br><span class="line"><span class="meta">@Target(ElementType.PARAMETER)</span></span><br><span class="line"><span class="meta">@Retention(RetentionPolicy.RUNTIME)</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> Token &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 自定义参数解析器：从请求头中取出 token</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">TokenArgumentResolver</span> <span class="keyword">implements</span> <span class="title class_">HandlerMethodArgumentResolver</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">supportsParameter</span><span class="params">(MethodParameter parameter)</span> &#123;</span><br><span class="line">        <span class="comment">// 只解析标注了 @Token 的参数</span></span><br><span class="line">        <span class="keyword">return</span> parameter.hasParameterAnnotation(Token.class);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">Object</span> <span class="title function_">resolveArgument</span><span class="params">(MethodParameter parameter, ModelAndViewContainer mavContainer,</span></span><br><span class="line"><span class="params">            NativeWebRequest webRequest, WebDataBinderFactory binderFactory)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">HttpServletRequest</span> <span class="variable">request</span> <span class="operator">=</span> webRequest.getNativeRequest(HttpServletRequest.class);</span><br><span class="line">        <span class="keyword">return</span> request.getHeader(<span class="string">&quot;token&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 注册自定义解析器</span></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">WebConfig</span> <span class="keyword">implements</span> <span class="title class_">WebMvcConfigurer</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">void</span> <span class="title function_">addArgumentResolvers</span><span class="params">(List&lt;HandlerMethodArgumentResolver&gt; resolvers)</span> &#123;</span><br><span class="line">        resolvers.add(<span class="keyword">new</span> <span class="title class_">TokenArgumentResolver</span>());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 使用：请求头中携带 token，即可自动注入</span></span><br><span class="line"><span class="meta">@ResponseBody</span></span><br><span class="line"><span class="meta">@GetMapping(&quot;/token&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="type">Map</span>&lt;String, Object&gt; <span class="title function_">token</span><span class="params">(<span class="meta">@Token</span> String token)</span> &#123;</span><br><span class="line">    <span class="type">Map</span>&lt;String, Object&gt; <span class="variable">result</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">    result.put(<span class="string">&quot;token&quot;</span>, token);</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>通过 <code>addArgumentResolvers</code> 添加的自定义解析器会排在默认解析器之前，优先匹配；如果 <code>supportsParameter</code> 返回 false，才会继续匹配默认解析器</p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://example.com">Lasyc</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2026/08/26/springboot/SpringBoot09/">http://example.com/2026/08/26/springboot/SpringBoot09/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="http://example.com" target="_blank">Lasyc の Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/">文件上传</a><a class="post-meta__tags" href="/tags/%E6%95%B0%E6%8D%AE%E6%A0%A1%E9%AA%8C/">数据校验</a><a class="post-meta__tags" href="/tags/%E5%8F%82%E6%95%B0%E8%A7%A3%E6%9E%90%E5%8E%9F%E7%90%86/">参数解析原理</a></div><div class="post-share"><div class="social-share" data-image="/img/avatar.webp" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/08/27/springboot/SpringBoot10/" title="Spring Boot 数据响应与内容协商"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">Spring Boot 数据响应与内容协商</div></div><div class="info-2"><div class="info-item-1">注解小结   注解 作用 使用场景    @PathVariable 从 URL 路径中提取参数 /user/&#123;id&#125;   @RequestParam 从查询参数或表单字段中取值 ?username=admin   @RequestHeader 从请求头中取值 获取 User-Agent 等   @CookieValue 从 Cookie 中取值 获取 JSESSIONID 等   @RequestBody 从请求体中取值（JSON&#x2F;XML） 前后端分离、POST JSON   @RequestAttribute 从 request 域中取值 配合拦截器、过滤器传值   @ModelAttribute 绑定请求参数到对象 &#x2F; 往 Model 中放值 表单绑定 POJO   @MatrixVariable 从矩阵变量中取值 /cars/shell;color=red   @RequestPart 获取 multipart 请求中的文件&#x2F;参数 文件上传   @Validated 启用参数校验 配合校验注解使用    简单类型参数（St...</div></div></div></a><a class="pagination-related" href="/2026/08/25/springboot/SpringBoot08/" title="Spring Boot 请求参数与注解"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Spring Boot 请求参数与注解</div></div><div class="info-2"><div class="info-item-1">普通参数与基本注解注解：  @PathVariable @RequestHeader @ModelAttribute @RequestParam @MatrixVariable @CookieValue @RequestBody  Servlet API  WebRequest ServletRequest MultipartRequest HttpSession javax.servlet.http.PushBuilder Principal InputStream Reader HttpMethod Locale TimeZone ZoneId  复杂参数  Map Errors&#x2F;BindingResult Model RedirectAttributes ServletResponse SessionStatus UriComponentsBuilder ServletUriComponentsBuilder  自定义对象参数 可以自动类型转换与格式，可以级联封装 代码示例@PathVariable12345678910111213141516171819@Res...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/04/08/javaweb/JavaWeb17/" title="Java Web 文件上传"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-04-08</div><div class="info-item-2">Java Web 文件上传</div></div><div class="info-2"><div class="info-item-1">文件上传文件上传需要满足以下条件：  上传控件必须在 form 表单中，且请求方式必须为 post form 标签中必须设置 enctype 属性，值为 multipart/form-data 在 form 标签中使用 input 标签，将 type 设置为 file，用于选择文件 在服务端接收文件并处理  12345&lt;form action=&quot;api/avatar&quot; method=&quot;post&quot; enctype=&quot;multipart/form-data&quot;&gt;  &lt;!-- 用于选择文件 --&gt;  &lt;input type=&quot;file&quot; name=&quot;avatar&quot; /&gt;  &lt;input type=&quot;submit&quot; /&gt;&lt;/form&gt;  123456public class UploadServlet extends HTMLServlet &#123;    @Override    protected voi...</div></div></div></a><a class="pagination-related" href="/2026/09/01/springboot/SpringBoot13/" title="Spring Boot 文件上传"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-09-01</div><div class="info-item-2">Spring Boot 文件上传</div></div><div class="info-2"><div class="info-item-1">文件上传参考文档 - Spring MVC 文件上传 在 Spring MVC 中，要实现文件上传需要自己配置 MultipartResolver（文件解析器）。而在 Spring Boot 中，官方通过自动配置帮我们把 StandardServletMultipartResolver 配好了，所以直接使用 MultipartFile 接收文件即可，无需额外配置。 一次完整的文件上传，主要分为三步：  页面表单以 POST + multipart/form-data 方式提交 Controller 中使用 MultipartFile 接收文件 根据业务保存文件（本地磁盘、云存储等）  页面表单注意事项：  表单的 method 必须是 post，否则无法上传文件。 表单的 enctype 必须是 multipart/form-data，否则无法上传文件。 表单中必须有一个 input 标签，且 type 必须是 file，否则无法上传文件。  1234&lt;form th:action=&quot;@&#123;/upload&#125;&quot; method=&quot;...</div></div></div></a><a class="pagination-related" href="/2026/08/01/springmvc/SpringMVC10/" title="Spring MVC 文件上传"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-08-01</div><div class="info-item-2">Spring MVC 文件上传</div></div><div class="info-2"><div class="info-item-1">文件上传Java Web 文件上传需要满足两个条件：  必须使用 POST 请求 必须添加 enctype=&quot;multipart/form-data&quot; 属性  1234&lt;form th:action=&quot;@&#123;/upload&#125;&quot; method=&quot;post&quot; enctype=&quot;multipart/form-data&quot;&gt;  &lt;input type=&quot;file&quot; name=&quot;file&quot; id=&quot;file&quot; /&gt;  &lt;input type=&quot;submit&quot; value=&quot;提交&quot; /&gt;&lt;/form&gt;  MultipartResolver从 Spring 3.1 开始，Spring 提供了两个 MultipartResolver 的实现用于处理 multipart 请求：  CommonsMultipartResolver 使用 commons-fil...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Lasyc</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">175</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">463</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">16</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/lasyc"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/lasyc" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E6%A0%A1%E9%AA%8C"><span class="toc-number">1.</span> <span class="toc-text">数据校验</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%A8%E5%AE%9E%E4%BD%93%E7%B1%BB%E4%B8%8A%E5%A3%B0%E6%98%8E%E6%A0%A1%E9%AA%8C%E8%A7%84%E5%88%99"><span class="toc-number">1.1.</span> <span class="toc-text">在实体类上声明校验规则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%A8-Controller-%E5%8F%82%E6%95%B0%E4%B8%8A%E5%90%AF%E7%94%A8%E6%A0%A1%E9%AA%8C"><span class="toc-number">1.2.</span> <span class="toc-text">在 Controller 参数上启用校验</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%A8%E5%B1%80%E5%A4%84%E7%90%86%E6%A0%A1%E9%AA%8C%E5%BC%82%E5%B8%B8"><span class="toc-number">1.3.</span> <span class="toc-text">全局处理校验异常</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E6%A0%A1%E9%AA%8C%E6%B3%A8%E8%A7%A3"><span class="toc-number">1.4.</span> <span class="toc-text">常用校验注解</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0"><span class="toc-number">2.</span> <span class="toc-text">文件上传</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E6%95%B0%E5%A4%84%E7%90%86%E5%8E%9F%E7%90%86"><span class="toc-number">3.</span> <span class="toc-text">参数处理原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E6%95%B0%E8%A7%A3%E6%9E%90%E5%99%A8%E4%B8%80%E8%A7%88"><span class="toc-number">3.1.</span> <span class="toc-text">参数解析器一览</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E5%AF%B9%E8%B1%A1%E5%8F%82%E6%95%B0%E7%BB%91%E5%AE%9A%E5%8E%9F%E7%90%86"><span class="toc-number">3.2.</span> <span class="toc-text">自定义对象参数绑定原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2"><span class="toc-number">3.3.</span> <span class="toc-text">类型转换</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E5%8F%82%E6%95%B0%E8%A7%A3%E6%9E%90%E5%99%A8"><span class="toc-number">3.4.</span> <span class="toc-text">自定义参数解析器</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/11/springsecurity/SpringSecurity12/" title="Spring Security 自定义 403 处理">Spring Security 自定义 403 处理</a><time datetime="2026-09-11T14:43:27.000Z" title="发表于 2026-09-11 22:43:27">2026-09-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/11/springsecurity/SpringSecurity11/" title="Spring Security 基于注解的访问控制">Spring Security 基于注解的访问控制</a><time datetime="2026-09-11T14:24:58.000Z" title="发表于 2026-09-11 22:24:58">2026-09-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/09/springsecurity/SpringSecurity10/" title="Spring Security 访问控制（授权）">Spring Security 访问控制（授权）</a><time datetime="2026-09-09T12:34:01.000Z" title="发表于 2026-09-09 20:34:01">2026-09-09</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/09/springsecurity/SpringSecurity09/" title="Spring Security 获取用户信息与自定义 UserDetails">Spring Security 获取用户信息与自定义 UserDetails</a><time datetime="2026-09-09T11:50:33.000Z" title="发表于 2026-09-09 19:50:33">2026-09-09</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/09/springsecurity/SpringSecurity08/" title="Spring Security Remember Me 与验证码">Spring Security Remember Me 与验证码</a><time datetime="2026-09-09T11:33:33.000Z" title="发表于 2026-09-09 19:33:33">2026-09-09</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/top_img.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Lasyc</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.7.0</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.7.0"></script><script src="/js/main.js?v=5.7.0"></script><div class="js-pjax"></div><script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script><script>
+(function() {
+  var myAplayer = null;
+  function createPlayer() {
+    var div = document.createElement('div');
+    div.id = 'my-aplayer';
+    document.body.appendChild(div);
+    myAplayer = new APlayer({
+      container: div,
+      mini: false,
+      autoplay: false,
+      mutex: true,
+      lrcType: 0,
+      volume: 0.7,
+      audio: [{
+        name: '这一生关于你的风景',
+        artist: '枯木逢春',
+        url: '/music/1356350562.mp3',
+        cover: '/img/1356350562.jpg'
+      }]
+    });
+  }
+  createPlayer();
+  document.addEventListener('pjax:complete', createPlayer);
+})();
+</script>
+<script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.7.0"></script></div></div></body></html>

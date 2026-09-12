@@ -1,0 +1,396 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>MySQL 视图与存储过程 | Lasyc の Blog</title><meta name="author" content="Lasyc"><meta name="copyright" content="Lasyc"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="视图视图介绍视图（View）是一种虚拟存在的表，它本身不存储数据，本质上是基于一条 SQL 查询语句的结果集：每次查询视图时，都会动态地从基础表中取最新数据。使用视图可以简化复杂的查询、提高数据安全性（隐藏敏感字段），相当于给数据加了一层抽象 视图基本使用 创建视图  CREATE [OR REPLACE] VIEW 视图名 AS 查询语句 [WITH [CASCADED | LOCAL] CHE">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL 视图与存储过程">
+<meta property="og:url" content="http://example.com/2025/11/25/mysql/MySQL13/index.html">
+<meta property="og:site_name" content="Lasyc の Blog">
+<meta property="og:description" content="视图视图介绍视图（View）是一种虚拟存在的表，它本身不存储数据，本质上是基于一条 SQL 查询语句的结果集：每次查询视图时，都会动态地从基础表中取最新数据。使用视图可以简化复杂的查询、提高数据安全性（隐藏敏感字段），相当于给数据加了一层抽象 视图基本使用 创建视图  CREATE [OR REPLACE] VIEW 视图名 AS 查询语句 [WITH [CASCADED | LOCAL] CHE">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/avatar.webp">
+<meta property="article:published_time" content="2025-11-25T14:32:08.000Z">
+<meta property="article:modified_time" content="2026-09-12T02:58:49.813Z">
+<meta property="article:author" content="Lasyc">
+<meta property="article:tag" content="变量">
+<meta property="article:tag" content="视图">
+<meta property="article:tag" content="存储过程">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/avatar.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "MySQL 视图与存储过程",
+  "url": "http://example.com/2025/11/25/mysql/MySQL13/",
+  "image": "http://example.com/img/avatar.webp",
+  "datePublished": "2025-11-25T14:32:08.000Z",
+  "dateModified": "2026-09-12T02:58:49.813Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Lasyc",
+      "url": "http://example.com"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2025/11/25/mysql/MySQL13/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.7.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.3.1/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        const data = { value }
+
+        if (ttl != null) {
+          data.expiry = Date.now() + ttl * 86400000
+        }
+
+        localStorage.setItem(key, JSON.stringify(data))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return
+
+        try {
+          const data = JSON.parse(itemStr)
+
+          if (data.expiry && Date.now() > data.expiry) {
+            localStorage.removeItem(key)
+            return
+          }
+
+          return data.value
+        } catch {
+          localStorage.removeItem(key)
+        }
+      }
+    }
+
+    const scriptCache = new Map()
+    const cssCache = new Map()
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => {
+        if (scriptCache.has(url)) {
+          return scriptCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+
+          script.src = url
+          script.async = true
+
+          for (const key in attr) {
+            script.setAttribute(key, attr[key])
+          }
+
+          script.onload = resolve
+          script.onerror = reject
+
+          document.head.appendChild(script)
+        })
+
+        scriptCache.set(url, promise)
+
+        return promise
+      },
+      getCSS: (url, id) => {
+        if (cssCache.has(url)) {
+          return cssCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const link = document.createElement('link')
+
+          link.rel = 'stylesheet'
+          link.href = url
+
+          if (id) {
+            link.id = id
+          }
+
+          link.onload = resolve
+          link.onerror = reject
+
+          document.head.appendChild(link)
+        })
+
+        cssCache.set(url, promise)
+
+        return promise
+      },
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+      const activateDarkMode = () => {
+        document.documentElement.dataset.theme = 'dark'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.dataset.theme = 'light'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.json","preload":true,"top_n_per_article":-1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":200,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":10,"languages":{"author":"作者: Lasyc","link":"链接: ","source":"来源: Lasyc の Blog","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'MySQL 视图与存储过程',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css"><style>
+#my-aplayer {
+  position: fixed;
+  bottom: 10px;
+  left: 10px;
+  width: 320px;
+  z-index: 99999;
+  border-radius: 5px;
+  overflow: hidden;
+}
+#my-aplayer .aplayer-title,
+#my-aplayer .aplayer-author {
+  color: #333 !important;
+}
+</style>
+<meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">175</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">463</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">16</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 图库</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/top_img.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Lasyc の Blog</span></a><a class="nav-page-title" href="/"><span class="site-name">MySQL 视图与存储过程</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 图库</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">MySQL 视图与存储过程</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-11-25T14:32:08.000Z" title="发表于 2025-11-25 22:32:08">2025-11-25</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-09-12T02:58:49.813Z" title="更新于 2026-09-12 10:58:49">2026-09-12</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%90%8E%E7%AB%AF/">后端</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%90%8E%E7%AB%AF/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%90%8E%E7%AB%AF/%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL/">MySQL</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">2.6k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>10分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h2 id="视图"><a href="#视图" class="headerlink" title="视图"></a>视图</h2><h3 id="视图介绍"><a href="#视图介绍" class="headerlink" title="视图介绍"></a>视图介绍</h3><p>视图（View）是一种<strong>虚拟存在的表</strong>，它本身不存储数据，本质上是基于一条 SQL 查询语句的结果集：每次查询视图时，都会动态地从基础表中取最新数据。使用视图可以简化复杂的查询、提高数据安全性（隐藏敏感字段），相当于给数据加了一层抽象</p>
+<h3 id="视图基本使用"><a href="#视图基本使用" class="headerlink" title="视图基本使用"></a>视图基本使用</h3><ol>
+<li><p>创建视图</p>
+<blockquote>
+<p>CREATE [OR REPLACE] VIEW 视图名 AS 查询语句 [WITH [CASCADED | LOCAL] CHECK OPTION];</p>
+</blockquote>
+</li>
+<li><p>查看全部视图</p>
+<blockquote>
+<p>SHOW FULL TABLES WHERE Table_type &#x3D; ‘VIEW’;</p>
+</blockquote>
+</li>
+<li><p>查看指定视图的定义</p>
+<blockquote>
+<p>SHOW CREATE VIEW 视图名;</p>
+</blockquote>
+</li>
+<li><p>查看视图数据</p>
+<blockquote>
+<p>SELECT * FROM 视图名;</p>
+</blockquote>
+</li>
+<li><p>修改视图</p>
+<blockquote>
+<p>CREATE OR REPLACE VIEW 视图名 AS 新的查询语句 [WITH [CASCADED | LOCAL] CHECK OPTION];</p>
+</blockquote>
+<blockquote>
+<p>ALTER VIEW 视图名 AS 新的查询语句 [WITH [CASCADED | LOCAL] CHECK OPTION];</p>
+</blockquote>
+</li>
+<li><p>删除视图</p>
+<blockquote>
+<p>DROP VIEW [IF EXISTS] 视图名;</p>
+</blockquote>
+</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 创建视图</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">OR</span> REPLACE <span class="keyword">VIEW</span> user_view_1 <span class="keyword">AS</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span></span><br><span class="line"><span class="keyword">FROM</span> tb_user</span><br><span class="line"><span class="keyword">WHERE</span> profession <span class="operator">=</span> <span class="string">&#x27;软件工程&#x27;</span></span><br><span class="line"><span class="keyword">WITH</span> <span class="keyword">LOCAL</span> <span class="keyword">CHECK</span> OPTION;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 查看全部视图</span></span><br><span class="line"><span class="keyword">SHOW</span> <span class="keyword">FULL</span> TABLES <span class="keyword">WHERE</span> Table_type <span class="operator">=</span> <span class="string">&#x27;VIEW&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 查看指定视图</span></span><br><span class="line"><span class="keyword">SHOW</span> <span class="keyword">CREATE</span> <span class="keyword">VIEW</span> user_view_1;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 查看视图数据</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span></span><br><span class="line"><span class="keyword">FROM</span> user_view_1;</span><br><span class="line"></span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span></span><br><span class="line"><span class="keyword">FROM</span> user_view_1</span><br><span class="line"><span class="keyword">WHERE</span> age <span class="operator">=</span> <span class="number">23</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 修改视图，相当于用新的视图覆盖原视图</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">OR</span> REPLACE <span class="keyword">VIEW</span> user_view_1 <span class="keyword">AS</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span></span><br><span class="line"><span class="keyword">FROM</span> tb_user</span><br><span class="line"><span class="keyword">WHERE</span> profession <span class="operator">=</span> <span class="string">&#x27;城市规划&#x27;</span></span><br><span class="line"><span class="keyword">WITH</span> <span class="keyword">LOCAL</span> <span class="keyword">CHECK</span> OPTION;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 修改原视图</span></span><br><span class="line"><span class="keyword">ALTER</span> <span class="keyword">VIEW</span> user_view_1 <span class="keyword">AS</span> <span class="keyword">SELECT</span> <span class="operator">*</span></span><br><span class="line">                          <span class="keyword">FROM</span> tb_user</span><br><span class="line">                          <span class="keyword">WHERE</span> profession <span class="operator">=</span> <span class="string">&#x27;化工&#x27;</span> <span class="keyword">WITH</span> <span class="keyword">LOCAL</span> <span class="keyword">CHECK</span> OPTION;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 删除视图</span></span><br><span class="line"><span class="keyword">DROP</span> <span class="keyword">VIEW</span> IF <span class="keyword">EXISTS</span> user_view_1;</span><br></pre></td></tr></table></figure>
+
+<h3 id="检查选项"><a href="#检查选项" class="headerlink" title="检查选项"></a>检查选项</h3><p>通过视图操作数据，本质上就是在操作视图对应的基础表。向视图中插入或更新数据时，MySQL 可以<strong>根据视图定义的查询条件来检查数据是否合规</strong>。为了控制这种检查行为，可以在创建视图时使用 <code>WITH [CASCADED | LOCAL] CHECK OPTION</code>：</p>
+<ol>
+<li>如果创建视图时<strong>没有</strong>使用 <code>WITH CHECK OPTION</code>，那么通过视图插入、更新数据时<strong>不做任何检查</strong>：不满足视图条件的数据也能成功插入基础表，只是插入后在这个视图中看不到而已（见下方”未开启”演示）；若视图是基于其他视图创建的，也不会检查上层视图的条件</li>
+<li>如果创建视图时使用了 <code>WITH CASCADED CHECK OPTION</code>（级联），那么插入&#x2F;更新的数据必须满足当前视图的条件；若当前视图是基于其他视图创建的，即使那些上层视图没开检查选项，<strong>也必须满足上层视图的查询条件</strong></li>
+<li>如果创建视图时使用了 <code>WITH LOCAL CHECK OPTION</code>（局部），那么插入&#x2F;更新的数据必须满足当前视图的条件；若基于其他视图创建，则只有<strong>那些同样开启了检查选项</strong>的上层视图条件需要满足</li>
+</ol>
+<p>未开启 <code>WITH [CASCADED | LOCAL] CHECK OPTION</code></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 创建视图</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">OR</span> REPLACE <span class="keyword">VIEW</span> user_view_1 <span class="keyword">AS</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span></span><br><span class="line"><span class="keyword">FROM</span> tb_user</span><br><span class="line"><span class="keyword">WHERE</span> profession <span class="operator">=</span> <span class="string">&#x27;软件工程&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 查看视图数据</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span></span><br><span class="line"><span class="keyword">FROM</span> user_view_1;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 向视图中插入数据，实际是插入到表中</span></span><br><span class="line"><span class="keyword">INSERT INTO</span> user_view_1(id, name, phone, email, profession, age, gender, status, create_time)</span><br><span class="line"><span class="keyword">VALUES</span> (<span class="number">25</span>, <span class="string">&#x27;诸葛亮&#x27;</span>, <span class="number">17799990024</span>, <span class="string">&#x27;zhuge666@sina.com&#x27;</span>, <span class="string">&#x27;软件工程&#x27;</span>, <span class="number">22</span>, <span class="number">2</span>, <span class="number">0</span>, <span class="string">&#x27;2025-11-26 19:32:30&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 插入成功，但是只添加到了 tb_user 中，在视图 user_view_1 中不存在，因为在创建视图时指定了条件 profession = &#x27;软件工程&#x27;</span></span><br><span class="line"><span class="keyword">INSERT INTO</span> user_view_1(id, name, phone, email, profession, age, gender, status, create_time)</span><br><span class="line"><span class="keyword">VALUES</span> (<span class="number">26</span>, <span class="string">&#x27;哪吒&#x27;</span>, <span class="number">17799990025</span>, <span class="string">&#x27;nezha666@sina.com&#x27;</span>, <span class="string">&#x27;计算机科学&#x27;</span>, <span class="number">22</span>, <span class="number">2</span>, <span class="number">0</span>, <span class="string">&#x27;2025-11-26 19:32:30&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>开启 <code>WITH [CASCADED | LOCAL] CHECK OPTION</code></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 创建视图</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">OR</span> REPLACE <span class="keyword">VIEW</span> user_view_1 <span class="keyword">AS</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span></span><br><span class="line"><span class="keyword">FROM</span> tb_user</span><br><span class="line"><span class="keyword">WHERE</span> profession <span class="operator">=</span> <span class="string">&#x27;软件工程&#x27;</span></span><br><span class="line"><span class="keyword">WITH</span> <span class="keyword">LOCAL</span> <span class="keyword">CHECK</span> OPTION ;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 查看视图数据</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span></span><br><span class="line"><span class="keyword">FROM</span> user_view_1;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 向视图中插入数据，实际是插入到表中，并且满足视图的条件，同时插入到视图中</span></span><br><span class="line"><span class="keyword">INSERT INTO</span> user_view_1(id, name, phone, email, profession, age, gender, status, create_time)</span><br><span class="line"><span class="keyword">VALUES</span> (<span class="number">25</span>, <span class="string">&#x27;诸葛亮&#x27;</span>, <span class="number">17799990024</span>, <span class="string">&#x27;zhuge666@sina.com&#x27;</span>, <span class="string">&#x27;软件工程&#x27;</span>, <span class="number">22</span>, <span class="number">2</span>, <span class="number">0</span>, <span class="string">&#x27;2025-11-26 19:32:30&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 插入失败，因为开启了 WITH LOCAL CHECK OPTION，因为在创建视图时指定了条件 profession = &#x27;软件工程&#x27;</span></span><br><span class="line"><span class="keyword">INSERT INTO</span> user_view_1(id, name, phone, email, profession, age, gender, status, create_time)</span><br><span class="line"><span class="keyword">VALUES</span> (<span class="number">26</span>, <span class="string">&#x27;哪吒&#x27;</span>, <span class="number">17799990025</span>, <span class="string">&#x27;nezha666@sina.com&#x27;</span>, <span class="string">&#x27;计算机科学&#x27;</span>, <span class="number">22</span>, <span class="number">2</span>, <span class="number">0</span>, <span class="string">&#x27;2025-11-26 19:32:30&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 报错：[HY000][1369] CHECK OPTION failed &#x27;mysql_study.user_view_1&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="更新及作用"><a href="#更新及作用" class="headerlink" title="更新及作用"></a>更新及作用</h3><p>对视图做更新（INSERT &#x2F; UPDATE &#x2F; DELETE）实际上更新的是它对应的基础表。但<strong>并不是所有视图都能更新</strong>：只有视图与基础表结构基本一致、且视图中<strong>没有</strong>聚合函数、<code>DISTINCT</code>、<code>GROUP BY</code>、<code>HAVING</code>、子查询等复杂内容时，才能安全更新（带 <code>WITH CHECK OPTION</code> 的视图更新时还会做条件检查）</p>
+<ol>
+<li>简单：用户可以将常用的查询语句封装成视图，简化查询操作</li>
+<li>安全：MySQL 中通过授权只能限制用户访问表，而不能限制用户访问表中的某列，通过将表中的可见列封装成视图，然后再访问视图，这样子用户只能看到可见列，从而提高数据的安全性</li>
+<li>独立：视图对外暴露的结构与基础表相互独立。基础表增加列不会影响视图（新列不会自动出现在视图里）；想调整对外暴露的字段时，只需更新视图定义，无需改动上层应用</li>
+</ol>
+<h3 id="视图案例"><a href="#视图案例" class="headerlink" title="视图案例"></a>视图案例</h3><p>为保证数据安全，用户在访问 tb_user 表时，只能看到基本字段，不能看到 phone 和 email 字段</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">VIEW</span> tb_user_view <span class="keyword">AS</span></span><br><span class="line"><span class="keyword">SELECT</span> id, name, profession, age, gender, status, create_time</span><br><span class="line"><span class="keyword">FROM</span> tb_user;</span><br><span class="line"></span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> tb_user_view;</span><br><span class="line"><span class="comment">-- 1,吕布,软件工程,23,1,6,2001-02-02 00:00:00</span></span><br><span class="line"><span class="comment">-- 2,曹操,通讯工程,33,1,0,2001-03-05 00:00:00</span></span><br><span class="line"><span class="comment">-- 3,赵云,英语,34,1,2,2002-03-02 00:00:00</span></span><br><span class="line"><span class="comment">-- 4,孙悟空,工程造价,54,1,0,2001-07-02 00:00:00</span></span><br><span class="line"><span class="comment">-- 5,花木兰,软件工程,23,2,1,2001-04-22 00:00:00</span></span><br><span class="line"><span class="comment">-- 6,大桥,舞蹈,22,2,0,2001-02-07 00:00:00</span></span><br><span class="line"><span class="comment">-- 7,露娜,应用数学,24,2,0,2001-02-08 00:00:00</span></span><br><span class="line"><span class="comment">-- 8,程咬金,化工,38,1,5,2001-05-23 00:00:00</span></span><br><span class="line"><span class="comment">-- 9,项羽,金属材料,43,1,0,2001-09-18 00:00:00</span></span><br><span class="line"><span class="comment">-- 10,白起,机械工程及其自动化,27,1,2,2001-08-16 00:00:00</span></span><br><span class="line"><span class="comment">-- 11,韩信,无机非金属材料工程,27,1,0,2001-06-12 00:00:00</span></span><br><span class="line"><span class="comment">-- 12,荆轲,会计,29,1,0,2001-05-11 00:00:00</span></span><br><span class="line"><span class="comment">-- 13,兰陵王,工程造价,44,1,1,2001-04-09 00:00:00</span></span><br><span class="line"><span class="comment">-- 14,狂铁,应用数学,43,1,2,2001-04-10 00:00:00</span></span><br><span class="line"><span class="comment">-- 15,貂蝉,软件工程,40,2,3,2001-02-12 00:00:00</span></span><br><span class="line"><span class="comment">-- 16,妲己,软件工程,31,2,0,2001-01-30 00:00:00</span></span><br><span class="line"><span class="comment">-- 17,芈月,工业经济,35,2,0,2000-05-03 00:00:00</span></span><br><span class="line"><span class="comment">-- 18,嬴政,化工,38,1,1,2001-08-08 00:00:00</span></span><br><span class="line"><span class="comment">-- 19,狄仁杰,国际贸易,30,1,0,2007-03-12 00:00:00</span></span><br><span class="line"><span class="comment">-- 20,安琪拉,城市规划,51,2,0,2001-08-15 00:00:00</span></span><br><span class="line"><span class="comment">-- 21,典韦,城市规划,52,1,2,2000-04-12 00:00:00</span></span><br><span class="line"><span class="comment">-- 22,廉颇,土木工程,19,1,3,2002-07-18 00:00:00</span></span><br><span class="line"><span class="comment">-- 23,后裔,城市园林,20,1,0,2002-03-10 00:00:00</span></span><br><span class="line"><span class="comment">-- 24,姜子牙,工程造价,29,1,4,2003-05-26 00:00:00</span></span><br><span class="line"><span class="comment">-- 25,诸葛亮,软件工程,22,2,0,2025-11-26 19:32:30</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="存储过程"><a href="#存储过程" class="headerlink" title="存储过程"></a>存储过程</h2><h3 id="存储过程介绍"><a href="#存储过程介绍" class="headerlink" title="存储过程介绍"></a>存储过程介绍</h3><p>存储过程（Stored Procedure）是一组<strong>事先定义好、存储在数据库中</strong>的 SQL 语句集合。把频繁使用的复杂操作封装成存储过程，之后只需 <code>CALL</code> 调用，可以简化操作、减少客户端与服务器的交互次数、提升效率</p>
+<h3 id="存储过程特点"><a href="#存储过程特点" class="headerlink" title="存储过程特点"></a>存储过程特点</h3><ol>
+<li>封装、复用</li>
+<li>可以接收参数、并返回结果</li>
+<li>减少交互次数，提升效率</li>
+</ol>
+<h3 id="存储过程基本使用"><a href="#存储过程基本使用" class="headerlink" title="存储过程基本使用"></a>存储过程基本使用</h3><ol>
+<li><p>创建存储过程</p>
+<blockquote>
+<p>CREATE PROCEDURE 存储过程名 ([参数列表]) BEGIN SQL语句; END;</p>
+</blockquote>
+</li>
+<li><p>调用存储过程</p>
+<blockquote>
+<p>CALL 存储过程名([参数列表]);</p>
+</blockquote>
+</li>
+<li><p>查看存储过程</p>
+<blockquote>
+<p>SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE &#x3D; ‘PROCEDURE’;</p>
+</blockquote>
+</li>
+<li><p>删除存储过程</p>
+<blockquote>
+<p>DROP PROCEDURE 存储过程名;</p>
+</blockquote>
+</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 创建存储过程</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">PROCEDURE</span> p1()</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">    <span class="keyword">SELECT</span> <span class="built_in">COUNT</span>(tb_user.id) <span class="keyword">FROM</span> tb_user;</span><br><span class="line"><span class="keyword">END</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 调用存储过程</span></span><br><span class="line"><span class="keyword">CALL</span> p1();</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 查看全部存储过程</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span></span><br><span class="line"><span class="keyword">FROM</span> INFORMATION_SCHEMA.ROUTINES</span><br><span class="line"><span class="keyword">WHERE</span> ROUTINE_TYPE <span class="operator">=</span> <span class="string">&#x27;PROCEDURE&#x27;</span></span><br><span class="line">  <span class="keyword">AND</span> ROUTINE_SCHEMA <span class="operator">=</span> <span class="string">&#x27;mysql_study&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">SHOW</span> <span class="keyword">CREATE</span> <span class="keyword">PROCEDURE</span> p1;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 删除存储过程</span></span><br><span class="line"><span class="keyword">DROP</span> <span class="keyword">PROCEDURE</span> IF <span class="keyword">EXISTS</span> p1;</span><br></pre></td></tr></table></figure>
+
+<h3 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h3><p>在存储过程中，可以使用变量来存储数据、传递结果。变量一共分三类：<code>系统变量</code>、<code>用户变量</code>、<code>局部变量</code></p>
+<h3 id="系统变量"><a href="#系统变量" class="headerlink" title="系统变量"></a>系统变量</h3><p>系统变量是 MySQL 提供的变量，用于保存 MySQL 服务器的状态信息，如当前时间、当前用户、当前数据库等，属于服务器层面，系统变量又分为<code>全局变量(GLOBAL)</code>和<code>会话变量(SESSION)</code>两种</p>
+<ol>
+<li><p>查看系统变量</p>
+<blockquote>
+<p>SHOW [GLOBAL | SESSION] VARIABLES [LIKE ‘变量名’];</p>
+</blockquote>
+<blockquote>
+<p>SELECT @@[GLOBAL | SESSION] 变量名;</p>
+</blockquote>
+</li>
+<li><p>修改系统变量</p>
+<blockquote>
+<p>SET [@@][GLOBAL | SESSION] 变量名 &#x3D; 值;</p>
+</blockquote>
+</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 查看全部系统变量，默认是 SESSION 级别</span></span><br><span class="line"><span class="keyword">SHOW</span> VARIABLES;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 查看全局系统变量</span></span><br><span class="line"><span class="keyword">SHOW</span> <span class="keyword">GLOBAL</span> VARIABLES;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 使用模糊查询</span></span><br><span class="line"><span class="keyword">SHOW</span> <span class="keyword">GLOBAL</span> VARIABLES <span class="keyword">LIKE</span> <span class="string">&#x27;auto%&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 查看指定系统变量</span></span><br><span class="line"><span class="keyword">SELECT</span> @<span class="variable">@global</span>.autocommit;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 设置系统变量</span></span><br><span class="line"><span class="keyword">SET</span> SESSION AUTOCOMMIT <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">SELECT</span> @<span class="variable">@session</span>.autocommit;</span><br><span class="line"></span><br><span class="line"><span class="keyword">SET</span> @<span class="variable">@session</span>.autocommit <span class="operator">=</span> <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="用户变量"><a href="#用户变量" class="headerlink" title="用户变量"></a>用户变量</h3><p>用户变量是定义在<strong>会话（当前连接）</strong>上的变量，用于保存临时数据，当前会话内都可以使用。用户变量以 <code>@</code> 符号开头，例如 <code>@my_name</code>，可以在 SQL 语句中直接使用</p>
+<ol>
+<li><p>创建用户变量</p>
+<blockquote>
+<p>SET @变量名 :&#x3D; 值;</p>
+</blockquote>
+<blockquote>
+<p>SELECT 字段名 INTO @变量名 FROM 表名 WHERE 条件;</p>
+</blockquote>
+</li>
+<li><p>使用用户变量</p>
+<blockquote>
+<p>SELECT @变量名;</p>
+</blockquote>
+</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 创建用户变量</span></span><br><span class="line"><span class="keyword">SET</span> <span class="variable">@my_name</span> <span class="operator">=</span> <span class="string">&#x27;lasyc&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">SET</span> <span class="variable">@my_age</span> :<span class="operator">=</span> <span class="number">20</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">SET</span> <span class="variable">@my_gender</span> :<span class="operator">=</span> <span class="string">&#x27;男&#x27;</span>, <span class="variable">@my_hobby</span> :<span class="operator">=</span> <span class="string">&#x27;Java&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 使用 SELECT 赋值</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="variable">@my_profession</span> :<span class="operator">=</span> <span class="string">&#x27;软件工程&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">SELECT</span> <span class="built_in">COUNT</span>(tb_user.id) <span class="keyword">INTO</span> <span class="variable">@tb_user_count</span> <span class="keyword">FROM</span> tb_user;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 查看用户变量</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="variable">@my_name</span>, <span class="variable">@my_age</span>, <span class="variable">@my_gender</span>, <span class="variable">@my_hobby</span>, <span class="variable">@my_profession</span>, <span class="variable">@tb_user_count</span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="局部变量"><a href="#局部变量" class="headerlink" title="局部变量"></a>局部变量</h3><p>局部变量是在<strong>存储过程内部定义</strong>、只在本次调用中生效的变量，用 <code>DECLARE</code> 关键字声明，只能在存储过程（函数）中使用。声明格式为：<code>DECLARE 变量名 数据类型 [DEFAULT 默认值];</code></p>
+<ol>
+<li><p>定义局部变量</p>
+<blockquote>
+<p>DECLARE 变量名 数据类型 [DEFAULT 值];</p>
+</blockquote>
+</li>
+<li><p>赋值</p>
+<blockquote>
+<p>SET 变量名 :&#x3D; 值;</p>
+</blockquote>
+<blockquote>
+<p>SELECT 字段名 INTO 变量名 FROM 表名 WHERE 条件;</p>
+</blockquote>
+</li>
+<li><p>使用局部变量</p>
+<blockquote>
+<p>SELECT 变量名;</p>
+</blockquote>
+</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">PROCEDURE</span> p2()</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">    <span class="keyword">DECLARE</span> user_count <span class="type">INT</span> <span class="keyword">DEFAULT</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">SET</span> user_count :<span class="operator">=</span> <span class="number">10</span>;</span><br><span class="line">    <span class="keyword">SELECT</span> user_count;</span><br><span class="line">    <span class="keyword">SELECT</span> <span class="built_in">COUNT</span>(tb_user.id) <span class="keyword">INTO</span> user_count <span class="keyword">FROM</span> tb_user;</span><br><span class="line">    <span class="keyword">SELECT</span> user_count;</span><br><span class="line"><span class="keyword">END</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">CALL</span> p2();</span><br></pre></td></tr></table></figure>
+
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://example.com">Lasyc</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2025/11/25/mysql/MySQL13/">http://example.com/2025/11/25/mysql/MySQL13/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="http://example.com" target="_blank">Lasyc の Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%8F%98%E9%87%8F/">变量</a><a class="post-meta__tags" href="/tags/%E8%A7%86%E5%9B%BE/">视图</a><a class="post-meta__tags" href="/tags/%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B/">存储过程</a></div><div class="post-share"><div class="social-share" data-image="/img/avatar.webp" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/11/26/mysql/MySQL14/" title="MySQL 存储过程进阶与触发器"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">MySQL 存储过程进阶与触发器</div></div><div class="info-2"><div class="info-item-1">IFIF 语句用于判断某个条件，并执行相应的语句 12345678910IF 条件1 THEN    语句1;[ELSEIF 条件2 THEN]    语句2;[ELSEIF 条件3 THEN]    语句3;......[ELSE]    语句n;END IF;  123456789101112131415CREATE PROCEDURE p3()BEGIN    DECLARE score INT DEFAULT 58;    DECLARE level VARCHAR(10);    IF score &gt;= 85 THEN        SET level := &#x27;优秀&#x27;;    ELSEIF score &gt;= 60 THEN        SET level := &#x27;合格&#x27;;    ELSE        SET level := &#x27;不合格&#x27;;    END IF;    SELECT level;END;CALL p3();  存储过程传参   参数类型 参数方向    IN 输入参数   OUT ...</div></div></div></a><a class="pagination-related" href="/2025/11/24/mysql/MySQL12/" title="MySQL SQL 优化"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">MySQL SQL 优化</div></div><div class="info-2"><div class="info-item-1">插入优化普通插入插入一条数据 12INSERT INTO tb_user(name, phone, email, profession, age, gender, status, create_time)VALUES (&#x27;吕布&#x27;, 17799990000, &#x27;lvbu666@163.com&#x27;, &#x27;软件工程&#x27;, 23, &#x27;1&#x27;, &#x27;6&#x27;, &#x27;2001-02-02 00:00:00&#x27;);  批量插入当需要插入多条数据时，不建议一条一条地执行 INSERT，而是把多条数据放在同一条 INSERT 语句里批量插入。 虽然批量插入效率高，但单条 INSERT 塞太多行也会有其他开销，经验上以 1000 行左右为一组比较合适，数据更多时可以拆成多条分批插入（MySQL 本身没有 1000 条的限制，主要受 max_allowed_packet 等参数影响）。 12345-- 一次插入多行：以 1000 行左右为一组比较合适，更多时拆成多批INSERT INTO tb_use...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/08/18/java/Java02/" title="Java 基础语法"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-08-18</div><div class="info-item-2">Java 基础语法</div></div><div class="info-2"><div class="info-item-1">注释为什么要有注释注释就是对代码进行解释说明的文字。通过注释，可以快速了解一个程序的功能和实现思路，提高代码的可读性。 注释分类 单行注释：// 注释内容 多行注释：/* 注释内容 */ 文档注释：/** 注释内容 */  代码示例1234567891011121314// 这是单行注释/*这是多行注释可以写多行内容*//** * 这是文档注释 * 可以用于生成文档 * @author Lasyc * @version 1.0 * @since 2025-08-18 */  注意事项 注释不会影响程序的运行，编译器在编译时会自动忽略注释内容；被注释掉的代码同样不会被执行。 多行注释不能嵌套使用：遇到第一个 */ 注释就结束了，嵌套会直接导致语法错误。 文档注释可以被 javadoc 工具提取，用于自动生成 API 文档，写工具类、类库时养成写文档注释的习惯很有价值。  关键字什么是关键字关键字（keyword）是 Java 中已被赋予特殊含义、有固定用途的单词，例如：class、public、for、if 等。它们已被语言本身占用，不能用作类名、变量名等标识符。  补充：goto...</div></div></div></a><a class="pagination-related" href="/2026/03/07/javaweb/JavaWeb04/" title="Web 前端 JavaScript 基础语法"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-07</div><div class="info-item-2">Web 前端 JavaScript 基础语法</div></div><div class="info-2"><div class="info-item-1">JavaScript 介绍JavaScript 是一种运行在浏览器上的脚本语言 JavaScript 和 HTML 代码的结合方式一使用 &lt;script&gt; 标签，将 js 代码编写到 html 文件中 12345678910111213&lt;!doctype html&gt;&lt;html lang=&quot;en&quot;&gt;  &lt;head&gt;    &lt;meta charset=&quot;UTF-8&quot; /&gt;    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot; /&gt;    &lt;title&gt;标题&lt;/title&gt;  &lt;/head&gt;  &lt;body&gt;&lt;/body&gt;  &lt;script&gt;    // 文件加载时会自动执行    alert(&quot;hello world&quot;);  &lt;/script&gt;...</div></div></div></a><a class="pagination-related" href="/2025/11/26/mysql/MySQL14/" title="MySQL 存储过程进阶与触发器"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-26</div><div class="info-item-2">MySQL 存储过程进阶与触发器</div></div><div class="info-2"><div class="info-item-1">IFIF 语句用于判断某个条件，并执行相应的语句 12345678910IF 条件1 THEN    语句1;[ELSEIF 条件2 THEN]    语句2;[ELSEIF 条件3 THEN]    语句3;......[ELSE]    语句n;END IF;  123456789101112131415CREATE PROCEDURE p3()BEGIN    DECLARE score INT DEFAULT 58;    DECLARE level VARCHAR(10);    IF score &gt;= 85 THEN        SET level := &#x27;优秀&#x27;;    ELSEIF score &gt;= 60 THEN        SET level := &#x27;合格&#x27;;    ELSE        SET level := &#x27;不合格&#x27;;    END IF;    SELECT level;END;CALL p3();  存储过程传参   参数类型 参数方向    IN 输入参数   OUT ...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Lasyc</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">175</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">463</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">16</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/lasyc"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/lasyc" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%86%E5%9B%BE"><span class="toc-number">1.</span> <span class="toc-text">视图</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%86%E5%9B%BE%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.1.</span> <span class="toc-text">视图介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%86%E5%9B%BE%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8"><span class="toc-number">1.2.</span> <span class="toc-text">视图基本使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A3%80%E6%9F%A5%E9%80%89%E9%A1%B9"><span class="toc-number">1.3.</span> <span class="toc-text">检查选项</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E5%8F%8A%E4%BD%9C%E7%94%A8"><span class="toc-number">1.4.</span> <span class="toc-text">更新及作用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%86%E5%9B%BE%E6%A1%88%E4%BE%8B"><span class="toc-number">1.5.</span> <span class="toc-text">视图案例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B"><span class="toc-number">2.</span> <span class="toc-text">存储过程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D"><span class="toc-number">2.1.</span> <span class="toc-text">存储过程介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B%E7%89%B9%E7%82%B9"><span class="toc-number">2.2.</span> <span class="toc-text">存储过程特点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8"><span class="toc-number">2.3.</span> <span class="toc-text">存储过程基本使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%98%E9%87%8F"><span class="toc-number">2.4.</span> <span class="toc-text">变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E5%8F%98%E9%87%8F"><span class="toc-number">2.5.</span> <span class="toc-text">系统变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%A8%E6%88%B7%E5%8F%98%E9%87%8F"><span class="toc-number">2.6.</span> <span class="toc-text">用户变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B1%80%E9%83%A8%E5%8F%98%E9%87%8F"><span class="toc-number">2.7.</span> <span class="toc-text">局部变量</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/11/springsecurity/SpringSecurity12/" title="Spring Security 自定义 403 处理">Spring Security 自定义 403 处理</a><time datetime="2026-09-11T14:43:27.000Z" title="发表于 2026-09-11 22:43:27">2026-09-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/11/springsecurity/SpringSecurity11/" title="Spring Security 基于注解的访问控制">Spring Security 基于注解的访问控制</a><time datetime="2026-09-11T14:24:58.000Z" title="发表于 2026-09-11 22:24:58">2026-09-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/09/springsecurity/SpringSecurity10/" title="Spring Security 访问控制（授权）">Spring Security 访问控制（授权）</a><time datetime="2026-09-09T12:34:01.000Z" title="发表于 2026-09-09 20:34:01">2026-09-09</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/09/springsecurity/SpringSecurity09/" title="Spring Security 获取用户信息与自定义 UserDetails">Spring Security 获取用户信息与自定义 UserDetails</a><time datetime="2026-09-09T11:50:33.000Z" title="发表于 2026-09-09 19:50:33">2026-09-09</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/09/springsecurity/SpringSecurity08/" title="Spring Security Remember Me 与验证码">Spring Security Remember Me 与验证码</a><time datetime="2026-09-09T11:33:33.000Z" title="发表于 2026-09-09 19:33:33">2026-09-09</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/top_img.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Lasyc</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.7.0</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.7.0"></script><script src="/js/main.js?v=5.7.0"></script><div class="js-pjax"></div><script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script><script>
+(function() {
+  var myAplayer = null;
+  function createPlayer() {
+    var div = document.createElement('div');
+    div.id = 'my-aplayer';
+    document.body.appendChild(div);
+    myAplayer = new APlayer({
+      container: div,
+      mini: false,
+      autoplay: false,
+      mutex: true,
+      lrcType: 0,
+      volume: 0.7,
+      audio: [{
+        name: '这一生关于你的风景',
+        artist: '枯木逢春',
+        url: '/music/1356350562.mp3',
+        cover: '/img/1356350562.jpg'
+      }]
+    });
+  }
+  createPlayer();
+  document.addEventListener('pjax:complete', createPlayer);
+})();
+</script>
+<script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.7.0"></script></div></div></body></html>

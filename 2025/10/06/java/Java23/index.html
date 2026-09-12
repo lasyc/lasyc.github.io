@@ -1,0 +1,529 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Java 集合体系与 List | Lasyc の Blog</title><meta name="author" content="Lasyc"><meta name="copyright" content="Lasyc"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="集合的体系结构集合大致分为两大类：Collection 和 Map。其中，Collection 是单列集合，每个位置只能保存一个值；而 Map 是双列集合，每个位置保存的是一个键值对（key 和 value 两个值）。 CollectionCollection 接口是所有单列集合的根接口，下面通过 List、Set、Queue 三个子体系来分类。  List：有序且可重复的集合，常用实现类有 Ar">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java 集合体系与 List">
+<meta property="og:url" content="http://example.com/2025/10/06/java/Java23/index.html">
+<meta property="og:site_name" content="Lasyc の Blog">
+<meta property="og:description" content="集合的体系结构集合大致分为两大类：Collection 和 Map。其中，Collection 是单列集合，每个位置只能保存一个值；而 Map 是双列集合，每个位置保存的是一个键值对（key 和 value 两个值）。 CollectionCollection 接口是所有单列集合的根接口，下面通过 List、Set、Queue 三个子体系来分类。  List：有序且可重复的集合，常用实现类有 Ar">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/avatar.webp">
+<meta property="article:published_time" content="2025-10-06T14:14:05.000Z">
+<meta property="article:modified_time" content="2026-09-12T03:03:43.775Z">
+<meta property="article:author" content="Lasyc">
+<meta property="article:tag" content="ArrayList">
+<meta property="article:tag" content="Collection">
+<meta property="article:tag" content="List">
+<meta property="article:tag" content="链表">
+<meta property="article:tag" content="数据结构">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/avatar.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Java 集合体系与 List",
+  "url": "http://example.com/2025/10/06/java/Java23/",
+  "image": "http://example.com/img/avatar.webp",
+  "datePublished": "2025-10-06T14:14:05.000Z",
+  "dateModified": "2026-09-12T03:03:43.775Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Lasyc",
+      "url": "http://example.com"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2025/10/06/java/Java23/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.7.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.3.1/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        const data = { value }
+
+        if (ttl != null) {
+          data.expiry = Date.now() + ttl * 86400000
+        }
+
+        localStorage.setItem(key, JSON.stringify(data))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return
+
+        try {
+          const data = JSON.parse(itemStr)
+
+          if (data.expiry && Date.now() > data.expiry) {
+            localStorage.removeItem(key)
+            return
+          }
+
+          return data.value
+        } catch {
+          localStorage.removeItem(key)
+        }
+      }
+    }
+
+    const scriptCache = new Map()
+    const cssCache = new Map()
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => {
+        if (scriptCache.has(url)) {
+          return scriptCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+
+          script.src = url
+          script.async = true
+
+          for (const key in attr) {
+            script.setAttribute(key, attr[key])
+          }
+
+          script.onload = resolve
+          script.onerror = reject
+
+          document.head.appendChild(script)
+        })
+
+        scriptCache.set(url, promise)
+
+        return promise
+      },
+      getCSS: (url, id) => {
+        if (cssCache.has(url)) {
+          return cssCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const link = document.createElement('link')
+
+          link.rel = 'stylesheet'
+          link.href = url
+
+          if (id) {
+            link.id = id
+          }
+
+          link.onload = resolve
+          link.onerror = reject
+
+          document.head.appendChild(link)
+        })
+
+        cssCache.set(url, promise)
+
+        return promise
+      },
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+      const activateDarkMode = () => {
+        document.documentElement.dataset.theme = 'dark'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.dataset.theme = 'light'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.json","preload":true,"top_n_per_article":-1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":200,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":10,"languages":{"author":"作者: Lasyc","link":"链接: ","source":"来源: Lasyc の Blog","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Java 集合体系与 List',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css"><style>
+#my-aplayer {
+  position: fixed;
+  bottom: 10px;
+  left: 10px;
+  width: 320px;
+  z-index: 99999;
+  border-radius: 5px;
+  overflow: hidden;
+}
+#my-aplayer .aplayer-title,
+#my-aplayer .aplayer-author {
+  color: #333 !important;
+}
+</style>
+<meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">175</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">463</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">16</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 图库</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/top_img.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Lasyc の Blog</span></a><a class="nav-page-title" href="/"><span class="site-name">Java 集合体系与 List</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 图库</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Java 集合体系与 List</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-10-06T14:14:05.000Z" title="发表于 2025-10-06 22:14:05">2025-10-06</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-09-12T03:03:43.775Z" title="更新于 2026-09-12 11:03:43">2026-09-12</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%90%8E%E7%AB%AF/">后端</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%90%8E%E7%AB%AF/%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80/">语言基础</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%90%8E%E7%AB%AF/%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80/Java/">Java</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">4.8k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>16分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h2 id="集合的体系结构"><a href="#集合的体系结构" class="headerlink" title="集合的体系结构"></a>集合的体系结构</h2><p>集合大致分为两大类：<code>Collection</code> 和 <code>Map</code>。其中，<code>Collection</code> 是单列集合，每个位置只能保存一个值；而 <code>Map</code> 是双列集合，每个位置保存的是一个<code>键值对</code>（key 和 value 两个值）。</p>
+<h2 id="Collection"><a href="#Collection" class="headerlink" title="Collection"></a>Collection</h2><p><code>Collection</code> 接口是所有单列集合的根接口，下面通过 <code>List</code>、<code>Set</code>、<code>Queue</code> 三个子体系来分类。</p>
+<ul>
+<li><code>List</code>：有序且可重复的集合，常用实现类有 <code>ArrayList</code> 和 <code>LinkedList</code></li>
+<li><code>Set</code>：无序且不可重复的集合，常用实现类有 <code>HashSet</code> 和 <code>TreeSet</code></li>
+<li><code>Queue</code>：用于存储待处理元素的集合，常用实现类有 <code>LinkedList</code> 和 <code>PriorityQueue</code></li>
+</ul>
+<h3 id="常用方法"><a href="#常用方法" class="headerlink" title="常用方法"></a>常用方法</h3><table>
+<thead>
+<tr>
+<th>方法名</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>add</td>
+<td>添加元素</td>
+</tr>
+<tr>
+<td>clear</td>
+<td>清空集合</td>
+</tr>
+<tr>
+<td>remove</td>
+<td>删除元素</td>
+</tr>
+<tr>
+<td>contains</td>
+<td>判断是否包含某个元素</td>
+</tr>
+<tr>
+<td>isEmpty</td>
+<td>判断集合是否为空</td>
+</tr>
+<tr>
+<td>size</td>
+<td>返回集合中元素的个数</td>
+</tr>
+</tbody></table>
+<h3 id="Collection-代码示例"><a href="#Collection-代码示例" class="headerlink" title="Collection 代码示例"></a>Collection 代码示例</h3><blockquote>
+<p>需要 <code>import java.util.Collection;</code>、<code>import java.util.ArrayList;</code>、<code>import java.util.Iterator;</code>。示例中用到了自定义的 <code>Student</code> 类（含 <code>name</code>、<code>age</code> 属性），可以自行定义一个用于练习。</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 因为 Collection 是一个接口，所以这里使用它的实现类 ArrayList 做演示</span></span><br><span class="line"><span class="type">Collection</span>&lt;String&gt; <span class="variable">collection</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line"></span><br><span class="line"><span class="comment">// add</span></span><br><span class="line">collection.add(<span class="string">&quot;A&quot;</span>);</span><br><span class="line">collection.add(<span class="string">&quot;B&quot;</span>);</span><br><span class="line">collection.add(<span class="string">&quot;C&quot;</span>);</span><br><span class="line"><span class="comment">// add 方法其实是有返回值的</span></span><br><span class="line"><span class="comment">// 对于 List 系列的集合，因为 List 系列集合允许重复数据，所以返回值永远都是 true</span></span><br><span class="line"><span class="comment">// 对于 Set 系列的集合，因为 Set 系列集合不允许重复数据，所以在添加重复数据时，返回值是 false</span></span><br><span class="line"><span class="type">boolean</span> <span class="variable">add</span> <span class="operator">=</span> collection.add(<span class="string">&quot;D&quot;</span>);</span><br><span class="line">System.out.println(add);        <span class="comment">// true</span></span><br><span class="line">System.out.println(collection); <span class="comment">// [A, B, C, D]</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// remove</span></span><br><span class="line"><span class="type">boolean</span> <span class="variable">remove1</span> <span class="operator">=</span> collection.remove(<span class="string">&quot;D&quot;</span>);</span><br><span class="line">System.out.println(remove1);    <span class="comment">// true</span></span><br><span class="line"><span class="comment">// 删除不存在的数据</span></span><br><span class="line"><span class="type">boolean</span> <span class="variable">remove2</span> <span class="operator">=</span> collection.remove(<span class="string">&quot;E&quot;</span>);</span><br><span class="line">System.out.println(remove2);    <span class="comment">// false</span></span><br><span class="line">System.out.println(collection); <span class="comment">// [A, B, C]</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// contains</span></span><br><span class="line"><span class="type">boolean</span> <span class="variable">contains1</span> <span class="operator">=</span> collection.contains(<span class="string">&quot;A&quot;</span>);</span><br><span class="line">System.out.println(contains1);   <span class="comment">// true</span></span><br><span class="line"><span class="type">boolean</span> <span class="variable">contains2</span> <span class="operator">=</span> collection.contains(<span class="string">&quot;D&quot;</span>);</span><br><span class="line">System.out.println(contains2);   <span class="comment">// false</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// contains 底层其实是遍历集合中所有元素，然后使用 equals 方法判断</span></span><br><span class="line"><span class="comment">// 所以在集合中保存自定义对象时，必须重写 equals 方法（还应该配合重写 hashCode）</span></span><br><span class="line"><span class="type">Collection</span>&lt;Student&gt; <span class="variable">students</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">students.add(<span class="keyword">new</span> <span class="title class_">Student</span>(<span class="string">&quot;zhangsan&quot;</span>, <span class="number">20</span>));</span><br><span class="line">students.add(<span class="keyword">new</span> <span class="title class_">Student</span>(<span class="string">&quot;lisi&quot;</span>, <span class="number">21</span>));</span><br><span class="line">students.add(<span class="keyword">new</span> <span class="title class_">Student</span>(<span class="string">&quot;wangwu&quot;</span>, <span class="number">22</span>));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 未重写 equals，所以比较的是地址，两个对象的地址当然不一样，所以肯定不存在</span></span><br><span class="line"><span class="comment">// Student student = new Student(&quot;zhangsan&quot;, 20);</span></span><br><span class="line"><span class="comment">// boolean contains = students.contains(student);</span></span><br><span class="line"><span class="comment">// System.out.println(contains);   // false</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 重写 equals，比较对象的属性值，如果名字和年龄一样，就认为是同一个学生</span></span><br><span class="line"><span class="type">Student</span> <span class="variable">student</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Student</span>(<span class="string">&quot;zhangsan&quot;</span>, <span class="number">20</span>);</span><br><span class="line"><span class="type">boolean</span> <span class="variable">contains</span> <span class="operator">=</span> students.contains(student);</span><br><span class="line">System.out.println(contains);   <span class="comment">// true</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// isEmpty</span></span><br><span class="line"><span class="type">boolean</span> <span class="variable">empty1</span> <span class="operator">=</span> collection.isEmpty();</span><br><span class="line">System.out.println(empty1); <span class="comment">// false</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// size</span></span><br><span class="line"><span class="type">int</span> <span class="variable">size</span> <span class="operator">=</span> collection.size();</span><br><span class="line">System.out.println(size);   <span class="comment">// 3</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// clear</span></span><br><span class="line">collection.clear();</span><br><span class="line">System.out.println(collection); <span class="comment">// []</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// isEmpty</span></span><br><span class="line"><span class="type">boolean</span> <span class="variable">empty2</span> <span class="operator">=</span> collection.isEmpty();</span><br><span class="line">System.out.println(empty2); <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="遍历"><a href="#遍历" class="headerlink" title="遍历"></a>遍历</h3><p>对于 Collection 集合，有三种遍历方式：分别是<code>迭代器</code>、<code>增强 for</code> 和 <code>Lambda</code>。</p>
+<h4 id="迭代器"><a href="#迭代器" class="headerlink" title="迭代器"></a>迭代器</h4><p>迭代器是集合的一种遍历方式，它提供了一种顺序访问集合元素的方式。迭代器提供了 <code>hasNext()</code> 和 <code>next()</code> 方法，用于判断集合中是否有下一个元素，并返回下一个元素。迭代器还提供了 <code>remove()</code> 方法，用于删除当前元素。</p>
+<p>在迭代过程中，不能直接修改集合中的元素，只能通过迭代器进行修改。因为迭代器在初始化时会记录集合当前的修改次数，每次调用 <code>next()</code> 方法时，都会检查集合的修改次数是否与迭代器记录的修改次数相同。如果集合被修改，集合中的修改次数会发生变化，与迭代器记录的次数不同，则会抛出 <code>ConcurrentModificationException</code> 异常。</p>
+<table>
+<thead>
+<tr>
+<th align="left">方法名</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">hasNext()</td>
+<td>判断是否有下一个元素</td>
+</tr>
+<tr>
+<td align="left">next()</td>
+<td>获取下一个元素</td>
+</tr>
+<tr>
+<td align="left">remove()</td>
+<td>删除当前元素</td>
+</tr>
+</tbody></table>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Collection</span>&lt;String&gt; <span class="variable">collection</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">collection.add(<span class="string">&quot;A&quot;</span>);</span><br><span class="line">collection.add(<span class="string">&quot;B&quot;</span>);</span><br><span class="line">collection.add(<span class="string">&quot;C&quot;</span>);</span><br><span class="line">collection.add(<span class="string">&quot;D&quot;</span>);</span><br><span class="line">collection.add(<span class="string">&quot;E&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 获取迭代器对象</span></span><br><span class="line"><span class="type">Iterator</span>&lt;String&gt; <span class="variable">iterator</span> <span class="operator">=</span> collection.iterator();</span><br><span class="line"><span class="keyword">while</span> (iterator.hasNext()) &#123;</span><br><span class="line">    System.out.println(iterator.next());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>迭代器只能使用一次，每次使用都需要重新获取迭代器对象</li>
+<li>迭代器在遍历过程中不能通过集合的 <code>remove</code> 方法<code>删除元素</code>，必须通过迭代器的 <code>remove</code> 方法删除元素</li>
+<li>迭代器是单向遍历的，只能向前遍历，不能向后遍历</li>
+</ol>
+<h4 id="增强-for"><a href="#增强-for" class="headerlink" title="增强 for"></a>增强 for</h4><p>增强 for 其实是语法糖，底层也是使用迭代器实现的。它不仅可以遍历 Collection 集合，还可以遍历数组。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (String item : collection) &#123;</span><br><span class="line">    System.out.println(item);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 遍历数组</span></span><br><span class="line"><span class="type">int</span>[] <span class="variable">arr</span> <span class="operator">=</span> &#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>&#125;;</span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> item : arr) &#123;</span><br><span class="line">    System.out.println(item);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>使用增强 for 遍历集合时，如果修改了 item 的值，集合中元素不会改变，因为 item 是集合中元素的一个副本</li>
+</ol>
+<h4 id="Lambda"><a href="#Lambda" class="headerlink" title="Lambda"></a>Lambda</h4><p>基于 Collection 接口的 <code>forEach</code> 方法，可以使用 Lambda 表达式遍历集合。<code>forEach</code> 底层使用的是迭代器实现的，但 ArrayList 集合除外——ArrayList 的 <code>forEach</code> 方法底层使用的是索引 for 实现的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Lambda 表达式</span></span><br><span class="line">collection.forEach((item) -&gt; &#123;</span><br><span class="line">    System.out.println(item);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 简写</span></span><br><span class="line">collection.forEach(item -&gt; System.out.println(item));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 再简写（方法引用）</span></span><br><span class="line">collection.forEach(System.out::println);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 注：forEach 方法底层使用的是迭代器实现的，但对于 ArrayList，其迭代器实现就是基于索引的</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h2><p>数据结构是计算机科学中重要的概念，它描述了数据如何存储和操作。Java 中常用的数据结构有数组、链表、栈、队列、树、图等。</p>
+<h3 id="栈"><a href="#栈" class="headerlink" title="栈"></a>栈</h3><p>栈是一种 Last In First Out（LIFO）的数据结构，它遵循<code>后进先出</code>原则：后入栈的元素，先出栈。</p>
+<h3 id="队列"><a href="#队列" class="headerlink" title="队列"></a>队列</h3><p>队列是一种 First In First Out（FIFO）的数据结构，它遵循<code>先进先出</code>原则：先入队列的元素，先出队列。</p>
+<h3 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h3><p>数组是一种有序的集合，它按照索引顺序存储元素。数组的元素在<code>内存中是连续的</code>，因此可以快速访问任意位置的元素（查询快）；但是对于插入和删除元素，数组效率较低（增删慢）。</p>
+<h3 id="链表"><a href="#链表" class="headerlink" title="链表"></a>链表</h3><p>链表是一种通过指针把元素一个个链接起来的数据结构。链表在<code>内存中不连续</code>，因此不能通过索引直接访问元素；但链表可以快速插入和删除元素，而查询效率较低（查询慢，增删快）。</p>
+<h3 id="树"><a href="#树" class="headerlink" title="树"></a>树</h3><p>树是一种 hierarchical（层次）的数据结构，它通过<code>父子节点</code>的关系来将<code>节点</code>进行连接，组成一个树形结构。</p>
+<ol>
+<li>一个节点只有一个父节点，而一个父节点可以有多个子节点</li>
+<li>子节点的个数称为<code>度</code></li>
+<li>最顶层的节点称为<code>根节点</code>，根节点没有父节点</li>
+<li><code>度为 0 的节点</code>称为<code>叶子节点</code></li>
+</ol>
+<h4 id="二叉树"><a href="#二叉树" class="headerlink" title="二叉树"></a>二叉树</h4><p>二叉树是一种树形结构，它的每个节点最多有两个子节点。</p>
+<h4 id="二叉搜索树"><a href="#二叉搜索树" class="headerlink" title="二叉搜索树"></a>二叉搜索树</h4><p>二叉搜索树是一种二叉树，它满足以下条件：若每个节点的<code>左子树中所有节点都小于本身</code>，且<code>右子树中所有节点都大于本身</code>，则该树为二叉搜索树。</p>
+<h4 id="二叉树的遍历方式"><a href="#二叉树的遍历方式" class="headerlink" title="二叉树的遍历方式"></a>二叉树的遍历方式</h4><ol>
+<li>前序遍历：根节点 -&gt; 左子树 -&gt; 右子树</li>
+<li>中序遍历：左子树 -&gt; 根节点 -&gt; 右子树</li>
+<li>后序遍历：左子树 -&gt; 右子树 -&gt; 根节点</li>
+<li>层序遍历：从根节点开始，依次访问每一层的节点</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//      ①</span></span><br><span class="line"><span class="comment">//    /   \</span></span><br><span class="line"><span class="comment">//   ②     ③</span></span><br><span class="line"><span class="comment">//  / \   / \</span></span><br><span class="line"><span class="comment">// ④   ⑤ ⑥   ⑦</span></span><br><span class="line"><span class="comment">// 前序遍历：① ② ④ ⑤ ③ ⑥ ⑦</span></span><br><span class="line"><span class="comment">// 中序遍历：④ ② ⑤ ① ⑥ ③ ⑦</span></span><br><span class="line"><span class="comment">// 后序遍历：④ ⑤ ② ⑥ ⑦ ③ ①</span></span><br><span class="line"><span class="comment">// 层序遍历：① ② ③ ④ ⑤ ⑥ ⑦</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="二叉搜索树的弊端"><a href="#二叉搜索树的弊端" class="headerlink" title="二叉搜索树的弊端"></a>二叉搜索树的弊端</h4><p>因为二叉搜索树要求节点的左子树都小于根节点、右子树都大于根节点，所以在添加元素时，如果添加的元素一个比一个大，就会全部被添加到右子树中，这样树就变成了”一条直线”，退化成类似链表的结构，查询效率大大降低。例如依次添加 ① ② ③ ④ ⑤ ⑥ ⑦ 时，每个新元素都会成为前一个元素的右子节点，最终形成如下结构：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 添加元素 ① ② ③ ④ ⑤ ⑥ ⑦</span></span><br><span class="line"><span class="comment">// 首先添加元素 ①，则 ① 为根节点</span></span><br><span class="line"><span class="comment">// 再添加元素 ②，因为 ② &gt; ①，将 ② 添加到 ① 的右子树</span></span><br><span class="line"><span class="comment">// 再添加元素 ③，因为 ③ &gt; ②，将 ③ 添加到 ② 的右子树</span></span><br><span class="line"><span class="comment">// 再添加元素 ④，因为 ④ &gt; ③，将 ④ 添加到 ③ 的右子树</span></span><br><span class="line"><span class="comment">// ...... 以此类推</span></span><br><span class="line"><span class="comment">//          ①</span></span><br><span class="line"><span class="comment">//           \</span></span><br><span class="line"><span class="comment">//            ②</span></span><br><span class="line"><span class="comment">//             \</span></span><br><span class="line"><span class="comment">//              ③</span></span><br><span class="line"><span class="comment">//               \</span></span><br><span class="line"><span class="comment">//                ④</span></span><br><span class="line"><span class="comment">//                 \</span></span><br><span class="line"><span class="comment">//                  ⑤</span></span><br><span class="line"><span class="comment">//                   \</span></span><br><span class="line"><span class="comment">//                    ⑥</span></span><br><span class="line"><span class="comment">//                     \</span></span><br><span class="line"><span class="comment">//                      ⑦</span></span><br><span class="line"><span class="comment">// 此时的二叉树与链表相似，若此时想查询 ⑦ 节点，则需要从根节点开始，依次遍历每个节点，这样效率较低</span></span><br><span class="line"><span class="comment">// 若想查询效率最高，我们希望得到的是如下左右均匀的平衡结构</span></span><br><span class="line"><span class="comment">//             ④</span></span><br><span class="line"><span class="comment">//           /   \</span></span><br><span class="line"><span class="comment">//          ②     ⑥</span></span><br><span class="line"><span class="comment">//        /  \   /  \</span></span><br><span class="line"><span class="comment">//       ①    ③ ⑤    ⑦</span></span><br><span class="line"><span class="comment">// 这里就需要使用平衡二叉树来解决这个问题</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="平衡二叉树"><a href="#平衡二叉树" class="headerlink" title="平衡二叉树"></a>平衡二叉树</h4><p>平衡二叉树是一种二叉树，它的<code>每个节点的左右子树的高度差不超过 1</code>。平衡二叉树是通过<code>旋转</code>机制来达到平衡的，旋转又分为左旋和右旋两种。当添加元素时，若某个节点的左右子树高度差超过 1，则需要进行旋转，通过旋转让树始终处于平衡状态。</p>
+<h4 id="左旋"><a href="#左旋" class="headerlink" title="左旋"></a>左旋</h4><p>左旋把失衡节点”往下压”：让失衡节点的右子节点变成新的父节点，失衡节点自己变成新父节点的左子节点；若右子节点原本带有左子节点，则把这个左子节点”过继”给失衡节点，作为失衡节点新的右子节点。示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//      ④                 ④</span></span><br><span class="line"><span class="comment">//    /   \             /   \</span></span><br><span class="line"><span class="comment">//   ①     ⑦           ①     ⑦</span></span><br><span class="line"><span class="comment">//       /   \             /   \</span></span><br><span class="line"><span class="comment">//      ⑥     ⑧           ⑥     ⑧</span></span><br><span class="line"><span class="comment">//                                \</span></span><br><span class="line"><span class="comment">//                                 ⑨</span></span><br><span class="line"><span class="comment">// 左侧是一个平衡二叉树，当添加 ⑨ 节点时，根据二叉树的规则，将 ⑨ 添加到 ⑧ 的右子树，如右侧所示</span></span><br><span class="line"><span class="comment">// 此时以 ④ 为根观察：左子树较浅（到 ① 为止），右子树一路连到 ⑨，高度差超过 1，④ 不再平衡，需要对 ④ 进行 左旋</span></span><br><span class="line"><span class="comment">// 左旋时，④ 的右子节点 ⑦ 变成新的父节点，④ 自己变成 ⑦ 的左子节点</span></span><br><span class="line"><span class="comment">// ⑦ 原本带有左子节点 ⑥，需要把 ⑥ &quot;过继&quot;给 ④，作为 ④ 的右子节点</span></span><br><span class="line"><span class="comment">// 旋转结果如下，树重新达到平衡</span></span><br><span class="line"><span class="comment">//         ⑦</span></span><br><span class="line"><span class="comment">//       /   \</span></span><br><span class="line"><span class="comment">//      ④     ⑧</span></span><br><span class="line"><span class="comment">//    /   \     \</span></span><br><span class="line"><span class="comment">//   ①     ⑥     ⑨</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="右旋"><a href="#右旋" class="headerlink" title="右旋"></a>右旋</h4><p>右旋与左旋方向相反：让失衡节点的左子节点变成新的父节点，失衡节点自己变成新父节点的右子节点；若左子节点原本带有右子节点，则把这个右子节点”过继”给失衡节点，作为失衡节点新的左子节点。示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//       ⑦                 ⑦</span></span><br><span class="line"><span class="comment">//     /   \             /   \</span></span><br><span class="line"><span class="comment">//    ④     ⑩           ④     ⑩</span></span><br><span class="line"><span class="comment">//  /   \             /   \</span></span><br><span class="line"><span class="comment">// ②     ⑤           ②     ⑤</span></span><br><span class="line"><span class="comment">//                  /</span></span><br><span class="line"><span class="comment">//                 ①</span></span><br><span class="line"><span class="comment">// 左侧是一个平衡二叉树，当添加 ① 节点时，根据二叉树的规则，将 ① 添加到 ② 的左子树，如右侧所示</span></span><br><span class="line"><span class="comment">// 此时以 ⑦ 为根观察：左子树一路连到 ①，右子树只有 ⑩，高度差超过 1，⑦ 不再平衡，需要对 ⑦ 进行 右旋</span></span><br><span class="line"><span class="comment">// 右旋时，⑦ 的左子节点 ④ 变成新的父节点，⑦ 自己变成 ④ 的右子节点</span></span><br><span class="line"><span class="comment">// ④ 原本带有右子节点 ⑤，需要把 ⑤ &quot;过继&quot;给 ⑦，作为 ⑦ 的左子节点</span></span><br><span class="line"><span class="comment">// 旋转结果如下，树重新达到平衡</span></span><br><span class="line"><span class="comment">//         ④</span></span><br><span class="line"><span class="comment">//       /   \</span></span><br><span class="line"><span class="comment">//      ②     ⑦</span></span><br><span class="line"><span class="comment">//    /      /   \</span></span><br><span class="line"><span class="comment">//   ①      ⑤     ⑩</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="旋转的应用场景"><a href="#旋转的应用场景" class="headerlink" title="旋转的应用场景"></a>旋转的应用场景</h4><ol>
+<li>LL：当添加的元素添加到<code>左子树的左子节点</code>时，则需要将整体进行<code>一次右旋</code></li>
+<li>LR：当添加的元素添加到<code>左子树的右子节点</code>时，则需要先将左子树进行<code>一次左旋</code>，变成<code>LL</code>，再将整体进行<code>一次右旋</code></li>
+<li>RR：当添加的元素添加到<code>右子树的右子节点</code>时，则需要将整体进行<code>一次左旋</code></li>
+<li>RL：当添加的元素添加到<code>右子树的左子节点</code>时，则需要先将右子树进行<code>一次右旋</code>，变成<code>RR</code>，再将整体进行<code>一次左旋</code></li>
+</ol>
+<h4 id="平衡二叉树的弊端"><a href="#平衡二叉树的弊端" class="headerlink" title="平衡二叉树的弊端"></a>平衡二叉树的弊端</h4><p><code>平衡二叉树</code>的查询效率比<code>二叉搜索树</code>高，但是每次添加元素时，都可能需要进行旋转，频繁旋转的效率较低。由此诞生了<code>红黑树</code>。</p>
+<h4 id="红黑树"><a href="#红黑树" class="headerlink" title="红黑树"></a>红黑树</h4><p>红黑树是一种<code>自平衡的二叉搜索树</code>，它的每个节点都有<code>颜色</code>，颜色分为<code>红色</code>和<code>黑色</code>。红黑树并<code>不是高度平衡的</code>，但它是<code>自平衡的</code>——它并不严格要求左右子树高度差不超过 1，而是通过<code>红黑规则</code>让树大体保持平衡，从而减少旋转次数。</p>
+<h4 id="红黑规则"><a href="#红黑规则" class="headerlink" title="红黑规则"></a>红黑规则</h4><p>红黑树依靠以下规则来维持平衡（注：规则 3 和规则 4 说的是同一件事——不允许出现两个连续的红色节点）：</p>
+<ol>
+<li>每个节点都是<code>黑色</code>或者<code>红色</code></li>
+<li>根节点是<code>黑色</code></li>
+<li>如果一个节点是<code>红色</code>，则它的<code>父节点和两个子节点都是黑色</code>（红色节点的父节点不能是红色，否则就出现了连续的红色节点）</li>
+<li>不存在<code>连续两个节点都是红色</code></li>
+<li>所有<code>叶子节点（NIL 节点）都是黑色</code></li>
+<li>从任意节点到其<code>叶子节点的所有路径上，都包含相同数量的黑色节点</code>（即黑高相同）</li>
+</ol>
+<h4 id="红黑树插入节点的颜色处理规则"><a href="#红黑树插入节点的颜色处理规则" class="headerlink" title="红黑树插入节点的颜色处理规则"></a>红黑树插入节点的颜色处理规则</h4><p>注意：以下规则仅为插入操作中部分情形的处理方式，完整实现还需考虑更多细节及连锁反应</p>
+<table>
+<thead>
+<tr>
+<th>节点状态</th>
+<th>颜色处理说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>默认</td>
+<td>新插入的节点默认为红色，目的是尽可能不破坏原有的黑高路径</td>
+</tr>
+<tr>
+<td>根节点</td>
+<td>若新节点成为根节点，则必须将其颜色设置为黑色</td>
+</tr>
+<tr>
+<td>黑色父节点</td>
+<td>插入红色子节点不会违反任何红黑树性质，因此不需要进行任何调整</td>
+</tr>
+<tr>
+<td>红色父节点 + 红色叔节点</td>
+<td>- 父节点 → 黑色<br>- 叔节点 → 黑色<br>- 祖父节点 → 红色（如果祖父是根节点，则再变回黑色）<br>- 然后递归向上检查祖父节点</td>
+</tr>
+<tr>
+<td>红色父节点 + 黑色叔节点 + 当前节点在右子树</td>
+<td>此时需要进行左旋操作，使结构转换为 LL 型，然后再进一步处理</td>
+</tr>
+<tr>
+<td>红色父节点 + 黑色叔节点 + 当前节点在左子树</td>
+<td>- 父节点 → 黑色<br>- 祖父节点 → 红色<br>- 对祖父节点进行右旋操作完成结构调整</td>
+</tr>
+</tbody></table>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 有如下节点：20、18、23、22、17、24、19，() 表示红色</span></span><br><span class="line"><span class="comment">// 一、添加元素 20 ，默认为红色，但是 20 是根节点，变为黑色，结构如下：</span></span><br><span class="line"><span class="comment">//        (20)             20</span></span><br><span class="line"><span class="comment">//       /    \    -&gt;    /     \</span></span><br><span class="line"><span class="comment">//    Nil     Nil      Nil     Nil</span></span><br><span class="line"><span class="comment">// 二、添加元素 18，根据二叉树的规则，将 18 添加到 20 的左子树，18 为非根节点，且父节点为黑色，不需要处理，结构如下：</span></span><br><span class="line"><span class="comment">//         20</span></span><br><span class="line"><span class="comment">//       /    \</span></span><br><span class="line"><span class="comment">//    (18)     Nil</span></span><br><span class="line"><span class="comment">//   /    \</span></span><br><span class="line"><span class="comment">// Nil    Nil</span></span><br><span class="line"><span class="comment">// 三、添加元素 23，根据二叉树的规则，将 23 添加到 20 的右子树，23 为非根节点，且父节点为黑色，不需要处理，结构如下：</span></span><br><span class="line"><span class="comment">//           20</span></span><br><span class="line"><span class="comment">//       /       \</span></span><br><span class="line"><span class="comment">//    (18)       (23)</span></span><br><span class="line"><span class="comment">//   /    \     /    \</span></span><br><span class="line"><span class="comment">// Nil    Nil Nil    Nil</span></span><br><span class="line"><span class="comment">// 四、添加元素 22，根据二叉树的规则，将 22 添加到 23 的左子树，22 为非根节点，但是父节点为红色，叔叔节点也为红色，需要进行处理，父节点变为黑色，叔叔节点变为黑色，祖父节点变为红色，但是祖父节点为根节点，则将祖父节点变为黑色</span></span><br><span class="line"><span class="comment">//           20                                20</span></span><br><span class="line"><span class="comment">//       /       \                         /        \</span></span><br><span class="line"><span class="comment">//    (18)       (23)                    18          23</span></span><br><span class="line"><span class="comment">//   /    \     /    \        -&gt;       /    \      /    \</span></span><br><span class="line"><span class="comment">// Nil    Nil (22)    Nil            Nil    Nil  (22)    Nil</span></span><br><span class="line"><span class="comment">//           /    \                             /    \</span></span><br><span class="line"><span class="comment">//         Nil    Nil                          Nil    Nil</span></span><br><span class="line"><span class="comment">// 五：添加元素 17、24、19，均为非根节点，且父节点为黑色，不需要处理，结构如下：</span></span><br><span class="line"><span class="comment">//                      20</span></span><br><span class="line"><span class="comment">//             /                \</span></span><br><span class="line"><span class="comment">//           18                  23</span></span><br><span class="line"><span class="comment">//       /       \            /       \</span></span><br><span class="line"><span class="comment">//    (17)       (19)       (22)      (24)</span></span><br><span class="line"><span class="comment">//   /    \     /    \    /    \     /    \</span></span><br><span class="line"><span class="comment">//  Nil   Nil Nil    Nil Nil   Nil Nil    Nil</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="List"><a href="#List" class="headerlink" title="List"></a>List</h2><p>List 集合的特点是：<code>有序</code>、<code>可重复</code>、<code>有索引</code>。常用的实现类有：ArrayList、LinkedList 和 Vector。</p>
+<h3 id="常用方法-1"><a href="#常用方法-1" class="headerlink" title="常用方法"></a>常用方法</h3><p>因为 List 继承自 Collection，所以 List 也拥有 Collection 的所有方法，除此之外，List 还新增了一些带索引的方法。</p>
+<table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">add(int index, E element)</td>
+<td>在指定位置插入元素</td>
+</tr>
+<tr>
+<td align="left">remove(int index)</td>
+<td>删除指定位置的元素</td>
+</tr>
+<tr>
+<td align="left">set(int index, E element)</td>
+<td>修改指定位置的元素</td>
+</tr>
+<tr>
+<td align="left">get(int index)</td>
+<td>获取指定位置的元素</td>
+</tr>
+</tbody></table>
+<h3 id="List-代码示例"><a href="#List-代码示例" class="headerlink" title="List 代码示例"></a>List 代码示例</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// List 仍是一个接口，所以这里使用 ArrayList 做演示</span></span><br><span class="line"><span class="type">List</span>&lt;String&gt; <span class="variable">list</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">list.add(<span class="string">&quot;A&quot;</span>);</span><br><span class="line">list.add(<span class="string">&quot;B&quot;</span>);</span><br><span class="line">list.add(<span class="string">&quot;C&quot;</span>);</span><br><span class="line">list.add(<span class="string">&quot;D&quot;</span>);</span><br><span class="line"></span><br><span class="line">System.out.println(list);   <span class="comment">// [A, B, C, D]</span></span><br><span class="line"><span class="comment">// add</span></span><br><span class="line">list.add(<span class="number">1</span>, <span class="string">&quot;M&quot;</span>);</span><br><span class="line">System.out.println(list);   <span class="comment">// [A, M, B, C, D]</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// remove</span></span><br><span class="line"><span class="type">String</span> <span class="variable">remove</span> <span class="operator">=</span> list.remove(<span class="number">1</span>);</span><br><span class="line">System.out.println(remove); <span class="comment">// M</span></span><br><span class="line">System.out.println(list);   <span class="comment">// [A, B, C, D]</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// set</span></span><br><span class="line"><span class="type">String</span> <span class="variable">set</span> <span class="operator">=</span> list.set(<span class="number">1</span>, <span class="string">&quot;M&quot;</span>);</span><br><span class="line">System.out.println(set);    <span class="comment">// B</span></span><br><span class="line">System.out.println(list);   <span class="comment">// [A, M, C, D]</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// get</span></span><br><span class="line"><span class="type">String</span> <span class="variable">get</span> <span class="operator">=</span> list.get(<span class="number">1</span>);</span><br><span class="line">System.out.println(get);    <span class="comment">// M</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="遍历-1"><a href="#遍历-1" class="headerlink" title="遍历"></a>遍历</h3><p>因为 List 中包含索引，所以除了可以使用<code>迭代器</code>、<code>增强 for</code> 和 <code>Lambda</code> 遍历之外，还可以使用<code>普通 for</code>和<code>列表迭代器</code>遍历。</p>
+<h4 id="普通-for"><a href="#普通-for" class="headerlink" title="普通 for"></a>普通 for</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; list.size(); i++) &#123;</span><br><span class="line">    System.out.println(list.get(i));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="列表迭代器"><a href="#列表迭代器" class="headerlink" title="列表迭代器"></a>列表迭代器</h4><p>相比于迭代器，列表迭代器多了两个方法：<code>hasPrevious()</code> 和 <code>previous()</code>，可以实现双向遍历。除此之外还有其他方法，了解即可。</p>
+<table>
+<thead>
+<tr>
+<th align="left">方法名</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">hasNext()</td>
+<td>判断是否有下一个元素</td>
+</tr>
+<tr>
+<td align="left">next()</td>
+<td>获取下一个元素</td>
+</tr>
+<tr>
+<td align="left">nextIndex()</td>
+<td>获取下一个元素的索引</td>
+</tr>
+<tr>
+<td align="left">hasPrevious()</td>
+<td>判断是否有前一个元素</td>
+</tr>
+<tr>
+<td align="left">previous()</td>
+<td>获取前一个元素</td>
+</tr>
+<tr>
+<td align="left">previousIndex()</td>
+<td>获取前一个元素的索引</td>
+</tr>
+<tr>
+<td align="left">add(E e)</td>
+<td>添加元素</td>
+</tr>
+<tr>
+<td align="left">remove()</td>
+<td>删除当前元素</td>
+</tr>
+<tr>
+<td align="left">set(E e)</td>
+<td>设置当前元素</td>
+</tr>
+</tbody></table>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">List</span>&lt;String&gt; <span class="variable">list</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">list.add(<span class="string">&quot;A&quot;</span>);</span><br><span class="line">list.add(<span class="string">&quot;B&quot;</span>);</span><br><span class="line">list.add(<span class="string">&quot;C&quot;</span>);</span><br><span class="line">list.add(<span class="string">&quot;D&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 列表迭代器初始指针位于第一个元素之前，所以不可直接使用 hasPrevious 和 previous</span></span><br><span class="line"><span class="comment">// 必须先正向遍历，将指针向后移动后，才可以使用</span></span><br><span class="line"><span class="type">ListIterator</span>&lt;String&gt; <span class="variable">stringListIterator</span> <span class="operator">=</span> list.listIterator();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 正向遍历</span></span><br><span class="line"><span class="keyword">while</span> (stringListIterator.hasNext()) &#123;</span><br><span class="line">    System.out.println(stringListIterator.next());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 逆向遍历</span></span><br><span class="line"><span class="keyword">while</span> (stringListIterator.hasPrevious()) &#123;</span><br><span class="line">    System.out.println(stringListIterator.previous());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="ArrayList"><a href="#ArrayList" class="headerlink" title="ArrayList"></a>ArrayList</h3><p>ArrayList 是基于<code>数组</code>实现的，<code>默认容量为 0</code>，当<code>首次添加元素时</code>，才将数组的<code>容量扩大为 10</code>。后续再次添加元素时，若数组容量不够，会<code>自动扩容</code>，扩容后的大小为原容量的 <code>1.5 倍</code>；但如果扩容后仍不足以容纳所有元素，则会直接扩容到实际需要的大小。</p>
+<h3 id="LinkedList"><a href="#LinkedList" class="headerlink" title="LinkedList"></a>LinkedList</h3><p>LinkedList 是基于<code>链表</code>实现的，它<code>不支持索引访问</code>，但它是<code>双向链表</code>的实现：每个节点都有<code>前驱</code>和<code>后继</code>，通过前后指针把节点串起来（注：LinkedList 并不是循环链表，<code>循环链表</code>只是链表的一种扩展形式）。在添加元素时，会<code>创建新的节点</code>，并<code>将新节点链接到链表的末尾</code>；在删除元素时，会<code>删除指定节点</code>，并<code>将指定节点的前驱和后继节点直接链接起来</code>。</p>
+<h4 id="独有方法"><a href="#独有方法" class="headerlink" title="独有方法"></a>独有方法</h4><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">addFirst(E e)</td>
+<td>在链表开头添加元素</td>
+</tr>
+<tr>
+<td align="left">addLast(E e)</td>
+<td>在链表末尾添加元素</td>
+</tr>
+<tr>
+<td align="left">removeFirst()</td>
+<td>删除链表开头的元素</td>
+</tr>
+<tr>
+<td align="left">removeLast()</td>
+<td>删除链表末尾的元素</td>
+</tr>
+<tr>
+<td align="left">getFirst()</td>
+<td>获取链表开头的元素</td>
+</tr>
+<tr>
+<td align="left">getLast()</td>
+<td>获取链表末尾的元素</td>
+</tr>
+</tbody></table>
+<h3 id="Vector"><a href="#Vector" class="headerlink" title="Vector"></a>Vector</h3><p>Vector 与 ArrayList 类似，也是基于<code>数组</code>实现的，但它是线程安全的。Vector 的扩容策略是每次扩容为原容量的 2 倍，而 ArrayList 是 1.5 倍。由于 Vector 的方法大多带有同步锁（synchronized），在单线程环境下性能不如 ArrayList，所以现在基本被 ArrayList 取代。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://example.com">Lasyc</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2025/10/06/java/Java23/">http://example.com/2025/10/06/java/Java23/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="http://example.com" target="_blank">Lasyc の Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/ArrayList/">ArrayList</a><a class="post-meta__tags" href="/tags/Collection/">Collection</a><a class="post-meta__tags" href="/tags/List/">List</a><a class="post-meta__tags" href="/tags/%E9%93%BE%E8%A1%A8/">链表</a><a class="post-meta__tags" href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a></div><div class="post-share"><div class="social-share" data-image="/img/avatar.webp" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/10/07/java/Java24/" title="Java 泛型与 Set"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">Java 泛型与 Set</div></div><div class="info-2"><div class="info-item-1">泛型泛型（Generics）是一种类型参数化的写法，它可以用来创建类型安全的、可复用的代码：使用泛型后，很多类型错误可以在编译阶段就暴露出来，而不是等到运行时才报错。  补充：Java 中的泛型其实是伪泛型——泛型是编译时的特性，编译后泛型信息会被擦除（类型擦除），所以运行时集合中并不真正保存泛型类型。可以通过反射机制在运行时向集合中添加泛型以外的元素，不过正常开发中不建议这么做。  泛型类泛型类的定义格式为：class 类名&lt;T&gt;，其中 T 表示类型参数 泛型类代码示例1234567891011121314151617181920// 泛型类public class MyList&lt;T&gt; &#123;    private final Object[] data = new Object[10];    private int size;    public MyList() &#123;    &#125;    public void add(T t) &#123;        data[size] = t;        size++;    &#...</div></div></div></a><a class="pagination-related" href="/2025/10/02/java/Java22/" title="Java 常见算法"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Java 常见算法</div></div><div class="info-2"><div class="info-item-1">查找基本查找基本查找也称为顺序查找，它是通过遍历整个数组或集合来查找目标元素。时间复杂度为 O(n)，空间复杂度为 O(1)。 12345678public static int sequentialSearch(int[] arr, int value) &#123;    for (int i = 0; i &lt; arr.length; i++) &#123;        if (arr[i] == value) &#123;            return i;        &#125;    &#125;    return -1;&#125;  二分查找二分查找是基于有序数组的一种查找方式。它每次从中间位置开始比较，并排除掉一半元素，直到找到目标值。时间复杂度为 O(log n)，空间复杂度为 O(1)。二分查找要求数组必须是 有序 的。 12345678910111213141516public static int binarySearch(int[] arr, int value) &#123;    // 二分查找    int min = 0;  ...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/09/01/java/Java12/" title="Java 集合"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-09-01</div><div class="info-item-2">Java 集合</div></div><div class="info-2"><div class="info-item-1">集合的基本使用为什么要有集合当我们需要存储多个同一类型的数据时，可以使用数组，但 数组的长度是固定 的，无法动态调整。集合可以根据需要动态扩展，提供了更灵活的数据存储方式。不过相比于数组，集合无法直接存储基本数据类型，通常要用包装类来存储。 ArrayListArrayList 是 Java 中最常用的集合类之一，它实现了 List 接口，允许存储重复的元素，并且元素有序（大致按添加顺序排列）。  提示：ArrayList 位于 java.util 包，使用前需要 import java.util.ArrayList;。尖括号 &lt;&gt; 里写的是集合要存储的元素类型，这种写法叫泛型；new 后面 &lt;&gt; 里的类型可以省略（钻石语法）。  代码示例123456// 创建一个 ArrayList 对象，只能存储 String 类型的数据ArrayList&lt;String&gt; arrayList = new ArrayList&lt;String&gt;();// 第二个 &lt;&gt; 内的泛型可省略ArrayList&lt;String&gt; arra...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Lasyc</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">175</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">463</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">16</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/lasyc"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/lasyc" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9B%86%E5%90%88%E7%9A%84%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84"><span class="toc-number">1.</span> <span class="toc-text">集合的体系结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Collection"><span class="toc-number">2.</span> <span class="toc-text">Collection</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95"><span class="toc-number">2.1.</span> <span class="toc-text">常用方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Collection-%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B"><span class="toc-number">2.2.</span> <span class="toc-text">Collection 代码示例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%81%8D%E5%8E%86"><span class="toc-number">2.3.</span> <span class="toc-text">遍历</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%AD%E4%BB%A3%E5%99%A8"><span class="toc-number">2.3.1.</span> <span class="toc-text">迭代器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A2%9E%E5%BC%BA-for"><span class="toc-number">2.3.2.</span> <span class="toc-text">增强 for</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Lambda"><span class="toc-number">2.3.3.</span> <span class="toc-text">Lambda</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="toc-number">3.</span> <span class="toc-text">数据结构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%88"><span class="toc-number">3.1.</span> <span class="toc-text">栈</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%98%9F%E5%88%97"><span class="toc-number">3.2.</span> <span class="toc-text">队列</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E7%BB%84"><span class="toc-number">3.3.</span> <span class="toc-text">数组</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%93%BE%E8%A1%A8"><span class="toc-number">3.4.</span> <span class="toc-text">链表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%91"><span class="toc-number">3.5.</span> <span class="toc-text">树</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%8C%E5%8F%89%E6%A0%91"><span class="toc-number">3.5.1.</span> <span class="toc-text">二叉树</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91"><span class="toc-number">3.5.2.</span> <span class="toc-text">二叉搜索树</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E9%81%8D%E5%8E%86%E6%96%B9%E5%BC%8F"><span class="toc-number">3.5.3.</span> <span class="toc-text">二叉树的遍历方式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91%E7%9A%84%E5%BC%8A%E7%AB%AF"><span class="toc-number">3.5.4.</span> <span class="toc-text">二叉搜索树的弊端</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B9%B3%E8%A1%A1%E4%BA%8C%E5%8F%89%E6%A0%91"><span class="toc-number">3.5.5.</span> <span class="toc-text">平衡二叉树</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B7%A6%E6%97%8B"><span class="toc-number">3.5.6.</span> <span class="toc-text">左旋</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%B3%E6%97%8B"><span class="toc-number">3.5.7.</span> <span class="toc-text">右旋</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%97%8B%E8%BD%AC%E7%9A%84%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">3.5.8.</span> <span class="toc-text">旋转的应用场景</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B9%B3%E8%A1%A1%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E5%BC%8A%E7%AB%AF"><span class="toc-number">3.5.9.</span> <span class="toc-text">平衡二叉树的弊端</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BA%A2%E9%BB%91%E6%A0%91"><span class="toc-number">3.5.10.</span> <span class="toc-text">红黑树</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BA%A2%E9%BB%91%E8%A7%84%E5%88%99"><span class="toc-number">3.5.11.</span> <span class="toc-text">红黑规则</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BA%A2%E9%BB%91%E6%A0%91%E6%8F%92%E5%85%A5%E8%8A%82%E7%82%B9%E7%9A%84%E9%A2%9C%E8%89%B2%E5%A4%84%E7%90%86%E8%A7%84%E5%88%99"><span class="toc-number">3.5.12.</span> <span class="toc-text">红黑树插入节点的颜色处理规则</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#List"><span class="toc-number">4.</span> <span class="toc-text">List</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95-1"><span class="toc-number">4.1.</span> <span class="toc-text">常用方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#List-%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B"><span class="toc-number">4.2.</span> <span class="toc-text">List 代码示例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%81%8D%E5%8E%86-1"><span class="toc-number">4.3.</span> <span class="toc-text">遍历</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%99%AE%E9%80%9A-for"><span class="toc-number">4.3.1.</span> <span class="toc-text">普通 for</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%97%E8%A1%A8%E8%BF%AD%E4%BB%A3%E5%99%A8"><span class="toc-number">4.3.2.</span> <span class="toc-text">列表迭代器</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ArrayList"><span class="toc-number">4.4.</span> <span class="toc-text">ArrayList</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LinkedList"><span class="toc-number">4.5.</span> <span class="toc-text">LinkedList</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%8B%AC%E6%9C%89%E6%96%B9%E6%B3%95"><span class="toc-number">4.5.1.</span> <span class="toc-text">独有方法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Vector"><span class="toc-number">4.6.</span> <span class="toc-text">Vector</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/11/springsecurity/SpringSecurity12/" title="Spring Security 自定义 403 处理">Spring Security 自定义 403 处理</a><time datetime="2026-09-11T14:43:27.000Z" title="发表于 2026-09-11 22:43:27">2026-09-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/11/springsecurity/SpringSecurity11/" title="Spring Security 基于注解的访问控制">Spring Security 基于注解的访问控制</a><time datetime="2026-09-11T14:24:58.000Z" title="发表于 2026-09-11 22:24:58">2026-09-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/09/springsecurity/SpringSecurity10/" title="Spring Security 访问控制（授权）">Spring Security 访问控制（授权）</a><time datetime="2026-09-09T12:34:01.000Z" title="发表于 2026-09-09 20:34:01">2026-09-09</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/09/springsecurity/SpringSecurity09/" title="Spring Security 获取用户信息与自定义 UserDetails">Spring Security 获取用户信息与自定义 UserDetails</a><time datetime="2026-09-09T11:50:33.000Z" title="发表于 2026-09-09 19:50:33">2026-09-09</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/09/springsecurity/SpringSecurity08/" title="Spring Security Remember Me 与验证码">Spring Security Remember Me 与验证码</a><time datetime="2026-09-09T11:33:33.000Z" title="发表于 2026-09-09 19:33:33">2026-09-09</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/top_img.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Lasyc</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.7.0</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.7.0"></script><script src="/js/main.js?v=5.7.0"></script><div class="js-pjax"></div><script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script><script>
+(function() {
+  var myAplayer = null;
+  function createPlayer() {
+    var div = document.createElement('div');
+    div.id = 'my-aplayer';
+    document.body.appendChild(div);
+    myAplayer = new APlayer({
+      container: div,
+      mini: false,
+      autoplay: false,
+      mutex: true,
+      lrcType: 0,
+      volume: 0.7,
+      audio: [{
+        name: '这一生关于你的风景',
+        artist: '枯木逢春',
+        url: '/music/1356350562.mp3',
+        cover: '/img/1356350562.jpg'
+      }]
+    });
+  }
+  createPlayer();
+  document.addEventListener('pjax:complete', createPlayer);
+})();
+</script>
+<script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.7.0"></script></div></div></body></html>

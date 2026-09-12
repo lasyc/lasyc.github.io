@@ -1,0 +1,356 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Lasyc の Blog</title><meta name="author" content="Lasyc"><meta name="copyright" content="Lasyc"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta property="og:type" content="website">
+<meta property="og:title" content="Lasyc の Blog">
+<meta property="og:url" content="http://example.com/page/15/index.html">
+<meta property="og:site_name" content="Lasyc の Blog">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/avatar.webp">
+<meta property="article:author" content="Lasyc">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/avatar.webp"><script type="application/ld+json"></script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/page/15/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.7.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.3.1/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        const data = { value }
+
+        if (ttl != null) {
+          data.expiry = Date.now() + ttl * 86400000
+        }
+
+        localStorage.setItem(key, JSON.stringify(data))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return
+
+        try {
+          const data = JSON.parse(itemStr)
+
+          if (data.expiry && Date.now() > data.expiry) {
+            localStorage.removeItem(key)
+            return
+          }
+
+          return data.value
+        } catch {
+          localStorage.removeItem(key)
+        }
+      }
+    }
+
+    const scriptCache = new Map()
+    const cssCache = new Map()
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => {
+        if (scriptCache.has(url)) {
+          return scriptCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+
+          script.src = url
+          script.async = true
+
+          for (const key in attr) {
+            script.setAttribute(key, attr[key])
+          }
+
+          script.onload = resolve
+          script.onerror = reject
+
+          document.head.appendChild(script)
+        })
+
+        scriptCache.set(url, promise)
+
+        return promise
+      },
+      getCSS: (url, id) => {
+        if (cssCache.has(url)) {
+          return cssCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const link = document.createElement('link')
+
+          link.rel = 'stylesheet'
+          link.href = url
+
+          if (id) {
+            link.id = id
+          }
+
+          link.onload = resolve
+          link.onerror = reject
+
+          document.head.appendChild(link)
+        })
+
+        cssCache.set(url, promise)
+
+        return promise
+      },
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+      const activateDarkMode = () => {
+        document.documentElement.dataset.theme = 'dark'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.dataset.theme = 'light'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.json","preload":true,"top_n_per_article":-1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":200,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":10,"languages":{"author":"作者: Lasyc","link":"链接: ","source":"来源: Lasyc の Blog","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Lasyc の Blog',
+  isHighlightShrink: false,
+  isToc: false,
+  pageType: 'home'
+}</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css"><style>
+#my-aplayer {
+  position: fixed;
+  bottom: 10px;
+  left: 10px;
+  width: 320px;
+  z-index: 99999;
+  border-radius: 5px;
+  overflow: hidden;
+}
+#my-aplayer .aplayer-title,
+#my-aplayer .aplayer-author {
+  color: #333 !important;
+}
+</style>
+<meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">175</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">463</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">16</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 图库</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="page" id="body-wrap"><header class="full_page" id="page-header" style="background-image: url(/img/top_img.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Lasyc の Blog</span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 图库</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="site-info"><h1 id="site-title">Lasyc の Blog</h1><div id="site-subtitle"><span id="subtitle"></span></div><div id="site_social_icons"><a class="social-icon" href="https://github.com/lasyc" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a></div></div><div id="scroll-down"><i class="fas fa-angle-down scroll-down-effects"></i></div></header><main class="layout" id="content-inner"><div class="recent-posts nc" id="recent-posts"><div class="recent-post-items"><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/10/22/java/Java35/" title="Java 多线程基础与线程安全">Java 多线程基础与线程安全</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-10-22T13:59:23.000Z" title="发表于 2025-10-22 21:59:23">2025-10-22</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-09-12T03:03:43.795Z" title="更新于 2026-09-12 11:03:43">2026-09-12</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%90%8E%E7%AB%AF/">后端</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%90%8E%E7%AB%AF/%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80/">语言基础</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%90%8E%E7%AB%AF/%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80/Java/">Java</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/">多线程</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/Thread/">Thread</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/synchronized/">synchronized</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/Lock/">Lock</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8/">线程安全</a></span></div><div class="content">多线程线程是程序执行的最小单位，是进程中的一条执行路径。Java 语言内置了对多线程编程的支持，使得我们可以轻松地创建和管理线程，从而实现并发执行任务，提高程序的性能和响应能力。 并发和并行并发：在单个处理器上，通过时间片轮转等方式让多个线程交替执行，看起来像”同时”在运行。并行：在多处理器（多核）系统上，多个线程真正地同时执行。 实现方式在 Java 中，创建多线程主要有三种方式：继承 Thread 类、实现 Runnable 接口、实现 Callable 接口，下面分别介绍。 继承 Thread 类Thread 类是 Java 中用于创建和管理线程的核心类。通过继承 Thread 类，可以创建自定义的线程类，并重写它的 run() 方法来定义线程要执行的任务。 注意：启动线程时，不要直接调用 run() 方法（那样只是在当前线程里执行一段普通方法），而是要调用 start() 方法来启动线程（start() 会开启一条新线程，由新线程去执行 run() 中的代码）。 12345678public class MyThread extends Thread &#123;    ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/10/20/java/Java34/" title="Java IO 高级流与工具类">Java IO 高级流与工具类</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-10-20T13:14:13.000Z" title="发表于 2025-10-20 21:14:13">2025-10-20</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-09-12T03:03:43.787Z" title="更新于 2026-09-12 11:03:43">2026-09-12</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%90%8E%E7%AB%AF/">后端</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%90%8E%E7%AB%AF/%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80/">语言基础</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%90%8E%E7%AB%AF/%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80/Java/">Java</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E5%BA%8F%E5%88%97%E5%8C%96/">序列化</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E6%89%93%E5%8D%B0%E6%B5%81/">打印流</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E5%8E%8B%E7%BC%A9%E6%B5%81/">压缩流</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/Properties/">Properties</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/Hutool/">Hutool</a></span></div><div class="content">序列化流序列化流是字节流（高级流，用于包装基本流），它是 Java 对象和字节之间的桥梁：把 Java 对象转换成字节（写文件，叫序列化），或者把字节转换成 Java 对象（读回来，叫反序列化）。序列化流有两个类：ObjectOutputStream（写对象）和 ObjectInputStream（读对象）。 使用序列化流操作 Java 对象时，必须保证对象是可序列化的：类必须实现 Serializable 接口。 如果不想让某个属性参与序列化（比如密码、临时数据），可以在该属性声明时加上 transient 关键字，序列化时会跳过它。 序列化流 构造方法   构造方法 描述    ObjectInputStream(InputStream in) 创建一个 ObjectInputStream 对象，该对象将字节流转换为 Java 对象   ObjectOutputStream(OutputStream out) 创建一个 ObjectOutputStream 对象，该对象将 Java 对象转换为字节流   序列化流 常用方法序列化输入流   方法 描述    readObjec...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/10/19/java/Java33/" title="Java IO 缓冲流与转换流">Java IO 缓冲流与转换流</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-10-19T13:14:13.000Z" title="发表于 2025-10-19 21:14:13">2025-10-19</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-09-12T03:03:43.787Z" title="更新于 2026-09-12 11:03:43">2026-09-12</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%90%8E%E7%AB%AF/">后端</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%90%8E%E7%AB%AF/%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80/">语言基础</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%90%8E%E7%AB%AF/%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80/Java/">Java</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E7%BC%93%E5%86%B2%E6%B5%81/">缓冲流</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E8%BD%AC%E6%8D%A2%E6%B5%81/">转换流</a></span></div><div class="content">缓冲流前边学习了字节流和字符流，一共四个类：FileInputStream、FileOutputStream、FileReader 和 FileWriter。这四个类直接操作文件，读写效率较低、功能也比较欠缺。为了提高读写效率，Java 提供了缓冲流。缓冲流在字节流&#x2F;字符流的基础上增加了一个缓冲区，读写数据时，先把数据读到缓冲区或写到缓冲区，攒够一批再真正操作文件，从而减少和磁盘的交互次数，提升效率。缓冲流也有四个类：BufferedInputStream、BufferedOutputStream、BufferedReader 和 BufferedWriter。 缓冲流并不是一种新的底层流，而是对已有流的”包装”。使用缓冲流时，需要把已有的基本流对象作为参数传入缓冲流的构造方法中。 补充：虽然字符流内部也带有缓冲区，但缓冲流的缓冲区大小可以自定义，而且缓冲流还额外提供了更方便的读写方式（如 readLine()），综合下来效率还是有提升的。 字节缓冲流字节缓冲流 构造方法   构造方法 描述    BufferedInputStream(InputStream in) ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/10/18/java/Java32/" title="Java IO 流基础(字节流与字符流)">Java IO 流基础(字节流与字符流)</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-10-18T13:14:13.000Z" title="发表于 2025-10-18 21:14:13">2025-10-18</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-09-12T03:03:43.787Z" title="更新于 2026-09-12 11:03:43">2026-09-12</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%90%8E%E7%AB%AF/">后端</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%90%8E%E7%AB%AF/%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80/">语言基础</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%90%8E%E7%AB%AF/%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80/Java/">Java</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/IO-%E6%B5%81/">IO 流</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E5%AD%97%E8%8A%82%E6%B5%81/">字节流</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E5%AD%97%E7%AC%A6%E6%B5%81/">字符流</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E7%BC%96%E7%A0%81/">编码</a></span></div><div class="content">IO 流IO 流是 Java 中用于处理输入和输出操作的核心概念。Java 提供了丰富的 IO 类库，支持文件操作、网络通信等多种场景。 分类IO 流可以从两个维度分类：  按照流的方向：输入流和输出流。输入流用于读取数据（从文件等数据源读进来），输出流用于写入数据（写到文件等目标去）。 按照流的数据类型：字节流和字符流。字节流可以处理所有类型的数据，而字符流专门用于处理文本数据。  字节流字节流是 Java 中用于处理字节数据的流。字节流可以处理所有类型的数据，如图片、音频、视频、文本等（一切数据在计算机底层都是字节），并提供了一系列方法用于读取、写入字节数据。 字节流有两个顶层接口：InputStream 和 OutputStream。InputStream 用于读取字节数据，OutputStream 用于写入字节数据。但是我们不需要直接使用这两个接口，而是使用它们的子类，分别是：FileInputStream（文件字节输入流）和 FileOutputStream（文件字节输出流）。 FileOutputStreamFileOutputStream 构造方法   构造方法 描...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/10/17/java/Java31/" title="Java File 类">Java File 类</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-10-17T12:18:56.000Z" title="发表于 2025-10-17 20:18:56">2025-10-17</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-09-12T03:03:05.696Z" title="更新于 2026-09-12 11:03:05">2026-09-12</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%90%8E%E7%AB%AF/">后端</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%90%8E%E7%AB%AF/%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80/">语言基础</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%90%8E%E7%AB%AF/%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80/Java/">Java</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/File/">File</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C/">文件操作</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/IO/">IO</a></span></div><div class="content">File 类File 类是 Java 中操作文件最常用的类之一，表示一个文件或文件夹的路径。用法：根据文件路径来创建 File 对象，然后通过 File 对象来获取文件信息，或者操作文件。注意：File 不仅可以表示文件，也可以表示文件夹（毕竟文件夹也可以看做是一种特殊的文件），但 File 对象本身只是”路径的抽象”，并不代表磁盘上一定存在这个文件。 File 类的构造方法   构造方法 描述    File(String pathname) 根据文件路径创建 File 对象   File(String parent, String child) 根据父目录路径和文件名创建 File 对象   File(File parent, String child) 根据父目录 File 对象和文件名创建 File 对象   123456789101112131415161718// 根据全路径获取文件File file1 = new File(&quot;D:\\java-study\\test.txt&quot;);System.out.println(file1);        ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/10/16/java/Java30/" title="Java 异常">Java 异常</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-10-16T12:50:40.000Z" title="发表于 2025-10-16 20:50:40">2025-10-16</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-09-12T03:03:05.696Z" title="更新于 2026-09-12 11:03:05">2026-09-12</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%90%8E%E7%AB%AF/">后端</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%90%8E%E7%AB%AF/%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80/">语言基础</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%90%8E%E7%AB%AF/%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80/Java/">Java</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E5%BC%82%E5%B8%B8/">异常</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E8%87%AA%E5%AE%9A%E4%B9%89%E5%BC%82%E5%B8%B8/">自定义异常</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/try-catch/">try-catch</a></span></div><div class="content">异常异常是程序运行时出现的错误。当异常发生时，会终止程序的运行，并抛出一个异常对象。异常是不可避免的，我们无法完全消除异常，只能正确地处理异常，让程序在出错时也能友好地提示、或安全地结束。 异常体系Throwable 是 Java 语言中所有异常的父类，子类有：Error、Exception。 Error 是错误，属于系统层面的错误（比如内存溢出），通常不是我们程序员需要处理的。 Exception 才是异常，是程序员需要处理的。异常共分为两大类，分别是：运行时异常和编译时异常。 运行时异常运行时异常：RuntimeException 及其子类，是在运行时（程序执行过程中）才出现的异常，比如：空指针异常、数组越界异常、类型转换异常等等。这类异常在开发中往往是无法预见的（比如数组越界要到运行到那一行才知道），编译器也无法检测到这些异常，所以不会提醒我们处理。 编译时异常编译时异常：Exception 中除 RuntimeException 以外的所有异常类，是在编译时（写代码、编译阶段）就会被编译器检查出来的异常，比如：文件不存在异常、类不存在异常、日期格式不对异常等等。这类异常在...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/10/15/java/Java29/" title="Java 方法引用">Java 方法引用</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-10-15T12:55:09.000Z" title="发表于 2025-10-15 20:55:09">2025-10-15</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-09-12T03:03:05.696Z" title="更新于 2026-09-12 11:03:05">2026-09-12</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%90%8E%E7%AB%AF/">后端</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%90%8E%E7%AB%AF/%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80/">语言基础</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%90%8E%E7%AB%AF/%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80/Java/">Java</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/Lambda/">Lambda</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E6%96%B9%E6%B3%95%E5%BC%95%E7%94%A8/">方法引用</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E5%87%BD%E6%95%B0%E5%BC%8F%E6%8E%A5%E5%8F%A3/">函数式接口</a></span></div><div class="content">方法引用方法引用是 Java 8 新增的语法，用于直接引用一个已经存在的方法。 使用背景：我们在调用某些方法时，有时需要传入一个函数式接口的实现类（比如 Comparator、Function），并实现它的抽象方法。但如果我们要写的这个逻辑，某个类里的方法已经实现了，那就不需要再写 Lambda 表达式，直接把这个方法当作参数传进去即可，这种写法就叫方法引用。 语法：类名::方法名（两个冒号）  提示：下面的示例大多是代码片段（只有核心语句），没有把 import 和类的框架都写全。复制到自己的项目里如果报”找不到符号”，通常就是缺 import，例如 java.util.ArrayList、java.util.List、java.util.Arrays、java.util.stream.Collectors 等，按报错提示补上即可。  代码示例1234567891011121314151617Integer[] nums = &#123;10, 9, 8, 7, 6, 5, 4, 3, 2, 1&#125;;// 匿名内部类// Arrays.sort(nums, new Co...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/10/15/java/Java28/" title="Java Stream">Java Stream</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-10-15T02:09:26.000Z" title="发表于 2025-10-15 10:09:26">2025-10-15</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-09-12T03:03:05.696Z" title="更新于 2026-09-12 11:03:05">2026-09-12</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%90%8E%E7%AB%AF/">后端</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%90%8E%E7%AB%AF/%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80/">语言基础</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%90%8E%E7%AB%AF/%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80/Java/">Java</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/Lambda/">Lambda</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/Stream/">Stream</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/">函数式编程</a></span></div><div class="content">StreamStream 是 Java 8 新增的 API，用于处理集合数据（注意：Stream 是流，不是集合，它本身不存储数据）。  下面示例代码用到的 import：java.util.*（List &#x2F; Map &#x2F; Set &#x2F; Arrays &#x2F; Optional）、java.util.stream.*（Stream &#x2F; Collectors）。  体验现有一个数值集合，删除偶数的元素，再将剩余元素进行平方处理，并打印出来。先看传统写法： 12345678910111213141516171819202122232425262728// 原始写法List&lt;Integer&gt; numList = new ArrayList&lt;&gt;();for (int i = 0; i &lt; 20; i++) &#123;    numList.add(i);&#125;System.out.println(numList); // [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/10/15/java/Java27/" title="Java 斗地主">Java 斗地主</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-10-15T00:57:00.000Z" title="发表于 2025-10-15 08:57:00">2025-10-15</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-09-12T03:03:05.696Z" title="更新于 2026-09-12 11:03:05">2026-09-12</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%90%8E%E7%AB%AF/">后端</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%90%8E%E7%AB%AF/%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80/">语言基础</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%90%8E%E7%AB%AF/%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80/Java/">Java</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E7%BB%BC%E5%90%88%E7%BB%83%E4%B9%A0/">综合练习</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E6%96%97%E5%9C%B0%E4%B8%BB/">斗地主</a></span></div><div class="content">斗地主一个用集合实现斗地主发牌的小案例，跟着视频写，主要练习 List &#x2F; Set &#x2F; Map 的配合使用。 视频地址 初始化先用最朴素的方式完成洗牌和发牌：不排序，把 54 张牌洗乱后，前 3 张留作底牌，其余 51 张轮流发给 3 个玩家（每人 17 张）。 1234567// 应用程序入口类public class App &#123;    public static void main(String[] args) &#123;        // 创建并启动斗地主游戏实例        new PokerGame();    &#125;&#125;  123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960import java.util.ArrayList;import java.util.Collections;import java.util.List;// 斗地主游戏主类pu...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/10/12/java/Java26/" title="Java 可变参数与集合工具类">Java 可变参数与集合工具类</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-10-12T15:17:44.000Z" title="发表于 2025-10-12 23:17:44">2025-10-12</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-09-12T03:03:43.782Z" title="更新于 2026-09-12 11:03:43">2026-09-12</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%90%8E%E7%AB%AF/">后端</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%90%8E%E7%AB%AF/%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80/">语言基础</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%90%8E%E7%AB%AF/%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80/Java/">Java</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E5%8F%AF%E5%8F%98%E5%8F%82%E6%95%B0/">可变参数</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/Collections/">Collections</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E4%B8%8D%E5%8F%AF%E5%8F%98%E9%9B%86%E5%90%88/">不可变集合</a></span></div><div class="content">可变参数可变参数（Variable Arguments）是一种语法糖，底层其实就是一个数组，它允许在调用方法时传递任意数量的参数。定义格式为：方法名(参数类型... 参数名)。例如下面的 sum 方法既可以传 3 个数，也可以传 4 个、5 个数。 12345678910111213141516public static void main(String[] args) &#123;    int sum1 = sum(1, 2, 3);    int sum2 = sum(1, 2, 3, 4);    int sum3 = sum(1, 2, 3, 4, 5);    System.out.println(sum1);   // 6    System.out.println(sum2);   // 10    System.out.println(sum3);   // 15&#125;public static int sum(int... nums) &#123;    int sum = 0;    for (int num : nums) &#123;       ...</div></div></div></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="/page/14/#content-inner"><i class="fas fa-chevron-left fa-fw"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/#content-inner">14</a><span class="page-number current">15</span><a class="page-number" href="/page/16/#content-inner">16</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/#content-inner">18</a><a class="extend next" rel="next" href="/page/16/#content-inner"><i class="fas fa-chevron-right fa-fw"></i></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Lasyc</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">175</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">463</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">16</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/lasyc"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/lasyc" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a></div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/11/springsecurity/SpringSecurity12/" title="Spring Security 自定义 403 处理">Spring Security 自定义 403 处理</a><time datetime="2026-09-11T14:43:27.000Z" title="发表于 2026-09-11 22:43:27">2026-09-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/11/springsecurity/SpringSecurity11/" title="Spring Security 基于注解的访问控制">Spring Security 基于注解的访问控制</a><time datetime="2026-09-11T14:24:58.000Z" title="发表于 2026-09-11 22:24:58">2026-09-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/09/springsecurity/SpringSecurity10/" title="Spring Security 访问控制（授权）">Spring Security 访问控制（授权）</a><time datetime="2026-09-09T12:34:01.000Z" title="发表于 2026-09-09 20:34:01">2026-09-09</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/09/springsecurity/SpringSecurity09/" title="Spring Security 获取用户信息与自定义 UserDetails">Spring Security 获取用户信息与自定义 UserDetails</a><time datetime="2026-09-09T11:50:33.000Z" title="发表于 2026-09-09 19:50:33">2026-09-09</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/09/springsecurity/SpringSecurity08/" title="Spring Security Remember Me 与验证码">Spring Security Remember Me 与验证码</a><time datetime="2026-09-09T11:33:33.000Z" title="发表于 2026-09-09 19:33:33">2026-09-09</time></div></div></div></div><div class="card-widget card-categories"><div class="item-headline"><i class="fas fa-folder-open"></i><span>分类</span><a class="card-more-btn" href="/categories/" title="查看更多">
+      <i class="fas fa-angle-right"></i></a></div>
+          <ul class="card-category-list" id="aside-cat-list">
+            <li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E5%89%8D%E7%AB%AF/"><span class="card-category-list-name">前端</span><span class="card-category-list-count">8</span></a><ul class="card-category-list child"><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E5%89%8D%E7%AB%AF/Web-%E5%89%8D%E7%AB%AF/"><span class="card-category-list-name">Web 前端</span><span class="card-category-list-count">8</span></a></li></ul></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E5%90%8E%E7%AB%AF/"><span class="card-category-list-name">后端</span><span class="card-category-list-count">167</span></a><ul class="card-category-list child"><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E5%90%8E%E7%AB%AF/%E6%95%B0%E6%8D%AE%E5%BA%93/"><span class="card-category-list-name">数据库</span><span class="card-category-list-count">31</span></a><ul class="card-category-list child"><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E5%90%8E%E7%AB%AF/%E6%95%B0%E6%8D%AE%E5%BA%93/JDBC/"><span class="card-category-list-name">JDBC</span><span class="card-category-list-count">11</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E5%90%8E%E7%AB%AF/%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL/"><span class="card-category-list-name">MySQL</span><span class="card-category-list-count">20</span></a></li></ul></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E5%90%8E%E7%AB%AF/%E6%A1%86%E6%9E%B6/"><span class="card-category-list-name">框架</span><span class="card-category-list-count">81</span></a><ul class="card-category-list child"><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E5%90%8E%E7%AB%AF/%E6%A1%86%E6%9E%B6/MyBatis/"><span class="card-category-list-name">MyBatis</span><span class="card-category-list-count">13</span></a></li></ul></li></ul></li>
+          </ul></div><div class="card-widget card-tags"><div class="item-headline"><i class="fas fa-tags"></i><span>标签</span></div><div class="card-tag-cloud"><a href="/tags/%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/" style="font-size: 1.1em; color: #999">读写分离</a> <a href="/tags/SSM/" style="font-size: 1.3em; color: #99a1ac">SSM</a> <a href="/tags/UsernamePasswordAuthenticationFilter/" style="font-size: 1.1em; color: #999">UsernamePasswordAuthenticationFilter</a> <a href="/tags/i18n/" style="font-size: 1.1em; color: #999">i18n</a> <a href="/tags/Mapper-%E6%98%A0%E5%B0%84/" style="font-size: 1.1em; color: #999">Mapper 映射</a> <a href="/tags/%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/" style="font-size: 1.3em; color: #99a1ac">动态代理</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E6%8C%81%E4%B9%85%E5%8C%96/" style="font-size: 1.1em; color: #999">数据持久化</a> <a href="/tags/%E5%8C%85/" style="font-size: 1.1em; color: #999">包</a> <a href="/tags/Session-%E5%9F%9F/" style="font-size: 1.1em; color: #999">Session 域</a> <a href="/tags/%E6%8B%A6%E6%88%AA%E5%99%A8/" style="font-size: 1.3em; color: #99a1ac">拦截器</a> <a href="/tags/Remember-Me/" style="font-size: 1.1em; color: #999">Remember Me</a> <a href="/tags/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/" style="font-size: 1.1em; color: #999">单元测试</a> <a href="/tags/%E6%97%A5%E5%BF%97/" style="font-size: 1.1em; color: #999">日志</a> <a href="/tags/%E6%A8%A1%E7%B3%8A%E6%9F%A5%E8%AF%A2/" style="font-size: 1.1em; color: #999">模糊查询</a> <a href="/tags/StringJoiner/" style="font-size: 1.1em; color: #999">StringJoiner</a> <a href="/tags/%E8%AF%B7%E6%B1%82%E6%8A%A5%E6%96%87/" style="font-size: 1.1em; color: #999">请求报文</a> <a href="/tags/POJO/" style="font-size: 1.1em; color: #999">POJO</a> <a href="/tags/Socket/" style="font-size: 1.1em; color: #999">Socket</a> <a href="/tags/Request-%E5%9F%9F/" style="font-size: 1.1em; color: #999">Request 域</a> <a href="/tags/%E5%BC%82%E5%B8%B8/" style="font-size: 1.1em; color: #999">异常</a> <a href="/tags/%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B/" style="font-size: 1.1em; color: #999">逆向工程</a> <a href="/tags/%E4%BA%8C%E7%BB%B4%E6%95%B0%E7%BB%84/" style="font-size: 1.1em; color: #999">二维数组</a> <a href="/tags/JSON/" style="font-size: 1.1em; color: #999">JSON</a> <a href="/tags/web-xml/" style="font-size: 1.1em; color: #999">web.xml</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" style="font-size: 1.1em; color: #999">数据结构</a> <a href="/tags/%E7%B1%BB%E4%B8%8E%E5%AF%B9%E8%B1%A1/" style="font-size: 1.1em; color: #999">类与对象</a> <a href="/tags/%E5%8E%9F%E7%90%86/" style="font-size: 1.5em; color: #99a9bf">原理</a> <a href="/tags/%E7%88%B6%E5%AD%90%E5%AE%B9%E5%99%A8/" style="font-size: 1.1em; color: #999">父子容器</a> <a href="/tags/%E8%BD%AC%E6%8D%A2%E6%B5%81/" style="font-size: 1.1em; color: #999">转换流</a> <a href="/tags/%E6%8C%81%E4%B9%85%E5%8C%96%E4%BB%A4%E7%89%8C/" style="font-size: 1.1em; color: #999">持久化令牌</a> <a href="/tags/%E5%BC%80%E5%8F%91%E5%B0%8F%E6%8A%80%E5%B7%A7/" style="font-size: 1.1em; color: #999">开发小技巧</a> <a href="/tags/RESTful/" style="font-size: 1.3em; color: #99a1ac">RESTful</a> <a href="/tags/Param-%E6%B3%A8%E8%A7%A3/" style="font-size: 1.1em; color: #999">Param 注解</a> <a href="/tags/final/" style="font-size: 1.1em; color: #999">final</a> <a href="/tags/Endpoints/" style="font-size: 1.1em; color: #999">Endpoints</a> <a href="/tags/%E6%B3%A8%E8%A7%A3/" style="font-size: 1.3em; color: #99a1ac">注解</a> <a href="/tags/%E9%93%BE%E8%A1%A8/" style="font-size: 1.1em; color: #999">链表</a> <a href="/tags/%E7%99%BB%E5%BD%95%E9%A1%B5%E9%9D%A2/" style="font-size: 1.1em; color: #999">登录页面</a> <a href="/tags/%E6%A0%B8%E5%BF%83%E6%A0%87%E7%AD%BE/" style="font-size: 1.1em; color: #999">核心标签</a> <a href="/tags/AOT/" style="font-size: 1.1em; color: #999">AOT</a></div></div><div class="card-widget card-archives">
+    <div class="item-headline"><i class="fas fa-archive"></i><span>归档</span><a class="card-more-btn" href="/archives/"
+            title="查看更多">
+            <i class="fas fa-angle-right"></i>
+          </a></div>
+  
+    <ul class="card-archive-list">
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/09/">
+            <span class="card-archive-list-date">
+              九月 2026
+            </span>
+            <span class="card-archive-list-count">26</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/08/">
+            <span class="card-archive-list-date">
+              八月 2026
+            </span>
+            <span class="card-archive-list-count">33</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/07/">
+            <span class="card-archive-list-date">
+              七月 2026
+            </span>
+            <span class="card-archive-list-count">15</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/06/">
+            <span class="card-archive-list-date">
+              六月 2026
+            </span>
+            <span class="card-archive-list-count">12</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/04/">
+            <span class="card-archive-list-date">
+              四月 2026
+            </span>
+            <span class="card-archive-list-count">5</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/03/">
+            <span class="card-archive-list-date">
+              三月 2026
+            </span>
+            <span class="card-archive-list-count">11</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/01/">
+            <span class="card-archive-list-date">
+              一月 2026
+            </span>
+            <span class="card-archive-list-count">3</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2025/12/">
+            <span class="card-archive-list-date">
+              十二月 2025
+            </span>
+            <span class="card-archive-list-count">17</span>
+          </a>
+        </li>
+      
+    </ul>
+  </div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>网站信息</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">175</div></div><div class="webinfo-item"><div class="item-name">本站总字数 :</div><div class="item-count">372.2k</div></div><div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">本站总浏览量 :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2026-09-12T05:57:53.238Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/top_img.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Lasyc</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.7.0</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.7.0"></script><script src="/js/main.js?v=5.7.0"></script><div class="js-pjax"><script>window.typedJSFn = {
+  init: str => {
+    window.typed = new Typed('#subtitle', Object.assign({
+      strings: str,
+      startDelay: 300,
+      typeSpeed: 150,
+      loop: true,
+      backSpeed: 50,
+    }, null))
+  },
+  run: subtitleType => {
+    if (true) {
+      if (typeof Typed === 'function') {
+        subtitleType()
+      } else {
+        btf.getScript('https://cdn.jsdelivr.net/npm/typed.js@3.0.0/dist/typed.umd.min.js').then(subtitleType)
+      }
+    } else {
+      subtitleType()
+    }
+  },
+  processSubtitle: (content, extraContents = []) => {
+    if (true) {
+      const sub = ["玲珑骰子安红豆，入骨相思知不知"].slice()
+
+      if (extraContents.length > 0) {
+        sub.unshift(...extraContents)
+      }
+
+      if (typeof content === 'string') {
+        sub.unshift(content)
+      } else if (Array.isArray(content)) {
+        sub.unshift(...content)
+      }
+
+      sub.length > 0 && typedJSFn.init(sub)
+    } else {
+      document.getElementById('subtitle').textContent = typeof content === 'string' ? content :
+        (Array.isArray(content) && content.length > 0 ? content[0] : '')
+    }
+  }
+}
+btf.addGlobalFn('pjaxSendOnce', () => { typed && typed.destroy() }, 'typedDestroy')
+</script><script>function subtitleType () {
+  typedJSFn.processSubtitle(["玲珑骰子安红豆，入骨相思知不知"])
+}
+typedJSFn.run(subtitleType)</script></div><script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script><script>
+(function() {
+  var myAplayer = null;
+  function createPlayer() {
+    var div = document.createElement('div');
+    div.id = 'my-aplayer';
+    document.body.appendChild(div);
+    myAplayer = new APlayer({
+      container: div,
+      mini: false,
+      autoplay: false,
+      mutex: true,
+      lrcType: 0,
+      volume: 0.7,
+      audio: [{
+        name: '这一生关于你的风景',
+        artist: '枯木逢春',
+        url: '/music/1356350562.mp3',
+        cover: '/img/1356350562.jpg'
+      }]
+    });
+  }
+  createPlayer();
+  document.addEventListener('pjax:complete', createPlayer);
+})();
+</script>
+<script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.7.0"></script></div></div></body></html>

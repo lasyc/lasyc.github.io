@@ -1,0 +1,517 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Java 多线程基础与线程安全 | Lasyc の Blog</title><meta name="author" content="Lasyc"><meta name="copyright" content="Lasyc"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="多线程线程是程序执行的最小单位，是进程中的一条执行路径。Java 语言内置了对多线程编程的支持，使得我们可以轻松地创建和管理线程，从而实现并发执行任务，提高程序的性能和响应能力。 并发和并行并发：在单个处理器上，通过时间片轮转等方式让多个线程交替执行，看起来像”同时”在运行。并行：在多处理器（多核）系统上，多个线程真正地同时执行。 实现方式在 Java 中，创建多线程主要有三种方式：继承 Thre">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java 多线程基础与线程安全">
+<meta property="og:url" content="http://example.com/2025/10/22/java/Java35/index.html">
+<meta property="og:site_name" content="Lasyc の Blog">
+<meta property="og:description" content="多线程线程是程序执行的最小单位，是进程中的一条执行路径。Java 语言内置了对多线程编程的支持，使得我们可以轻松地创建和管理线程，从而实现并发执行任务，提高程序的性能和响应能力。 并发和并行并发：在单个处理器上，通过时间片轮转等方式让多个线程交替执行，看起来像”同时”在运行。并行：在多处理器（多核）系统上，多个线程真正地同时执行。 实现方式在 Java 中，创建多线程主要有三种方式：继承 Thre">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/avatar.webp">
+<meta property="article:published_time" content="2025-10-22T13:59:23.000Z">
+<meta property="article:modified_time" content="2026-09-12T03:03:43.795Z">
+<meta property="article:author" content="Lasyc">
+<meta property="article:tag" content="多线程">
+<meta property="article:tag" content="Thread">
+<meta property="article:tag" content="synchronized">
+<meta property="article:tag" content="Lock">
+<meta property="article:tag" content="线程安全">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/avatar.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Java 多线程基础与线程安全",
+  "url": "http://example.com/2025/10/22/java/Java35/",
+  "image": "http://example.com/img/avatar.webp",
+  "datePublished": "2025-10-22T13:59:23.000Z",
+  "dateModified": "2026-09-12T03:03:43.795Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Lasyc",
+      "url": "http://example.com"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2025/10/22/java/Java35/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.7.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.3.1/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        const data = { value }
+
+        if (ttl != null) {
+          data.expiry = Date.now() + ttl * 86400000
+        }
+
+        localStorage.setItem(key, JSON.stringify(data))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return
+
+        try {
+          const data = JSON.parse(itemStr)
+
+          if (data.expiry && Date.now() > data.expiry) {
+            localStorage.removeItem(key)
+            return
+          }
+
+          return data.value
+        } catch {
+          localStorage.removeItem(key)
+        }
+      }
+    }
+
+    const scriptCache = new Map()
+    const cssCache = new Map()
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => {
+        if (scriptCache.has(url)) {
+          return scriptCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+
+          script.src = url
+          script.async = true
+
+          for (const key in attr) {
+            script.setAttribute(key, attr[key])
+          }
+
+          script.onload = resolve
+          script.onerror = reject
+
+          document.head.appendChild(script)
+        })
+
+        scriptCache.set(url, promise)
+
+        return promise
+      },
+      getCSS: (url, id) => {
+        if (cssCache.has(url)) {
+          return cssCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const link = document.createElement('link')
+
+          link.rel = 'stylesheet'
+          link.href = url
+
+          if (id) {
+            link.id = id
+          }
+
+          link.onload = resolve
+          link.onerror = reject
+
+          document.head.appendChild(link)
+        })
+
+        cssCache.set(url, promise)
+
+        return promise
+      },
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+      const activateDarkMode = () => {
+        document.documentElement.dataset.theme = 'dark'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.dataset.theme = 'light'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.json","preload":true,"top_n_per_article":-1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":200,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":10,"languages":{"author":"作者: Lasyc","link":"链接: ","source":"来源: Lasyc の Blog","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Java 多线程基础与线程安全',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css"><style>
+#my-aplayer {
+  position: fixed;
+  bottom: 10px;
+  left: 10px;
+  width: 320px;
+  z-index: 99999;
+  border-radius: 5px;
+  overflow: hidden;
+}
+#my-aplayer .aplayer-title,
+#my-aplayer .aplayer-author {
+  color: #333 !important;
+}
+</style>
+<meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">175</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">463</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">16</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 图库</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/top_img.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Lasyc の Blog</span></a><a class="nav-page-title" href="/"><span class="site-name">Java 多线程基础与线程安全</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 图库</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Java 多线程基础与线程安全</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-10-22T13:59:23.000Z" title="发表于 2025-10-22 21:59:23">2025-10-22</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-09-12T03:03:43.795Z" title="更新于 2026-09-12 11:03:43">2026-09-12</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%90%8E%E7%AB%AF/">后端</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%90%8E%E7%AB%AF/%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80/">语言基础</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%90%8E%E7%AB%AF/%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80/Java/">Java</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">3.7k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>14分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h2 id="多线程"><a href="#多线程" class="headerlink" title="多线程"></a>多线程</h2><p><code>线程</code>是程序执行的最小单位，是进程中的一条执行路径。Java 语言内置了对多线程编程的支持，使得我们可以轻松地创建和管理线程，从而实现并发执行任务，提高程序的性能和响应能力。</p>
+<h2 id="并发和并行"><a href="#并发和并行" class="headerlink" title="并发和并行"></a>并发和并行</h2><p>并发：在单个处理器上，通过时间片轮转等方式让多个线程交替执行，看起来像”同时”在运行。<br>并行：在多处理器（多核）系统上，多个线程真正地同时执行。</p>
+<h2 id="实现方式"><a href="#实现方式" class="headerlink" title="实现方式"></a>实现方式</h2><p>在 Java 中，创建多线程主要有三种方式：<strong>继承 <code>Thread</code> 类</strong>、<strong>实现 <code>Runnable</code> 接口</strong>、<strong>实现 <code>Callable</code> 接口</strong>，下面分别介绍。</p>
+<h3 id="继承-Thread-类"><a href="#继承-Thread-类" class="headerlink" title="继承 Thread 类"></a>继承 Thread 类</h3><p><code>Thread</code> 类是 Java 中用于创建和管理线程的核心类。通过继承 <code>Thread</code> 类，可以创建自定义的线程类，并重写它的 <code>run()</code> 方法来定义线程要执行的任务。</p>
+<p>注意：启动线程时，不要直接调用 <code>run()</code> 方法（那样只是在当前线程里执行一段普通方法），而是要调用 <code>start()</code> 方法来启动线程（<code>start()</code> 会开启一条新线程，由新线程去执行 <code>run()</code> 中的代码）。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyThread</span> <span class="keyword">extends</span> <span class="title class_">Thread</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</span><br><span class="line">            System.out.println(getName() + <span class="string">&quot; &quot;</span> +i);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">MyThread</span> <span class="variable">myThread1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MyThread</span>();</span><br><span class="line">myThread1.setName(<span class="string">&quot;Thread 1&quot;</span>);</span><br><span class="line"><span class="comment">// 不要直接调用 run 方法，而是调用 start 方法开启一条新线程</span></span><br><span class="line">myThread1.start();</span><br><span class="line"></span><br><span class="line"><span class="type">MyThread</span> <span class="variable">myThread2</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MyThread</span>();</span><br><span class="line">myThread2.setName(<span class="string">&quot;Thread 2&quot;</span>);</span><br><span class="line">myThread2.start();</span><br></pre></td></tr></table></figure>
+
+<h3 id="实现-Runnable-接口"><a href="#实现-Runnable-接口" class="headerlink" title="实现 Runnable 接口"></a>实现 Runnable 接口</h3><p><code>Runnable</code> 接口是另一种创建线程的方式。通过实现 <code>Runnable</code> 接口，可以把”线程任务”和”线程本身”分离开：同一个 <code>Runnable</code> 对象可以被多个线程共享。实现 <code>Runnable</code> 接口需要重写 <code>run()</code> 方法，然后把 <code>Runnable</code> 对象传给 <code>Thread</code> 类的构造函数来创建线程。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyRunnable</span> <span class="keyword">implements</span> <span class="title class_">Runnable</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">Thread</span> <span class="variable">thread</span> <span class="operator">=</span> Thread.currentThread();</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</span><br><span class="line">            System.out.println(thread.getName() + <span class="string">&quot; &quot;</span> + i);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建 Runnable 对象</span></span><br><span class="line"><span class="type">MyRunnable</span> <span class="variable">myRunnable</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MyRunnable</span>();</span><br><span class="line"><span class="comment">// 将 Runnable 对象传给 Thread</span></span><br><span class="line"><span class="type">Thread</span> <span class="variable">thread1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Thread</span>(myRunnable);</span><br><span class="line">thread1.setName(<span class="string">&quot;Thread 1&quot;</span>);</span><br><span class="line"><span class="comment">// 启动线程</span></span><br><span class="line">thread1.start();</span><br><span class="line"></span><br><span class="line"><span class="type">Thread</span> <span class="variable">thread2</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Thread</span>(myRunnable);</span><br><span class="line">thread2.setName(<span class="string">&quot;Thread 2&quot;</span>);</span><br><span class="line">thread2.start();</span><br></pre></td></tr></table></figure>
+
+<h3 id="实现-Callable-接口"><a href="#实现-Callable-接口" class="headerlink" title="实现 Callable 接口"></a>实现 Callable 接口</h3><p><code>Callable</code> 接口是 Java 5 引入的第三种创建线程的方式。与 <code>Runnable</code> 不同，<code>Callable</code> 的 <code>call()</code> 方法<strong>可以返回结果</strong>，并且<strong>可以抛出异常</strong>。用法：实现 <code>Callable</code> 接口并重写 <code>call()</code> 方法，把 <code>Callable</code> 对象交给 <code>FutureTask</code> 类包装，再把 <code>FutureTask</code> 对象交给 <code>Thread</code> 类来创建线程（因为 <code>Thread</code> 只认 <code>Runnable</code>，而 <code>FutureTask</code> 实现了 <code>Runnable</code>）。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyCallable</span> <span class="keyword">implements</span> <span class="title class_">Callable</span>&lt;Integer&gt; &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">Integer</span> <span class="title function_">call</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">Thread</span> <span class="variable">thread</span> <span class="operator">=</span> Thread.currentThread();</span><br><span class="line">        <span class="comment">// 求和并返回</span></span><br><span class="line">        <span class="type">int</span> <span class="variable">sum</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</span><br><span class="line">            sum += i;</span><br><span class="line">            System.out.println(thread.getName() + <span class="string">&quot; &quot;</span> + i);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> sum;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>提示：<code>Callable</code>、<code>FutureTask</code> 在 <code>java.util.concurrent</code> 包中，需要 <code>import java.util.concurrent.Callable;</code> 和 <code>import java.util.concurrent.FutureTask;</code>。</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建 Callable 对象</span></span><br><span class="line"><span class="type">MyCallable</span> <span class="variable">callable</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MyCallable</span>();</span><br><span class="line"><span class="comment">// 将 Callable 对象交给 FutureTask</span></span><br><span class="line"><span class="type">FutureTask</span>&lt;Integer&gt; <span class="variable">futureTask</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FutureTask</span>&lt;Integer&gt;(callable);</span><br><span class="line"><span class="comment">// 将 FutureTask 交给 Thread 并开启线程</span></span><br><span class="line"><span class="keyword">new</span> <span class="title class_">Thread</span>(futureTask).start();</span><br><span class="line"><span class="comment">// 通过 FutureTask 获取线程的返回值；注意 get() 会阻塞，直到线程执行完拿到结果</span></span><br><span class="line"><span class="type">Integer</span> <span class="variable">sum</span> <span class="operator">=</span> futureTask.get();</span><br><span class="line">System.out.println(sum);</span><br></pre></td></tr></table></figure>
+
+<h2 id="Thread-构造方法"><a href="#Thread-构造方法" class="headerlink" title="Thread 构造方法"></a>Thread 构造方法</h2><table>
+<thead>
+<tr>
+<th>构造方法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Thread()</td>
+<td>创建一个新的线程对象，默认线程组为当前线程的线程组，线程名称为 “Thread-x”</td>
+</tr>
+<tr>
+<td>Thread(Runnable task)</td>
+<td>创建一个新的线程对象，指定线程执行的任务</td>
+</tr>
+<tr>
+<td>Thread(ThreadGroup group, Runnable task)</td>
+<td>创建一个新的线程对象，指定线程组和线程执行的任务</td>
+</tr>
+<tr>
+<td>Thread(String name)</td>
+<td>创建一个新的线程对象，指定线程名称</td>
+</tr>
+<tr>
+<td>Thread(ThreadGroup group, String name)</td>
+<td>创建一个新的线程对象，指定线程组和线程名称</td>
+</tr>
+<tr>
+<td>Thread(Runnable task, String name)</td>
+<td>创建一个新的线程对象，指定线程执行的任务和线程名称</td>
+</tr>
+<tr>
+<td>Thread(ThreadGroup group, Runnable task, String name)</td>
+<td>创建一个新的线程对象，指定线程组、线程执行的任务和线程名称</td>
+</tr>
+<tr>
+<td>Thread(ThreadGroup group, Runnable task, String name, long stackSize)</td>
+<td>创建一个新的线程对象，指定线程组、线程执行的任务、线程名称和线程栈大小</td>
+</tr>
+<tr>
+<td>Thread(ThreadGroup group, Runnable task, String name, long stackSize, boolean inheritInheritableThreadLocals)</td>
+<td>创建一个新的线程对象，指定线程组、线程执行的任务、线程名称、线程栈大小和是否继承可继承的线程局部变量</td>
+</tr>
+</tbody></table>
+<h2 id="Thread-常用方法"><a href="#Thread-常用方法" class="headerlink" title="Thread 常用方法"></a>Thread 常用方法</h2><table>
+<thead>
+<tr>
+<th>方法名</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>currentThread()</code></td>
+<td>获取当前线程对象</td>
+</tr>
+<tr>
+<td><code>yield()</code></td>
+<td>让出当前 CPU 执行权，进入就绪状态</td>
+</tr>
+<tr>
+<td><code>sleep(long millis)</code></td>
+<td>使当前线程休眠指定的毫秒数，休眠期间让出 CPU，进入超时等待状态</td>
+</tr>
+<tr>
+<td>ofPlatform()</td>
+<td>创建一个与平台相关的线程工厂</td>
+</tr>
+<tr>
+<td>ofVirtual()</td>
+<td>创建一个虚拟线程工厂</td>
+</tr>
+<tr>
+<td>startVirtualThread(Runnable task)</td>
+<td>启动一个虚拟线程来执行指定任务</td>
+</tr>
+<tr>
+<td>isVirtual()</td>
+<td>判断当前线程是否为虚拟线程</td>
+</tr>
+<tr>
+<td>start()</td>
+<td>启动线程，调用线程的 run() 方法</td>
+</tr>
+<tr>
+<td>run()</td>
+<td>线程执行的任务代码</td>
+</tr>
+<tr>
+<td>interrupt()</td>
+<td>中断线程</td>
+</tr>
+<tr>
+<td>interrupted()</td>
+<td>静态方法，判断当前线程是否被中断，并清除中断状态</td>
+</tr>
+<tr>
+<td>isInterrupted()</td>
+<td>判断线程是否被中断，不清除中断状态</td>
+</tr>
+<tr>
+<td>isAlive()</td>
+<td>判断线程是否存活</td>
+</tr>
+<tr>
+<td><code>setPriority(int newPriority)</code> &#x2F; <code>getPriority()</code></td>
+<td>设置 &#x2F; 获取线程优先级</td>
+</tr>
+<tr>
+<td><code>setName(String name)</code> &#x2F; <code>getName()</code></td>
+<td>设置 &#x2F; 获取线程名称，线程默认名为：Thread-x</td>
+</tr>
+<tr>
+<td>getThreadGroup()</td>
+<td>获取线程所属的线程组</td>
+</tr>
+<tr>
+<td>activeCount()</td>
+<td>获取线程组中活动线程的数量</td>
+</tr>
+<tr>
+<td>enumerate(Thread[] tarray)</td>
+<td>将线程组中的活动线程复制到指定数组中</td>
+</tr>
+<tr>
+<td><code>join()</code> &#x2F; <code>join(long millis)</code></td>
+<td>等待该线程终止；带毫秒参数表示最多等待这么久</td>
+</tr>
+<tr>
+<td>dumpStack()</td>
+<td>打印当前线程的堆栈信息</td>
+</tr>
+<tr>
+<td><code>setDaemon(boolean on)</code></td>
+<td>设置线程为守护线程或用户线程</td>
+</tr>
+<tr>
+<td>isDaemon()</td>
+<td>判断线程是否为守护线程</td>
+</tr>
+<tr>
+<td>getContextClassLoader()</td>
+<td>获取线程的上下文类加载器</td>
+</tr>
+<tr>
+<td>holdsLock(Object obj)</td>
+<td>判断当前线程是否持有指定对象的锁</td>
+</tr>
+<tr>
+<td>getStackTrace()</td>
+<td>获取线程的堆栈跟踪信息</td>
+</tr>
+<tr>
+<td>getAllStackTraces()</td>
+<td>获取所有线程的堆栈跟踪信息</td>
+</tr>
+<tr>
+<td>threadId()</td>
+<td>获取线程的唯一标识符</td>
+</tr>
+<tr>
+<td>getState()</td>
+<td>获取线程的状态</td>
+</tr>
+<tr>
+<td>set &#x2F; getDefaultUncaughtExceptionHandler(UncaughtExceptionHandler ueh)</td>
+<td>设置 &#x2F; 获取线程的默认未捕获异常处理器</td>
+</tr>
+<tr>
+<td>setUncaughtExceptionHandler(UncaughtExceptionHandler ueh) &#x2F; getUncaughtExceptionHandler()</td>
+<td>设置 &#x2F; 获取线程的未捕获异常处理器</td>
+</tr>
+</tbody></table>
+<h2 id="Thread-代码示例"><a href="#Thread-代码示例" class="headerlink" title="Thread 代码示例"></a>Thread 代码示例</h2><blockquote>
+<p>下面这段代码要写在 <code>main</code> 方法里运行。注意 <code>Thread.sleep(5000)</code> 会抛出受检异常 <code>InterruptedException</code>，编译时必须处理：要么用 <code>try-catch</code> 包起来，要么给 <code>main</code> 方法加 <code>throws InterruptedException</code>。</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 获取当前线程</span></span><br><span class="line"><span class="type">Thread</span> <span class="variable">thread</span> <span class="operator">=</span> Thread.currentThread();</span><br><span class="line"><span class="comment">// 获取线程名</span></span><br><span class="line"><span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> thread.getName();</span><br><span class="line">System.out.println(name);   <span class="comment">// main</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 修改线程名</span></span><br><span class="line">thread.setName(<span class="string">&quot;thread test&quot;</span>);</span><br><span class="line">System.out.println(thread.getName());   <span class="comment">// thread test</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 睡眠</span></span><br><span class="line">System.out.println(System.currentTimeMillis()); <span class="comment">// 1761309398420</span></span><br><span class="line">Thread.sleep(<span class="number">5000</span>);</span><br><span class="line">System.out.println(System.currentTimeMillis()); <span class="comment">// 1761309403421</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="线程优先级"><a href="#线程优先级" class="headerlink" title="线程优先级"></a>线程优先级</h2><p>线程优先级是指线程在 CPU 调度中的优先级别。Java 中的线程优先级范围是 1~10，数值越大优先级越高，默认优先级为 5。可以通过 <code>setPriority()</code> 方法设置线程的优先级，通过 <code>getPriority()</code> 方法获取。</p>
+<p>注意：线程优先级只是给操作系统调度器的一个”建议”，并不保证高优先级的线程一定先执行，具体调度行为取决于操作系统的实现。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">MyThread</span> <span class="variable">thread1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MyThread</span>();</span><br><span class="line"><span class="type">MyThread</span> <span class="variable">thread2</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MyThread</span>();</span><br><span class="line"></span><br><span class="line">System.out.println(thread1.getPriority());  <span class="comment">// 5</span></span><br><span class="line">System.out.println(thread2.getPriority());  <span class="comment">// 5</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 设置线程优先级</span></span><br><span class="line">thread1.setPriority(<span class="number">1</span>);</span><br><span class="line">thread2.setPriority(<span class="number">10</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 启动线程，按理说 thread2（优先级 10）应该先执行，</span></span><br><span class="line"><span class="comment">// 但实际结果不一定：优先级高只代表被 CPU 调度的概率更大，而不是 100% 会被先调度</span></span><br><span class="line">thread1.start();</span><br><span class="line">thread2.start();</span><br></pre></td></tr></table></figure>
+
+<h2 id="守护线程"><a href="#守护线程" class="headerlink" title="守护线程"></a>守护线程</h2><p>守护线程是一种特殊的线程，它的生命周期依赖于其他非守护线程（用户线程）：当所有非守护线程都结束时，JVM 会自动终止所有守护线程。守护线程通常用于执行后台任务，如垃圾回收、日志记录等。可以通过 <code>setDaemon(true)</code> 方法把线程设置为守护线程（要在 <code>start()</code> 之前设置才有效）。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyThread1</span> <span class="keyword">extends</span> <span class="title class_">Thread</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">            System.out.println(getName() + <span class="string">&quot; &quot;</span> + i);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyThread2</span> <span class="keyword">extends</span> <span class="title class_">Thread</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; <span class="number">1000</span>; i++) &#123;</span><br><span class="line">            System.out.println(getName() + <span class="string">&quot; &quot;</span> + i);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">MyThread1</span> <span class="variable">myThread1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MyThread1</span>();</span><br><span class="line"><span class="type">MyThread2</span> <span class="variable">myThread2</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MyThread2</span>();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 设置 myThread2 为守护线程</span></span><br><span class="line">myThread2.setDaemon(<span class="literal">true</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 启动线程，当 myThread1 结束后，myThread2 也会自动结束</span></span><br><span class="line">myThread1.start();</span><br><span class="line">myThread2.start();</span><br></pre></td></tr></table></figure>
+
+<h2 id="礼让线程"><a href="#礼让线程" class="headerlink" title="礼让线程"></a>礼让线程</h2><p>礼让线程是指在多线程环境中，某个线程主动放弃当前 CPU 的使用权，让其他线程有机会执行。可以通过调用 <code>Thread.yield()</code> 方法来实现。</p>
+<p>注意：<code>yield()</code> 只是把线程从”运行中”临时让出来、回到”就绪”状态，并不保证其他线程一定会被调度到，具体行为取决于操作系统的线程调度策略。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyThread</span> <span class="keyword">extends</span> <span class="title class_">Thread</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</span><br><span class="line">            System.out.println(getName() + <span class="string">&quot; &quot;</span> + i);</span><br><span class="line">            <span class="comment">// 当 i 为 50 时，礼让线程</span></span><br><span class="line">            <span class="keyword">if</span> (i == <span class="number">50</span>) &#123;</span><br><span class="line">                System.out.println(getName() + <span class="string">&quot; 礼让线程&quot;</span>);</span><br><span class="line">                Thread.<span class="keyword">yield</span>();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">MyThread</span> <span class="variable">myThread1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MyThread</span>();</span><br><span class="line"><span class="type">MyThread</span> <span class="variable">myThread2</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MyThread</span>();</span><br><span class="line">myThread1.setName(<span class="string">&quot;Thread 1&quot;</span>);</span><br><span class="line">myThread2.setName(<span class="string">&quot;Thread 2&quot;</span>);</span><br><span class="line">myThread1.start();</span><br><span class="line">myThread2.start();</span><br></pre></td></tr></table></figure>
+
+<h2 id="插队线程"><a href="#插队线程" class="headerlink" title="插队线程"></a>插队线程</h2><p>插队线程（join）是指：某个线程通过调用 <code>Thread.join()</code> 方法，等待另一个线程执行完毕后再继续执行。这样可以协调线程的执行顺序。</p>
+<blockquote>
+<p>下面代码写在 <code>main</code> 方法里。<code>join()</code> 会抛出受检异常 <code>InterruptedException</code>，需要 <code>try-catch</code> 或给 <code>main</code> 加 <code>throws InterruptedException</code>；<code>join()</code> 还有带毫秒参数的重载（如 <code>join(1000)</code>，最多等 1 秒）。</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">MyThread</span> <span class="variable">thread</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MyThread</span>();</span><br><span class="line">thread.start();</span><br><span class="line"><span class="comment">// 让主线程等待 thread 线程执行完毕</span></span><br><span class="line">thread.join();</span><br><span class="line"><span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> Thread.currentThread().getName();</span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</span><br><span class="line">    System.out.println(name + i);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="线程的生命周期"><a href="#线程的生命周期" class="headerlink" title="线程的生命周期"></a>线程的生命周期</h2><p>线程的生命周期包括以下几个状态：</p>
+<ol>
+<li>新建状态（New）：线程对象已经被创建，但还没有调用 <code>start()</code>，此时线程还没有真正开始运行</li>
+<li>就绪状态（Runnable）：已经调用 <code>start()</code>，线程在等待 CPU 调度执行<ul>
+<li>被 CPU 调度到后，线程进入运行状态</li>
+</ul>
+</li>
+<li>运行状态（Running）：线程正在执行自己的任务代码<ul>
+<li>任务执行完毕后，进入终止状态</li>
+<li>CPU 时间片用完被抢走时，回到就绪状态</li>
+<li>运行中调用 <code>sleep()</code>、<code>wait()</code>、<code>join()</code> 等方法时，会暂停下来，进入对应的等待状态（见第 5、6 点）</li>
+</ul>
+</li>
+<li>阻塞状态（Blocked）：线程想进入 <code>synchronized</code> 代码块，但锁被其他线程占着，只能等待<ul>
+<li>等到锁被释放、自己拿到锁后，恢复到就绪状态</li>
+</ul>
+</li>
+<li>等待状态（Waiting）：线程无限期地等待另一个线程的通知<ul>
+<li>通过 <code>wait()</code>（不带时间）、<code>join()</code>（不带时间）进入</li>
+<li>被 <code>notify()</code> &#x2F; <code>notifyAll()</code> 唤醒、或等待的线程结束后，恢复到就绪状态</li>
+</ul>
+</li>
+<li>超时等待状态（Timed Waiting）：线程等待指定的一段时间，时间到了会自动恢复<ul>
+<li>通过 <code>sleep(毫秒)</code>、<code>wait(毫秒)</code>、<code>join(毫秒)</code> 进入</li>
+<li>时间一到（或中途被唤醒），恢复到就绪状态</li>
+</ul>
+</li>
+<li>终止状态（Terminated）：线程执行完毕（<code>run()</code> 正常结束，或中途抛出未捕获异常）</li>
+</ol>
+<h2 id="安全问题"><a href="#安全问题" class="headerlink" title="安全问题"></a>安全问题</h2><p>在多线程环境中，多个线程可能会同时访问共享资源，导致数据不一致或其他安全问题（比如下面例子中两个窗口把同一张票卖给了两个人）。为了确保线程安全，可以使用同步机制，如 <code>synchronized</code> 关键字、<code>Lock</code> 接口等。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyThread</span> <span class="keyword">extends</span> <span class="title class_">Thread</span> &#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="type">int</span> <span class="variable">ticked</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (ticked &lt; <span class="number">100</span>) &#123;</span><br><span class="line">                <span class="comment">// 模拟延迟</span></span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    Thread.sleep(<span class="number">100</span>);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(e);</span><br><span class="line">                &#125;</span><br><span class="line">                ticked++;</span><br><span class="line">                System.out.println(getName() + <span class="string">&quot;正在售卖第&quot;</span> + ticked + <span class="string">&quot;张票&quot;</span>);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 模拟三个窗口同时售票</span></span><br><span class="line"><span class="type">MyThread</span> <span class="variable">myThread1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MyThread</span>();</span><br><span class="line"><span class="type">MyThread</span> <span class="variable">myThread2</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MyThread</span>();</span><br><span class="line"><span class="type">MyThread</span> <span class="variable">myThread3</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MyThread</span>();</span><br><span class="line"></span><br><span class="line">myThread1.start();</span><br><span class="line">myThread2.start();</span><br><span class="line">myThread3.start();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 控制台打印输出结果，会发现，Thread-1 和 Thread-2 卖的票数会重复，导致数据不一致</span></span><br><span class="line"><span class="comment">// Thread-0正在售卖第1张票</span></span><br><span class="line"><span class="comment">// ......</span></span><br><span class="line"><span class="comment">// Thread-2正在售卖第96张票</span></span><br><span class="line"><span class="comment">// Thread-1正在售卖第97张票</span></span><br><span class="line"><span class="comment">// Thread-0正在售卖第95张票</span></span><br><span class="line"><span class="comment">// Thread-1正在售卖第99张票</span></span><br><span class="line"><span class="comment">// Thread-2正在售卖第99张票</span></span><br><span class="line"><span class="comment">// Thread-0正在售卖第100张票</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="解决线程安全问题"><a href="#解决线程安全问题" class="headerlink" title="解决线程安全问题"></a>解决线程安全问题</h2><p>线程安全问题的解决方法有很多种：如 <code>synchronized</code> 关键字、<code>Lock</code> 接口、<code>volatile</code> 关键字、原子类等（本文重点讲前两种，后几种见文末待补充的小节）。</p>
+<h3 id="synchronized-关键字"><a href="#synchronized-关键字" class="headerlink" title="synchronized 关键字"></a>synchronized 关键字</h3><p><code>synchronized</code> 关键字可以修饰<strong>方法</strong>或<strong>代码块</strong>，用来保证：同一时间只有一个线程能进入被锁住的区域，其他线程想进来必须先等锁被释放。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// synchronized 用于代码块</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyThread</span> <span class="keyword">extends</span> <span class="title class_">Thread</span> &#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="type">int</span> <span class="variable">ticked</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 创建一个锁对象，用于锁定资源，必须保证该对象是唯一的</span></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Object</span> <span class="variable">lock</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Object</span>();</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">            <span class="comment">// 锁定资源</span></span><br><span class="line">            <span class="keyword">synchronized</span> (lock) &#123;</span><br><span class="line">                <span class="keyword">if</span> (ticked &lt; <span class="number">100</span>) &#123;</span><br><span class="line">                    <span class="keyword">try</span> &#123;</span><br><span class="line">                        Thread.sleep(<span class="number">100</span>);</span><br><span class="line">                    &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(e);</span><br><span class="line">                    &#125;</span><br><span class="line">                    ticked++;</span><br><span class="line">                    System.out.println(getName() + <span class="string">&quot;正在售卖第&quot;</span> + ticked + <span class="string">&quot;张票&quot;</span>);</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// synchronized 用于方法</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyThread</span> <span class="keyword">extends</span> <span class="title class_">Thread</span> &#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="type">int</span> <span class="variable">ticked</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (method()) <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 注意：这里必须用 static synchronized。</span></span><br><span class="line">    <span class="comment">// 因为下面会 new 出三个不同的 MyThread 实例去卖票，如果 method() 是普通的实例同步方法，</span></span><br><span class="line">    <span class="comment">// 锁的是各自的 this（三把不同的锁），根本锁不住；static synchronized 锁的是 MyThread.class</span></span><br><span class="line">    <span class="comment">// 这个唯一的类对象，三个线程才用的是同一把锁，才能保证互斥。</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> <span class="type">boolean</span> <span class="title function_">method</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (ticked &lt; <span class="number">100</span>) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                Thread.sleep(<span class="number">100</span>);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(e);</span><br><span class="line">            &#125;</span><br><span class="line">            ticked++;</span><br><span class="line">            System.out.println(Thread.currentThread().getName() + <span class="string">&quot;正在售卖第&quot;</span> + ticked + <span class="string">&quot;张票&quot;</span>);</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Lock-接口"><a href="#Lock-接口" class="headerlink" title="Lock 接口"></a>Lock 接口</h3><p><code>Lock</code> 接口提供了比 <code>synchronized</code> 更灵活的控制，可以更精确地控制锁的获取与释放。常用方法：<code>lock()</code>（获取锁，拿不到就阻塞等待）、<code>tryLock()</code>（尝试获取锁，拿不到立即返回 false，不会一直等）、<code>unlock()</code>（释放锁，一般放在 finally 中，保证一定执行）。</p>
+<p><code>Lock</code> 是一个接口，所以我们需要使用它的实现类：<code>ReentrantLock</code>。</p>
+<blockquote>
+<p>注意：下面代码用到了 <code>Lock</code>、<code>ReentrantLock</code>，需要 <code>import java.util.concurrent.locks.Lock;</code> 和 <code>import java.util.concurrent.locks.ReentrantLock;</code>。</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyThread</span> <span class="keyword">extends</span> <span class="title class_">Thread</span> &#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="type">int</span> <span class="variable">ticked</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Lock</span> <span class="variable">lock</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ReentrantLock</span>();</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">            <span class="comment">// 锁定资源</span></span><br><span class="line">            lock.lock();</span><br><span class="line">            <span class="keyword">if</span> (ticked &lt; <span class="number">100</span>) &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    Thread.sleep(<span class="number">1</span>);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(e);</span><br><span class="line">                &#125;</span><br><span class="line">                ticked++;</span><br><span class="line">                System.out.println(getName() + <span class="string">&quot;正在售卖第&quot;</span> + ticked + <span class="string">&quot;张票&quot;</span>);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">// 当线程执行完毕，确保锁释放掉</span></span><br><span class="line">                lock.unlock();</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 执行完毕，确保锁释放掉</span></span><br><span class="line">            lock.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://example.com">Lasyc</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2025/10/22/java/Java35/">http://example.com/2025/10/22/java/Java35/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="http://example.com" target="_blank">Lasyc の Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/">多线程</a><a class="post-meta__tags" href="/tags/Thread/">Thread</a><a class="post-meta__tags" href="/tags/synchronized/">synchronized</a><a class="post-meta__tags" href="/tags/Lock/">Lock</a><a class="post-meta__tags" href="/tags/%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8/">线程安全</a></div><div class="post-share"><div class="social-share" data-image="/img/avatar.webp" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/10/23/java/Java36/" title="Java 死锁、等待唤醒与阻塞队列"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">Java 死锁、等待唤醒与阻塞队列</div></div><div class="info-2"><div class="info-item-1">死锁当一个线程的执行需要同时获取多把锁，但只拿到了其中一部分、剩下的锁又被其他线程占着时，就会出现：自己拿不到全部的锁无法继续执行，别的线程也等不到自己释放锁无法执行——两边互相等待，谁也无法推进，这就叫死锁。 死锁产生的根本原因可以概括为：多个线程各自持有一部分锁，同时又在等待对方持有的锁，谁也不肯先释放，从而形成僵局，程序卡死。 12345678910111213141516171819202122232425262728293031323334public class MyThread extends Thread &#123;    static int ticked = 0;    // 创建两个锁对象    static final Lock lockA = new ReentrantLock();    static final Lock lockB = new ReentrantLock();    @Override    public void run() &#123;        while (true) &#123;            if (get...</div></div></div></a><a class="pagination-related" href="/2025/10/20/java/Java34/" title="Java IO 高级流与工具类"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Java IO 高级流与工具类</div></div><div class="info-2"><div class="info-item-1">序列化流序列化流是字节流（高级流，用于包装基本流），它是 Java 对象和字节之间的桥梁：把 Java 对象转换成字节（写文件，叫序列化），或者把字节转换成 Java 对象（读回来，叫反序列化）。序列化流有两个类：ObjectOutputStream（写对象）和 ObjectInputStream（读对象）。 使用序列化流操作 Java 对象时，必须保证对象是可序列化的：类必须实现 Serializable 接口。 如果不想让某个属性参与序列化（比如密码、临时数据），可以在该属性声明时加上 transient 关键字，序列化时会跳过它。 序列化流 构造方法   构造方法 描述    ObjectInputStream(InputStream in) 创建一个 ObjectInputStream 对象，该对象将字节流转换为 Java 对象   ObjectOutputStream(OutputStream out) 创建一个 ObjectOutputStream 对象，该对象将 Java 对象转换为字节流   序列化流 常用方法序列化输入流   方法 描述    readObjec...</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Lasyc</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">175</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">463</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">16</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/lasyc"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/lasyc" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%9A%E7%BA%BF%E7%A8%8B"><span class="toc-number">1.</span> <span class="toc-text">多线程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B9%B6%E5%8F%91%E5%92%8C%E5%B9%B6%E8%A1%8C"><span class="toc-number">2.</span> <span class="toc-text">并发和并行</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F"><span class="toc-number">3.</span> <span class="toc-text">实现方式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%A7%E6%89%BF-Thread-%E7%B1%BB"><span class="toc-number">3.1.</span> <span class="toc-text">继承 Thread 类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0-Runnable-%E6%8E%A5%E5%8F%A3"><span class="toc-number">3.2.</span> <span class="toc-text">实现 Runnable 接口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0-Callable-%E6%8E%A5%E5%8F%A3"><span class="toc-number">3.3.</span> <span class="toc-text">实现 Callable 接口</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Thread-%E6%9E%84%E9%80%A0%E6%96%B9%E6%B3%95"><span class="toc-number">4.</span> <span class="toc-text">Thread 构造方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Thread-%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95"><span class="toc-number">5.</span> <span class="toc-text">Thread 常用方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Thread-%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B"><span class="toc-number">6.</span> <span class="toc-text">Thread 代码示例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E4%BC%98%E5%85%88%E7%BA%A7"><span class="toc-number">7.</span> <span class="toc-text">线程优先级</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%88%E6%8A%A4%E7%BA%BF%E7%A8%8B"><span class="toc-number">8.</span> <span class="toc-text">守护线程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A4%BC%E8%AE%A9%E7%BA%BF%E7%A8%8B"><span class="toc-number">9.</span> <span class="toc-text">礼让线程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8F%92%E9%98%9F%E7%BA%BF%E7%A8%8B"><span class="toc-number">10.</span> <span class="toc-text">插队线程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="toc-number">11.</span> <span class="toc-text">线程的生命周期</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98"><span class="toc-number">12.</span> <span class="toc-text">安全问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98"><span class="toc-number">13.</span> <span class="toc-text">解决线程安全问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#synchronized-%E5%85%B3%E9%94%AE%E5%AD%97"><span class="toc-number">13.1.</span> <span class="toc-text">synchronized 关键字</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Lock-%E6%8E%A5%E5%8F%A3"><span class="toc-number">13.2.</span> <span class="toc-text">Lock 接口</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/11/springsecurity/SpringSecurity12/" title="Spring Security 自定义 403 处理">Spring Security 自定义 403 处理</a><time datetime="2026-09-11T14:43:27.000Z" title="发表于 2026-09-11 22:43:27">2026-09-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/11/springsecurity/SpringSecurity11/" title="Spring Security 基于注解的访问控制">Spring Security 基于注解的访问控制</a><time datetime="2026-09-11T14:24:58.000Z" title="发表于 2026-09-11 22:24:58">2026-09-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/09/springsecurity/SpringSecurity10/" title="Spring Security 访问控制（授权）">Spring Security 访问控制（授权）</a><time datetime="2026-09-09T12:34:01.000Z" title="发表于 2026-09-09 20:34:01">2026-09-09</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/09/springsecurity/SpringSecurity09/" title="Spring Security 获取用户信息与自定义 UserDetails">Spring Security 获取用户信息与自定义 UserDetails</a><time datetime="2026-09-09T11:50:33.000Z" title="发表于 2026-09-09 19:50:33">2026-09-09</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/09/springsecurity/SpringSecurity08/" title="Spring Security Remember Me 与验证码">Spring Security Remember Me 与验证码</a><time datetime="2026-09-09T11:33:33.000Z" title="发表于 2026-09-09 19:33:33">2026-09-09</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/top_img.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Lasyc</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.7.0</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.7.0"></script><script src="/js/main.js?v=5.7.0"></script><div class="js-pjax"></div><script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script><script>
+(function() {
+  var myAplayer = null;
+  function createPlayer() {
+    var div = document.createElement('div');
+    div.id = 'my-aplayer';
+    document.body.appendChild(div);
+    myAplayer = new APlayer({
+      container: div,
+      mini: false,
+      autoplay: false,
+      mutex: true,
+      lrcType: 0,
+      volume: 0.7,
+      audio: [{
+        name: '这一生关于你的风景',
+        artist: '枯木逢春',
+        url: '/music/1356350562.mp3',
+        cover: '/img/1356350562.jpg'
+      }]
+    });
+  }
+  createPlayer();
+  document.addEventListener('pjax:complete', createPlayer);
+})();
+</script>
+<script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.7.0"></script></div></div></body></html>

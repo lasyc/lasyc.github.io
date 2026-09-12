@@ -9,9 +9,9 @@
 <meta property="article:published_time" content="2026-09-08T02:38:26.000Z">
 <meta property="article:modified_time" content="2026-09-12T03:08:50.488Z">
 <meta property="article:author" content="Lasyc">
+<meta property="article:tag" content="UserDetails">
 <meta property="article:tag" content="数据库认证">
 <meta property="article:tag" content="内存认证">
-<meta property="article:tag" content="UserDetails">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/img/avatar.webp"><script type="application/ld+json">{
   "@context": "https://schema.org",
@@ -203,19 +203,82 @@
   isHighlightShrink: false,
   isToc: true,
   pageType: 'post'
-}</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css"><style>
-#my-aplayer {
+}</script><link rel="stylesheet" href="https://unpkg.com/aplayer@1.10.1/dist/APlayer.min.css"><style>
+#my-aplayer-wrap {
   position: fixed;
-  bottom: 10px;
-  left: 10px;
-  width: 320px;
+  bottom: 100px;
+  left: 0;
   z-index: 99999;
-  border-radius: 5px;
+  transition: transform 0.3s ease;
+  transform: translateX(-280px);
+}
+#my-aplayer-wrap:hover,
+#my-aplayer-wrap.show {
+  transform: translateX(0);
+}
+#my-aplayer {
+  width: 320px;
+  border-radius: 0 8px 8px 0;
   overflow: hidden;
+  box-shadow: 2px 2px 16px rgba(0,0,0,0.15);
 }
 #my-aplayer .aplayer-title,
 #my-aplayer .aplayer-author {
   color: #333 !important;
+}
+/* 吸附小耳朵 */
+#player-tab {
+  position: absolute;
+  right: -36px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 80px;
+  background: linear-gradient(135deg, #e91e63, #ff5722);
+  border-radius: 0 12px 12px 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 16px;
+  box-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+  writing-mode: vertical-rl;
+  letter-spacing: 2px;
+  user-select: none;
+}
+#player-tab:hover {
+  background: linear-gradient(135deg, #c2185b, #e64a19);
+}
+
+/* 移动端自动隐藏 */
+@media screen and (max-width: 768px) {
+  #my-aplayer-wrap {
+    transform: translateX(-360px);
+    pointer-events: none;
+  }
+  #my-aplayer-wrap.show {
+    transform: translateX(0);
+    pointer-events: auto;
+  }
+  #player-tab {
+    pointer-events: auto;
+    right: -32px;
+    width: 32px;
+    height: 64px;
+    font-size: 14px;
+    border-radius: 0 10px 10px 0;
+  }
+}
+
+/* 动画入场 */
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-360px); }
+  to   { opacity: 1; transform: translateX(-280px); }
+}
+#my-aplayer-wrap {
+  animation: slideIn 0.8s ease forwards;
+  animation-delay: 1s;
 }
 </style>
 <meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">175</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">463</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">16</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 图库</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/top_img.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Lasyc の Blog</span></a><a class="nav-page-title" href="/"><span class="site-name">Spring Security 数据库认证与内存认证</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 图库</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Spring Security 数据库认证与内存认证</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-09-08T02:38:26.000Z" title="发表于 2026-09-08 10:38:26">2026-09-08</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-09-12T03:08:50.488Z" title="更新于 2026-09-12 11:08:50">2026-09-12</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%90%8E%E7%AB%AF/">后端</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%90%8E%E7%AB%AF/%E6%A1%86%E6%9E%B6/">框架</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%90%8E%E7%AB%AF/%E6%A1%86%E6%9E%B6/Spring-Security/">Spring Security</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">2.5k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>11分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h2 id="基于数据库的认证"><a href="#基于数据库的认证" class="headerlink" title="基于数据库的认证"></a>基于数据库的认证</h2><h3 id="引入依赖"><a href="#引入依赖" class="headerlink" title="引入依赖"></a>引入依赖</h3><p>这里持久层使用 MyBatis-Plus</p>
@@ -330,13 +393,65 @@
 <p>先使用 <code>bCryptPasswordEncoder</code> 将 <code>123456</code> 加密。然后将加密后的密文添加到数据库中，随后便可以登录成功</p>
 <h2 id="基于内存的认证"><a href="#基于内存的认证" class="headerlink" title="基于内存的认证"></a>基于内存的认证</h2><p>我们可以通过 <code>InMemoryUserDetailsManager</code> 配置内置用户信息，即无需通过数据库查询，只存在于内存中的用户信息</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SecurityConfig</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">BCryptPasswordEncoder</span> <span class="title function_">bCryptPasswordEncoder</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">BCryptPasswordEncoder</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">InMemoryUserDetailsManager</span> <span class="title function_">inMemoryUserDetailsManager</span><span class="params">(BCryptPasswordEncoder bCryptPasswordEncoder)</span> &#123;</span><br><span class="line">        <span class="type">UserDetails</span> <span class="variable">admin</span> <span class="operator">=</span> User.builder()</span><br><span class="line">                .username(<span class="string">&quot;admin&quot;</span>)</span><br><span class="line">                .password(bCryptPasswordEncoder.encode(<span class="string">&quot;123456&quot;</span>))</span><br><span class="line">                .authorities(Collections.emptyList())</span><br><span class="line">                .build();</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">InMemoryUserDetailsManager</span>(List.of(admin));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://example.com">Lasyc</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2026/09/08/springsecurity/SpringSecurity05/">http://example.com/2026/09/08/springsecurity/SpringSecurity05/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="http://example.com" target="_blank">Lasyc の Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%A4%E8%AF%81/">数据库认证</a><a class="post-meta__tags" href="/tags/%E5%86%85%E5%AD%98%E8%AE%A4%E8%AF%81/">内存认证</a><a class="post-meta__tags" href="/tags/UserDetails/">UserDetails</a></div><div class="post-share"><div class="social-share" data-image="/img/avatar.webp" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/09/08/springsecurity/SpringSecurity06/" title="Spring Security 自定义登录页面"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">Spring Security 自定义登录页面</div></div><div class="info-2"><div class="info-item-1">创建登录页面虽然 Spring Security 为我们提供了登录页，但是太简陋了，所以实际开发时并不会使用，而是使用我们自己的登录页，而且仅限于前后端不分离的情况下。 既然是前后端不分离的场景，那我们常用的前端技术就是 Thymeleaf 引入依赖1234&lt;dependency&gt;    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;    &lt;artifactId&gt;spring-boot-starter-thymeleaf&lt;/artifactId&gt;&lt;/dependency&gt;  创建登录页在 templates 路径下新建 HTML 文件 login.html 1234567891011121314151617181920212223&lt;form action=&quot;/login&quot; method=&quot;POST&quot;&gt;  &lt;div class=&quot;form-group&quot;&gt;    &lt;label for...</div></div></div></a><a class="pagination-related" href="/2026/09/07/springboot/SpringBoot25/" title="Spring Boot 自动装配与内嵌容器"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Spring Boot 自动装配与内嵌容器</div></div><div class="info-2"><div class="info-item-1">自动装配原理refresh 第 5 步解析启动类时，会碰到 @SpringBootApplication 上的 @EnableAutoConfiguration，自动装配的入口就在这。 入口：@EnableAutoConfiguration1234@Import(AutoConfigurationImportSelector.class)public @interface EnableAutoConfiguration &#123;    ...&#125;  AutoConfigurationImportSelector 是一个 DeferredImportSelector。Deferred（延迟）的意思是：它不会在解析到 @EnableAutoConfiguration 时立刻导入，而是等我（用户）自己写的所有 @Configuration、@Bean、@ComponentScan 都处理完之后，再统一导入自动配置类。这样就保证了”自定义优先，自动配置兜底“：我注册的 @Bean 在先，自动配置里那些 @ConditionalOnMissingBean 一看容器里已经有了，就...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/09/09/springsecurity/SpringSecurity09/" title="Spring Security 获取用户信息与自定义 UserDetails"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-09-09</div><div class="info-item-2">Spring Security 获取用户信息与自定义 UserDetails</div></div><div class="info-2"><div class="info-item-1">获取用户信息Spring Security 会将当前登录用户的认证信息存储在 SecurityContext，而 SecurityContext 又通过 ThreadLocal 绑定到当前线程，以此来确保线程安全 Authentication 对象包含两个核心信息：  principal：用户主体，通常是 UserDetails 的实现类 credentials：凭证，一般是密码，认证完成后会被擦除 authorities：用户拥有的权限集合  实现方法一通过 SecurityContextHolder 手动获取 1234567891011121314151617181920212223242526@ResponseBody@GetMapping(&quot;/authentication&quot;)public Object authentication() &#123;    SecurityContext context = SecurityContextHolder.getContext();    return context.getAuthentication();...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Lasyc</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">175</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">463</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">16</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/lasyc"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/lasyc" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E8%AE%A4%E8%AF%81"><span class="toc-number">1.</span> <span class="toc-text">基于数据库的认证</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%95%E5%85%A5%E4%BE%9D%E8%B5%96"><span class="toc-number">1.1.</span> <span class="toc-text">引入依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E6%95%B0%E6%8D%AE%E6%BA%90"><span class="toc-number">1.2.</span> <span class="toc-text">配置数据源</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BB%BA%E8%A1%A8"><span class="toc-number">1.3.</span> <span class="toc-text">建表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B"><span class="toc-number">1.4.</span> <span class="toc-text">逆向工程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%A4%E8%AF%81%E6%B5%81%E7%A8%8B"><span class="toc-number">1.5.</span> <span class="toc-text">认证流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%86%E7%A0%81%E5%8A%A0%E5%AF%86%EF%BC%88PasswordEncoder-%E6%8E%A5%E5%8F%A3%EF%BC%89"><span class="toc-number">1.6.</span> <span class="toc-text">密码加密（PasswordEncoder 接口）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#BCryptPasswordEncoder"><span class="toc-number">1.7.</span> <span class="toc-text">BCryptPasswordEncoder</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8E%E5%86%85%E5%AD%98%E7%9A%84%E8%AE%A4%E8%AF%81"><span class="toc-number">2.</span> <span class="toc-text">基于内存的认证</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/11/springsecurity/SpringSecurity12/" title="Spring Security 自定义 403 处理">Spring Security 自定义 403 处理</a><time datetime="2026-09-11T14:43:27.000Z" title="发表于 2026-09-11 22:43:27">2026-09-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/11/springsecurity/SpringSecurity11/" title="Spring Security 基于注解的访问控制">Spring Security 基于注解的访问控制</a><time datetime="2026-09-11T14:24:58.000Z" title="发表于 2026-09-11 22:24:58">2026-09-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/09/springsecurity/SpringSecurity10/" title="Spring Security 访问控制（授权）">Spring Security 访问控制（授权）</a><time datetime="2026-09-09T12:34:01.000Z" title="发表于 2026-09-09 20:34:01">2026-09-09</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/09/springsecurity/SpringSecurity09/" title="Spring Security 获取用户信息与自定义 UserDetails">Spring Security 获取用户信息与自定义 UserDetails</a><time datetime="2026-09-09T11:50:33.000Z" title="发表于 2026-09-09 19:50:33">2026-09-09</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/09/springsecurity/SpringSecurity08/" title="Spring Security Remember Me 与验证码">Spring Security Remember Me 与验证码</a><time datetime="2026-09-09T11:33:33.000Z" title="发表于 2026-09-09 19:33:33">2026-09-09</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/top_img.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Lasyc</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.7.0</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.7.0"></script><script src="/js/main.js?v=5.7.0"></script><div class="js-pjax"></div><script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script><script>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://example.com">Lasyc</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2026/09/08/springsecurity/SpringSecurity05/">http://example.com/2026/09/08/springsecurity/SpringSecurity05/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="http://example.com" target="_blank">Lasyc の Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/UserDetails/">UserDetails</a><a class="post-meta__tags" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%A4%E8%AF%81/">数据库认证</a><a class="post-meta__tags" href="/tags/%E5%86%85%E5%AD%98%E8%AE%A4%E8%AF%81/">内存认证</a></div><div class="post-share"><div class="social-share" data-image="/img/avatar.webp" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/09/08/springsecurity/SpringSecurity06/" title="Spring Security 自定义登录页面"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">Spring Security 自定义登录页面</div></div><div class="info-2"><div class="info-item-1">创建登录页面虽然 Spring Security 为我们提供了登录页，但是太简陋了，所以实际开发时并不会使用，而是使用我们自己的登录页，而且仅限于前后端不分离的情况下。 既然是前后端不分离的场景，那我们常用的前端技术就是 Thymeleaf 引入依赖1234&lt;dependency&gt;    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;    &lt;artifactId&gt;spring-boot-starter-thymeleaf&lt;/artifactId&gt;&lt;/dependency&gt;  创建登录页在 templates 路径下新建 HTML 文件 login.html 1234567891011121314151617181920212223&lt;form action=&quot;/login&quot; method=&quot;POST&quot;&gt;  &lt;div class=&quot;form-group&quot;&gt;    &lt;label for...</div></div></div></a><a class="pagination-related" href="/2026/09/07/springboot/SpringBoot25/" title="Spring Boot 自动装配与内嵌容器"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Spring Boot 自动装配与内嵌容器</div></div><div class="info-2"><div class="info-item-1">自动装配原理refresh 第 5 步解析启动类时，会碰到 @SpringBootApplication 上的 @EnableAutoConfiguration，自动装配的入口就在这。 入口：@EnableAutoConfiguration1234@Import(AutoConfigurationImportSelector.class)public @interface EnableAutoConfiguration &#123;    ...&#125;  AutoConfigurationImportSelector 是一个 DeferredImportSelector。Deferred（延迟）的意思是：它不会在解析到 @EnableAutoConfiguration 时立刻导入，而是等我（用户）自己写的所有 @Configuration、@Bean、@ComponentScan 都处理完之后，再统一导入自动配置类。这样就保证了”自定义优先，自动配置兜底“：我注册的 @Bean 在先，自动配置里那些 @ConditionalOnMissingBean 一看容器里已经有了，就...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/09/09/springsecurity/SpringSecurity09/" title="Spring Security 获取用户信息与自定义 UserDetails"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-09-09</div><div class="info-item-2">Spring Security 获取用户信息与自定义 UserDetails</div></div><div class="info-2"><div class="info-item-1">获取用户信息Spring Security 会将当前登录用户的认证信息存储在 SecurityContext，而 SecurityContext 又通过 ThreadLocal 绑定到当前线程，以此来确保线程安全 Authentication 对象包含两个核心信息：  principal：用户主体，通常是 UserDetails 的实现类 credentials：凭证，一般是密码，认证完成后会被擦除 authorities：用户拥有的权限集合  实现方法一通过 SecurityContextHolder 手动获取 1234567891011121314151617181920212223242526@ResponseBody@GetMapping(&quot;/authentication&quot;)public Object authentication() &#123;    SecurityContext context = SecurityContextHolder.getContext();    return context.getAuthentication();...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Lasyc</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">175</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">463</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">16</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/lasyc"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/lasyc" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E8%AE%A4%E8%AF%81"><span class="toc-number">1.</span> <span class="toc-text">基于数据库的认证</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%95%E5%85%A5%E4%BE%9D%E8%B5%96"><span class="toc-number">1.1.</span> <span class="toc-text">引入依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E6%95%B0%E6%8D%AE%E6%BA%90"><span class="toc-number">1.2.</span> <span class="toc-text">配置数据源</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BB%BA%E8%A1%A8"><span class="toc-number">1.3.</span> <span class="toc-text">建表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B"><span class="toc-number">1.4.</span> <span class="toc-text">逆向工程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%A4%E8%AF%81%E6%B5%81%E7%A8%8B"><span class="toc-number">1.5.</span> <span class="toc-text">认证流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%86%E7%A0%81%E5%8A%A0%E5%AF%86%EF%BC%88PasswordEncoder-%E6%8E%A5%E5%8F%A3%EF%BC%89"><span class="toc-number">1.6.</span> <span class="toc-text">密码加密（PasswordEncoder 接口）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#BCryptPasswordEncoder"><span class="toc-number">1.7.</span> <span class="toc-text">BCryptPasswordEncoder</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8E%E5%86%85%E5%AD%98%E7%9A%84%E8%AE%A4%E8%AF%81"><span class="toc-number">2.</span> <span class="toc-text">基于内存的认证</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/11/springsecurity/SpringSecurity12/" title="Spring Security 自定义 403 处理">Spring Security 自定义 403 处理</a><time datetime="2026-09-11T14:43:27.000Z" title="发表于 2026-09-11 22:43:27">2026-09-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/11/springsecurity/SpringSecurity11/" title="Spring Security 基于注解的访问控制">Spring Security 基于注解的访问控制</a><time datetime="2026-09-11T14:24:58.000Z" title="发表于 2026-09-11 22:24:58">2026-09-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/09/springsecurity/SpringSecurity10/" title="Spring Security 访问控制（授权）">Spring Security 访问控制（授权）</a><time datetime="2026-09-09T12:34:01.000Z" title="发表于 2026-09-09 20:34:01">2026-09-09</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/09/springsecurity/SpringSecurity09/" title="Spring Security 获取用户信息与自定义 UserDetails">Spring Security 获取用户信息与自定义 UserDetails</a><time datetime="2026-09-09T11:50:33.000Z" title="发表于 2026-09-09 19:50:33">2026-09-09</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/09/springsecurity/SpringSecurity08/" title="Spring Security Remember Me 与验证码">Spring Security Remember Me 与验证码</a><time datetime="2026-09-09T11:33:33.000Z" title="发表于 2026-09-09 19:33:33">2026-09-09</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/top_img.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Lasyc</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.7.0</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.7.0"></script><script src="/js/main.js?v=5.7.0"></script><div class="js-pjax"></div><script src="https://unpkg.com/aplayer@1.10.1/dist/APlayer.min.js"></script><script>
 (function() {
   var myAplayer = null;
+  var autoHideTimer = null;
+
   function createPlayer() {
+    if (myAplayer) {
+      try { myAplayer.destroy(); } catch(e) {}
+      myAplayer = null;
+    }
+
+    var oldWrap = document.getElementById('my-aplayer-wrap');
+    if (oldWrap) oldWrap.remove();
+
+    // 外层包裹
+    var wrap = document.createElement('div');
+    wrap.id = 'my-aplayer-wrap';
+
+    // 小耳朵按钮
+    var tab = document.createElement('div');
+    tab.id = 'player-tab';
+    tab.innerHTML = '♪';
+    tab.title = '音乐播放器';
+
+    // 播放器容器
     var div = document.createElement('div');
     div.id = 'my-aplayer';
-    document.body.appendChild(div);
+
+    wrap.appendChild(div);
+    wrap.appendChild(tab);
+    document.body.appendChild(wrap);
+
+    // 点击耳朵展开/收起
+    tab.addEventListener('click', function(e) {
+      e.stopPropagation();
+      wrap.classList.toggle('show');
+    });
+
+    // 点击页面其他地方收起
+    document.addEventListener('click', function(e) {
+      if (!wrap.contains(e.target)) {
+        wrap.classList.remove('show');
+      }
+    });
+
+    // 移动端自动收起：展开后 5 秒无操作自动隐藏
+    wrap.addEventListener('mouseenter', function() {
+      clearTimeout(autoHideTimer);
+    });
+    wrap.addEventListener('mouseleave', function() {
+      startAutoHide(wrap);
+    });
+    // 触屏展开后自动收起
+    wrap.addEventListener('touchstart', function() {
+      clearTimeout(autoHideTimer);
+      startAutoHide(wrap);
+    });
+
+    // 初始化 APlayer
     myAplayer = new APlayer({
       container: div,
       mini: false,
@@ -344,14 +459,31 @@
       mutex: true,
       lrcType: 0,
       volume: 0.7,
+      preload: 'auto',
       audio: [{
-        name: '这一生关于你的风景',
-        artist: '枯木逢春',
-        url: '/music/1356350562.mp3',
-        cover: '/img/1356350562.jpg'
+        name: '歌曲名',
+        artist: '歌手',
+        url: '/music/song.mp3',
+        cover: '/music/cover.jpg'
       }]
     });
+
+    // pjax 后保留播放状态
+    myAplayer.on('play', function() {
+      window.__myAudioState = {
+        url: myAplayer.audio.src,
+        currentTime: myAplayer.audio.currentTime
+      };
+    });
   }
+
+  function startAutoHide(wrap) {
+    clearTimeout(autoHideTimer);
+    autoHideTimer = setTimeout(function() {
+      wrap.classList.remove('show');
+    }, 5000);
+  }
+
   createPlayer();
   document.addEventListener('pjax:complete', createPlayer);
 })();

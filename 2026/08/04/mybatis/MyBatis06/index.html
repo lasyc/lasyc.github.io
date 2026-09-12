@@ -203,19 +203,82 @@
   isHighlightShrink: false,
   isToc: true,
   pageType: 'post'
-}</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css"><style>
-#my-aplayer {
+}</script><link rel="stylesheet" href="https://unpkg.com/aplayer@1.10.1/dist/APlayer.min.css"><style>
+#my-aplayer-wrap {
   position: fixed;
-  bottom: 10px;
-  left: 10px;
-  width: 320px;
+  bottom: 100px;
+  left: 0;
   z-index: 99999;
-  border-radius: 5px;
+  transition: transform 0.3s ease;
+  transform: translateX(-280px);
+}
+#my-aplayer-wrap:hover,
+#my-aplayer-wrap.show {
+  transform: translateX(0);
+}
+#my-aplayer {
+  width: 320px;
+  border-radius: 0 8px 8px 0;
   overflow: hidden;
+  box-shadow: 2px 2px 16px rgba(0,0,0,0.15);
 }
 #my-aplayer .aplayer-title,
 #my-aplayer .aplayer-author {
   color: #333 !important;
+}
+/* 吸附小耳朵 */
+#player-tab {
+  position: absolute;
+  right: -36px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 80px;
+  background: linear-gradient(135deg, #e91e63, #ff5722);
+  border-radius: 0 12px 12px 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 16px;
+  box-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+  writing-mode: vertical-rl;
+  letter-spacing: 2px;
+  user-select: none;
+}
+#player-tab:hover {
+  background: linear-gradient(135deg, #c2185b, #e64a19);
+}
+
+/* 移动端自动隐藏 */
+@media screen and (max-width: 768px) {
+  #my-aplayer-wrap {
+    transform: translateX(-360px);
+    pointer-events: none;
+  }
+  #my-aplayer-wrap.show {
+    transform: translateX(0);
+    pointer-events: auto;
+  }
+  #player-tab {
+    pointer-events: auto;
+    right: -32px;
+    width: 32px;
+    height: 64px;
+    font-size: 14px;
+    border-radius: 0 10px 10px 0;
+  }
+}
+
+/* 动画入场 */
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-360px); }
+  to   { opacity: 1; transform: translateX(-280px); }
+}
+#my-aplayer-wrap {
+  animation: slideIn 0.8s ease forwards;
+  animation-delay: 1s;
 }
 </style>
 <meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">175</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">463</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">16</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 图库</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/top_img.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Lasyc の Blog</span></a><a class="nav-page-title" href="/"><span class="site-name">MyBatis 查询</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 图库</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">MyBatis 查询</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-08-04T11:47:27.000Z" title="发表于 2026-08-04 19:47:27">2026-08-04</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-09-12T03:00:39.288Z" title="更新于 2026-09-12 11:00:39">2026-09-12</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%90%8E%E7%AB%AF/">后端</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%90%8E%E7%AB%AF/%E6%A1%86%E6%9E%B6/">框架</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%90%8E%E7%AB%AF/%E6%A1%86%E6%9E%B6/MyBatis/">MyBatis</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">826</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>3分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h2 id="查询结果为一个对象"><a href="#查询结果为一个对象" class="headerlink" title="查询结果为一个对象"></a>查询结果为一个对象</h2><p>如果可以确定查询结果只有<code>一条记录</code>，那么可以使用<code>一个对象</code>来接收，或者使用<code>集合</code>来接收。</p>
@@ -276,13 +339,65 @@
 <td>一个集合（对象、Map）、一个 Map（需要使用 @MapKey 声明 key）</td>
 </tr>
 </tbody></table>
-</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://example.com">Lasyc</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2026/08/04/mybatis/MyBatis06/">http://example.com/2026/08/04/mybatis/MyBatis06/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="http://example.com" target="_blank">Lasyc の Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E6%9F%A5%E8%AF%A2%E7%BB%93%E6%9E%9C/">查询结果</a><a class="post-meta__tags" href="/tags/resultType/">resultType</a><a class="post-meta__tags" href="/tags/%E7%BB%93%E6%9E%9C%E5%B0%81%E8%A3%85/">结果封装</a></div><div class="post-share"><div class="social-share" data-image="/img/avatar.webp" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/08/04/mybatis/MyBatis07/" title="MyBatis 特殊 SQL"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">MyBatis 特殊 SQL</div></div><div class="info-2"><div class="info-item-1">模糊查询在模糊查询中，如果直接使用 #&#123;&#125; 来获取参数，将会报错，因为在模糊查询的 SQL 中需要写引号，当占位符处于引号中时就无法生效。 1List&lt;User&gt; getUserByLike(@Param(&quot;username&quot;) String username);  12345678910 &lt;!--    1.如果使用 #&#123;username&#125;    这里的 SQL 会被解析为 SELECT * FROM t_user WHERE username LIKE &#x27;%?&#x27;    此时 ? 被单引号包围，并不会被认为是占位符，因此参数无法设置，    会报错：Could not set parameters for mapping......--&gt;&lt;select id=&quot;getUserByLike&quot; resultType=&quot;User&quot;&gt;    SELECT * FROM t_user WHERE username LIKE &#x27...</div></div></div></a><a class="pagination-related" href="/2026/08/03/mybatis/MyBatis05/" title="MyBatis 获取参数"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">MyBatis 获取参数</div></div><div class="info-2"><div class="info-item-1">搭建 MyBatis 开发环境引入依赖 123456789101112131415161718&lt;dependencies&gt;    &lt;dependency&gt;        &lt;groupId&gt;org.mybatis&lt;/groupId&gt;        &lt;artifactId&gt;mybatis&lt;/artifactId&gt;        &lt;version&gt;3.5.19&lt;/version&gt;    &lt;/dependency&gt;    &lt;dependency&gt;        &lt;groupId&gt;com.mysql&lt;/groupId&gt;        &lt;artifactId&gt;mysql-connector-j&lt;/artifactId&gt;        &lt;version&gt;9.7.0&lt;/version&gt;    &lt;/dependency&gt;    &lt;dependency&gt;        &lt;group...</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Lasyc</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">175</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">463</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">16</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/lasyc"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/lasyc" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9F%A5%E8%AF%A2%E7%BB%93%E6%9E%9C%E4%B8%BA%E4%B8%80%E4%B8%AA%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.</span> <span class="toc-text">查询结果为一个对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9F%A5%E8%AF%A2%E7%BB%93%E6%9E%9C%E4%B8%BA%E4%B8%80%E4%B8%AA%E9%9B%86%E5%90%88"><span class="toc-number">2.</span> <span class="toc-text">查询结果为一个集合</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9F%A5%E8%AF%A2%E7%BB%93%E6%9E%9C%E4%B8%BA%E4%B8%80%E4%B8%AA%E5%80%BC"><span class="toc-number">3.</span> <span class="toc-text">查询结果为一个值</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9F%A5%E8%AF%A2%E7%BB%93%E6%9E%9C%E4%B8%BA%E4%B8%80%E4%B8%AA-Map"><span class="toc-number">4.</span> <span class="toc-text">查询结果为一个 Map</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">5.</span> <span class="toc-text">总结</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/11/springsecurity/SpringSecurity12/" title="Spring Security 自定义 403 处理">Spring Security 自定义 403 处理</a><time datetime="2026-09-11T14:43:27.000Z" title="发表于 2026-09-11 22:43:27">2026-09-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/11/springsecurity/SpringSecurity11/" title="Spring Security 基于注解的访问控制">Spring Security 基于注解的访问控制</a><time datetime="2026-09-11T14:24:58.000Z" title="发表于 2026-09-11 22:24:58">2026-09-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/09/springsecurity/SpringSecurity10/" title="Spring Security 访问控制（授权）">Spring Security 访问控制（授权）</a><time datetime="2026-09-09T12:34:01.000Z" title="发表于 2026-09-09 20:34:01">2026-09-09</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/09/springsecurity/SpringSecurity09/" title="Spring Security 获取用户信息与自定义 UserDetails">Spring Security 获取用户信息与自定义 UserDetails</a><time datetime="2026-09-09T11:50:33.000Z" title="发表于 2026-09-09 19:50:33">2026-09-09</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/09/springsecurity/SpringSecurity08/" title="Spring Security Remember Me 与验证码">Spring Security Remember Me 与验证码</a><time datetime="2026-09-09T11:33:33.000Z" title="发表于 2026-09-09 19:33:33">2026-09-09</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/top_img.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Lasyc</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.7.0</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.7.0"></script><script src="/js/main.js?v=5.7.0"></script><div class="js-pjax"></div><script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script><script>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://example.com">Lasyc</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2026/08/04/mybatis/MyBatis06/">http://example.com/2026/08/04/mybatis/MyBatis06/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="http://example.com" target="_blank">Lasyc の Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E6%9F%A5%E8%AF%A2%E7%BB%93%E6%9E%9C/">查询结果</a><a class="post-meta__tags" href="/tags/resultType/">resultType</a><a class="post-meta__tags" href="/tags/%E7%BB%93%E6%9E%9C%E5%B0%81%E8%A3%85/">结果封装</a></div><div class="post-share"><div class="social-share" data-image="/img/avatar.webp" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/08/04/mybatis/MyBatis07/" title="MyBatis 特殊 SQL"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">MyBatis 特殊 SQL</div></div><div class="info-2"><div class="info-item-1">模糊查询在模糊查询中，如果直接使用 #&#123;&#125; 来获取参数，将会报错，因为在模糊查询的 SQL 中需要写引号，当占位符处于引号中时就无法生效。 1List&lt;User&gt; getUserByLike(@Param(&quot;username&quot;) String username);  12345678910 &lt;!--    1.如果使用 #&#123;username&#125;    这里的 SQL 会被解析为 SELECT * FROM t_user WHERE username LIKE &#x27;%?&#x27;    此时 ? 被单引号包围，并不会被认为是占位符，因此参数无法设置，    会报错：Could not set parameters for mapping......--&gt;&lt;select id=&quot;getUserByLike&quot; resultType=&quot;User&quot;&gt;    SELECT * FROM t_user WHERE username LIKE &#x27...</div></div></div></a><a class="pagination-related" href="/2026/08/03/mybatis/MyBatis05/" title="MyBatis 获取参数"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">MyBatis 获取参数</div></div><div class="info-2"><div class="info-item-1">搭建 MyBatis 开发环境引入依赖 123456789101112131415161718&lt;dependencies&gt;    &lt;dependency&gt;        &lt;groupId&gt;org.mybatis&lt;/groupId&gt;        &lt;artifactId&gt;mybatis&lt;/artifactId&gt;        &lt;version&gt;3.5.19&lt;/version&gt;    &lt;/dependency&gt;    &lt;dependency&gt;        &lt;groupId&gt;com.mysql&lt;/groupId&gt;        &lt;artifactId&gt;mysql-connector-j&lt;/artifactId&gt;        &lt;version&gt;9.7.0&lt;/version&gt;    &lt;/dependency&gt;    &lt;dependency&gt;        &lt;group...</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Lasyc</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">175</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">463</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">16</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/lasyc"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/lasyc" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9F%A5%E8%AF%A2%E7%BB%93%E6%9E%9C%E4%B8%BA%E4%B8%80%E4%B8%AA%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.</span> <span class="toc-text">查询结果为一个对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9F%A5%E8%AF%A2%E7%BB%93%E6%9E%9C%E4%B8%BA%E4%B8%80%E4%B8%AA%E9%9B%86%E5%90%88"><span class="toc-number">2.</span> <span class="toc-text">查询结果为一个集合</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9F%A5%E8%AF%A2%E7%BB%93%E6%9E%9C%E4%B8%BA%E4%B8%80%E4%B8%AA%E5%80%BC"><span class="toc-number">3.</span> <span class="toc-text">查询结果为一个值</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9F%A5%E8%AF%A2%E7%BB%93%E6%9E%9C%E4%B8%BA%E4%B8%80%E4%B8%AA-Map"><span class="toc-number">4.</span> <span class="toc-text">查询结果为一个 Map</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">5.</span> <span class="toc-text">总结</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/11/springsecurity/SpringSecurity12/" title="Spring Security 自定义 403 处理">Spring Security 自定义 403 处理</a><time datetime="2026-09-11T14:43:27.000Z" title="发表于 2026-09-11 22:43:27">2026-09-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/11/springsecurity/SpringSecurity11/" title="Spring Security 基于注解的访问控制">Spring Security 基于注解的访问控制</a><time datetime="2026-09-11T14:24:58.000Z" title="发表于 2026-09-11 22:24:58">2026-09-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/09/springsecurity/SpringSecurity10/" title="Spring Security 访问控制（授权）">Spring Security 访问控制（授权）</a><time datetime="2026-09-09T12:34:01.000Z" title="发表于 2026-09-09 20:34:01">2026-09-09</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/09/springsecurity/SpringSecurity09/" title="Spring Security 获取用户信息与自定义 UserDetails">Spring Security 获取用户信息与自定义 UserDetails</a><time datetime="2026-09-09T11:50:33.000Z" title="发表于 2026-09-09 19:50:33">2026-09-09</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/09/springsecurity/SpringSecurity08/" title="Spring Security Remember Me 与验证码">Spring Security Remember Me 与验证码</a><time datetime="2026-09-09T11:33:33.000Z" title="发表于 2026-09-09 19:33:33">2026-09-09</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/top_img.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Lasyc</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.7.0</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.7.0"></script><script src="/js/main.js?v=5.7.0"></script><div class="js-pjax"></div><script src="https://unpkg.com/aplayer@1.10.1/dist/APlayer.min.js"></script><script>
 (function() {
   var myAplayer = null;
+  var autoHideTimer = null;
+
   function createPlayer() {
+    if (myAplayer) {
+      try { myAplayer.destroy(); } catch(e) {}
+      myAplayer = null;
+    }
+
+    var oldWrap = document.getElementById('my-aplayer-wrap');
+    if (oldWrap) oldWrap.remove();
+
+    // 外层包裹
+    var wrap = document.createElement('div');
+    wrap.id = 'my-aplayer-wrap';
+
+    // 小耳朵按钮
+    var tab = document.createElement('div');
+    tab.id = 'player-tab';
+    tab.innerHTML = '♪';
+    tab.title = '音乐播放器';
+
+    // 播放器容器
     var div = document.createElement('div');
     div.id = 'my-aplayer';
-    document.body.appendChild(div);
+
+    wrap.appendChild(div);
+    wrap.appendChild(tab);
+    document.body.appendChild(wrap);
+
+    // 点击耳朵展开/收起
+    tab.addEventListener('click', function(e) {
+      e.stopPropagation();
+      wrap.classList.toggle('show');
+    });
+
+    // 点击页面其他地方收起
+    document.addEventListener('click', function(e) {
+      if (!wrap.contains(e.target)) {
+        wrap.classList.remove('show');
+      }
+    });
+
+    // 移动端自动收起：展开后 5 秒无操作自动隐藏
+    wrap.addEventListener('mouseenter', function() {
+      clearTimeout(autoHideTimer);
+    });
+    wrap.addEventListener('mouseleave', function() {
+      startAutoHide(wrap);
+    });
+    // 触屏展开后自动收起
+    wrap.addEventListener('touchstart', function() {
+      clearTimeout(autoHideTimer);
+      startAutoHide(wrap);
+    });
+
+    // 初始化 APlayer
     myAplayer = new APlayer({
       container: div,
       mini: false,
@@ -290,14 +405,31 @@
       mutex: true,
       lrcType: 0,
       volume: 0.7,
+      preload: 'auto',
       audio: [{
-        name: '这一生关于你的风景',
-        artist: '枯木逢春',
-        url: '/music/1356350562.mp3',
-        cover: '/img/1356350562.jpg'
+        name: '歌曲名',
+        artist: '歌手',
+        url: '/music/song.mp3',
+        cover: '/music/cover.jpg'
       }]
     });
+
+    // pjax 后保留播放状态
+    myAplayer.on('play', function() {
+      window.__myAudioState = {
+        url: myAplayer.audio.src,
+        currentTime: myAplayer.audio.currentTime
+      };
+    });
   }
+
+  function startAutoHide(wrap) {
+    clearTimeout(autoHideTimer);
+    autoHideTimer = setTimeout(function() {
+      wrap.classList.remove('show');
+    }, 5000);
+  }
+
   createPlayer();
   document.addEventListener('pjax:complete', createPlayer);
 })();

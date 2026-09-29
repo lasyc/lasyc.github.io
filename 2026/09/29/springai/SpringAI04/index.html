@@ -1,0 +1,345 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Spring AI 工具调用 | Lasyc の Blog</title><meta name="author" content="Lasyc"><meta name="copyright" content="Lasyc"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="概述工具调用——即 AI 模型调用应用定义的函数并根据其结果行动的能力——是智能人工智能系统的核心构建模块。只能生成文本的模型是聊天机器人；能够发现信息、采取行动并循环直到达成目标的模型称为代理（Agent）。 工具调用的执行流程：模型根据对话决定调用某个工具 → 框架执行对应方法并拿到返回值 → 返回值作为消息回传给模型 → 模型结合结果继续生成回复（循环进行直到不再需要调用工具）。 工具有两大">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring AI 工具调用">
+<meta property="og:url" content="http://example.com/2026/09/29/springai/SpringAI04/index.html">
+<meta property="og:site_name" content="Lasyc の Blog">
+<meta property="og:description" content="概述工具调用——即 AI 模型调用应用定义的函数并根据其结果行动的能力——是智能人工智能系统的核心构建模块。只能生成文本的模型是聊天机器人；能够发现信息、采取行动并循环直到达成目标的模型称为代理（Agent）。 工具调用的执行流程：模型根据对话决定调用某个工具 → 框架执行对应方法并拿到返回值 → 返回值作为消息回传给模型 → 模型结合结果继续生成回复（循环进行直到不再需要调用工具）。 工具有两大">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/avatar.webp">
+<meta property="article:published_time" content="2026-09-29T11:42:55.000Z">
+<meta property="article:modified_time" content="2026-09-29T13:16:07.425Z">
+<meta property="article:author" content="Lasyc">
+<meta property="article:tag" content="Spring AI">
+<meta property="article:tag" content="工具调用">
+<meta property="article:tag" content="@Tool">
+<meta property="article:tag" content="ToolCallback">
+<meta property="article:tag" content="Function Calling">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/avatar.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Spring AI 工具调用",
+  "url": "http://example.com/2026/09/29/springai/SpringAI04/",
+  "image": "http://example.com/img/avatar.webp",
+  "datePublished": "2026-09-29T11:42:55.000Z",
+  "dateModified": "2026-09-29T13:16:07.425Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Lasyc",
+      "url": "http://example.com"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2026/09/29/springai/SpringAI04/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.7.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.3.1/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        const data = { value }
+
+        if (ttl != null) {
+          data.expiry = Date.now() + ttl * 86400000
+        }
+
+        localStorage.setItem(key, JSON.stringify(data))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return
+
+        try {
+          const data = JSON.parse(itemStr)
+
+          if (data.expiry && Date.now() > data.expiry) {
+            localStorage.removeItem(key)
+            return
+          }
+
+          return data.value
+        } catch {
+          localStorage.removeItem(key)
+        }
+      }
+    }
+
+    const scriptCache = new Map()
+    const cssCache = new Map()
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => {
+        if (scriptCache.has(url)) {
+          return scriptCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+
+          script.src = url
+          script.async = true
+
+          for (const key in attr) {
+            script.setAttribute(key, attr[key])
+          }
+
+          script.onload = resolve
+          script.onerror = reject
+
+          document.head.appendChild(script)
+        })
+
+        scriptCache.set(url, promise)
+
+        return promise
+      },
+      getCSS: (url, id) => {
+        if (cssCache.has(url)) {
+          return cssCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const link = document.createElement('link')
+
+          link.rel = 'stylesheet'
+          link.href = url
+
+          if (id) {
+            link.id = id
+          }
+
+          link.onload = resolve
+          link.onerror = reject
+
+          document.head.appendChild(link)
+        })
+
+        cssCache.set(url, promise)
+
+        return promise
+      },
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+      const activateDarkMode = () => {
+        document.documentElement.dataset.theme = 'dark'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.dataset.theme = 'light'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.json","preload":true,"top_n_per_article":-1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":200,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":10,"languages":{"author":"作者: Lasyc","link":"链接: ","source":"来源: Lasyc の Blog","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Spring AI 工具调用',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">192</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">504</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">17</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 图库</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/top_img.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Lasyc の Blog</span></a><a class="nav-page-title" href="/"><span class="site-name">Spring AI 工具调用</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 图库</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Spring AI 工具调用</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-09-29T11:42:55.000Z" title="发表于 2026-09-29 19:42:55">2026-09-29</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-09-29T13:16:07.425Z" title="更新于 2026-09-29 21:16:07">2026-09-29</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%90%8E%E7%AB%AF/">后端</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%90%8E%E7%AB%AF/%E6%A1%86%E6%9E%B6/">框架</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%90%8E%E7%AB%AF/%E6%A1%86%E6%9E%B6/Spring-AI/">Spring AI</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">2.2k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>7分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>工具调用——即 AI 模型调用应用定义的函数并根据其结果行动的能力——是智能人工智能系统的核心构建模块。只能生成文本的模型是聊天机器人；能够发现信息、采取行动并循环直到达成目标的模型称为代理（Agent）。</p>
+<p>工具调用的执行流程：模型根据对话决定调用某个工具 → 框架执行对应方法并拿到返回值 → 返回值作为消息回传给模型 → 模型结合结果继续生成回复（循环进行直到不再需要调用工具）。</p>
+<p>工具有两大用途：</p>
+<ol>
+<li><p>信息检索——通过数据库、网络服务、文件系统或搜索引擎的数据来补充模型的知识。举例：获取当前天气、查询客户记录、查找最新新闻。</p>
+</li>
+<li><p>采取行动——在系统中执行操作。例如：发送邮件、预订机票、更新记录、触发工作流程。</p>
+</li>
+</ol>
+<h2 id="工具调用实现"><a href="#工具调用实现" class="headerlink" title="工具调用实现"></a>工具调用实现</h2><h3 id="创建自定义的-Tool"><a href="#创建自定义的-Tool" class="headerlink" title="创建自定义的 Tool"></a>创建自定义的 Tool</h3><p>我们需要使用 <code>@Tool</code> 注解标注方法来定义工具，并通过 <code>description</code> 属性描述该工具的用途：</p>
+<p>官网示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.ai.tool.annotation.Tool;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.i18n.LocaleContextHolder;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">DateTimeTools</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Tool(description = &quot;Get the current date and time in the user&#x27;s timezone&quot;)</span></span><br><span class="line">    <span class="type">String</span> <span class="title function_">getCurrentDateTime</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> LocalDateTime.now().atZone(LocaleContextHolder.getTimeZone().toZoneId()).toString();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Tool(description = &quot;Set a user alarm for the given time, provided in ISO-8601 format&quot;)</span></span><br><span class="line">    <span class="type">void</span> <span class="title function_">setAlarm</span><span class="params">(String time)</span> &#123;</span><br><span class="line">        <span class="type">LocalDateTime</span> <span class="variable">alarmTime</span> <span class="operator">=</span> LocalDateTime.parse(time, DateTimeFormatter.ISO_DATE_TIME);</span><br><span class="line">        System.out.println(<span class="string">&quot;Alarm set for &quot;</span> + alarmTime);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Spring AI 提供了三种定义工具的方式，从最省事到最灵活：</p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>@Tool 注解</th>
+<th>MethodToolCallback</th>
+<th>FunctionToolCallback</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>本质</td>
+<td>声明式，标注在方法上</td>
+<td>编程式，包装一个反射 Method</td>
+<td>编程式，包装一个函数式对象</td>
+</tr>
+<tr>
+<td>代码量</td>
+<td>最少</td>
+<td>较多</td>
+<td>中等</td>
+</tr>
+<tr>
+<td>工具定义来源</td>
+<td>注解 + 方法签名自动生成</td>
+<td>builder 手动&#x2F;半自动构建</td>
+<td>builder 手动指定 name&#x2F;description&#x2F;inputType</td>
+</tr>
+<tr>
+<td>适合谁写的代码</td>
+<td>你自己拥有的类</td>
+<td>别人的类、无法改源码</td>
+<td>lambda、方法引用、已有 Function</td>
+</tr>
+<tr>
+<td>运行时动态构建</td>
+<td>不方便</td>
+<td>非常适合</td>
+<td>适合</td>
+</tr>
+<tr>
+<td>参数 schema 生成</td>
+<td>由方法参数自动推导（支持 @ToolParam 等注解）</td>
+<td>同左（因为底层还是方法）</td>
+<td>由 inputType（通常是 record&#x2F;POJO）生成</td>
+</tr>
+<tr>
+<td>AOT&#x2F;GraalVM 支持</td>
+<td>需要类是 Spring bean 或加 @RegisterReflection</td>
+<td>同左</td>
+<td>天然友好（不依赖方法反射）</td>
+</tr>
+</tbody></table>
+<p>三者的共同点（先记住这些，就不用死记区别了）：</p>
+<ul>
+<li>最终都产出 <code>ToolCallback</code>——这是”工具”在 Spring AI 里的统一抽象：<code>ToolDefinition</code>（<code>name</code> + <code>description</code> + <code>inputSchema</code>，即<strong>模型看到的部分</strong>）+ 执行逻辑（<code>call(...)</code>）。三种方式<strong>可以自由混用</strong>。</li>
+<li>注册方式完全相同：<code>defaultTools(...)</code> &#x2F; <code>tools(...)</code> 既接受 <code>@Tool</code> 的普通对象，也接受 <code>ToolCallback</code>、<code>ToolCallbackProvider</code> 对象，可以混着传。</li>
+<li>模型侧无感知：模型只拿到一份 JSON Schema，不关心你背后是注解、反射还是 lambda。</li>
+</ul>
+<p>三者的区别只有一件事：<strong>工具定义（name、description、参数 schema）从哪来</strong>——是注解和方法签名替你自动生成，还是你在代码里手动指定。</p>
+<h4 id="Tool"><a href="#Tool" class="headerlink" title="@Tool"></a>@Tool</h4><p>注解方式，样板代码最少，也是最常用的方式。</p>
+<p>工作方式：框架在运行时读取方法上的注解和方法签名，自动生成 <code>ToolDefinition</code>（<code>name</code> 默认取方法名、参数 schema 由参数类型推导），再包装成可执行的工具——你只管写方法。</p>
+<p>该注解提供了四个属性：</p>
+<ol>
+<li><code>name</code>：为该方法起别名，全局唯一，默认为方法名，如：<code>getCurrentDateTime</code></li>
+<li><code>description</code>：工具描述，尽可能详细——AI 完全依赖它决定什么场景调用哪个工具，务必认真写</li>
+<li><code>returnDirect</code>：工具执行结果是直接返回给用户（<code>true</code>），还是交回模型继续推理（<code>false</code>，默认）</li>
+<li><code>resultConverter</code>：结果转换器，把方法返回值转换成回传给模型的字符串</li>
+</ol>
+<p>除此之外，我们还可以使用 <code>@ToolParam</code> 注解来为参数添加描述，确保 AI 可以正确传递参数：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">WeatherTools</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Tool(description = &quot;Get the weather for a city at a specific time&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">String</span> <span class="title function_">getWeather</span><span class="params">(</span></span><br><span class="line"><span class="params">            <span class="meta">@ToolParam(description = &quot;City name&quot;)</span> String city,</span></span><br><span class="line"><span class="params">            <span class="meta">@ToolParam(description = &quot;Time in ISO-8601 format&quot;, required = false)</span> String at)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> weatherService.fetch(city, at);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>要点与适用场景：</p>
+<ul>
+<li>方法可以是 <code>public</code> &#x2F; 包私有 &#x2F; <code>private</code>，也可以是 <code>static</code> 或实例方法；工具类<strong>不必须</strong>是 Spring Bean，<code>new</code> 出来直接传给 <code>tools(...)</code> 就行。</li>
+<li>参数默认<strong>全部必填</strong>，可选用 <code>@ToolParam(required = false)</code> 或 <code>@Nullable</code> 标记可选——必填标得不准、模型又拿不到值时，它会自己”编”一个，这是常见幻觉来源之一。</li>
+<li>打 GraalVM native 镜像（AOT 编译）时，所在类需要是 Spring Bean 或加 <code>@RegisterReflection</code>。</li>
+<li><strong>适用场景</strong>：方法在你自己拥有的类里——绝大多数情况选它就对了。</li>
+</ul>
+<h4 id="MethodToolCallback"><a href="#MethodToolCallback" class="headerlink" title="MethodToolCallback"></a>MethodToolCallback</h4><p>手动包装一个<strong>已存在的方法</strong>（<code>java.lang.reflect.Method</code> + 目标对象），全程不依赖注解。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Method</span> <span class="variable">method</span> <span class="operator">=</span> ReflectionUtils.findMethod(WeatherTools.class, <span class="string">&quot;getWeather&quot;</span>, String.class);</span><br><span class="line"></span><br><span class="line"><span class="type">MethodToolCallback</span> <span class="variable">callback</span> <span class="operator">=</span> MethodToolCallback.builder()</span><br><span class="line">    .toolDefinition(ToolDefinitions.builder(method)</span><br><span class="line">        .description(<span class="string">&quot;Get the current weather for a given city&quot;</span>)</span><br><span class="line">        .build())</span><br><span class="line">    .toolMethod(method)</span><br><span class="line">    .toolObject(<span class="keyword">new</span> <span class="title class_">WeatherTools</span>())</span><br><span class="line">    .build();</span><br></pre></td></tr></table></figure>
+
+<p>适用场景（什么时候非它不可）：</p>
+<ol>
+<li>方法存在、但<strong>你改不了它的源码</strong>——第三方 SDK、遗留代码、JDK 方法，没法在上面加 <code>@Tool</code>；</li>
+<li>工具定义需要<strong>运行时动态生成</strong>——<code>name</code> &#x2F; <code>description</code> 从配置文件、数据库里读取，按需查找方法拼装出工具。</li>
+</ol>
+<p>要点：</p>
+<ul>
+<li><code>toolObject</code>：实例方法必填，<code>static</code> 方法可省略；</li>
+<li>没有注解可用，<code>name</code> 按方法名生成，<code>description</code> 要像示例那样手动写进 <code>ToolDefinitions.builder(method)</code>；</li>
+<li>和 <code>@Tool</code> 的关系：<code>@Tool</code> 在运行时本质上走的就是这条路径，两者执行行为一致，区别只在”定义从哪来”（注解自动 vs 手动指定）；</li>
+<li>限制：方法的参数和返回值不能是 <code>Optional</code>、<code>CompletableFuture</code> 等异步类型、<code>Mono</code>&#x2F;<code>Flux</code> 等响应式类型、<code>Function</code> 等函数类型——这些生成不了模型能理解的 schema（<code>@Tool</code> 同理）。</li>
+</ul>
+<h4 id="FunctionToolCallback"><a href="#FunctionToolCallback" class="headerlink" title="FunctionToolCallback"></a>FunctionToolCallback</h4><p>包装一个<strong>函数式对象</strong>：<code>Function</code>、<code>Supplier</code>、<code>Consumer</code>、<code>BiFunction</code>——包括 lambda 和方法引用。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">FunctionToolCallback</span> <span class="variable">callback</span> <span class="operator">=</span> FunctionToolCallback.builder(<span class="string">&quot;currentWeather&quot;</span>, weatherService::getWeather)</span><br><span class="line">    .description(<span class="string">&quot;Get the weather in location&quot;</span>)</span><br><span class="line">    .inputType(WeatherRequest.class)   <span class="comment">// 用这个类型生成 JSON Schema</span></span><br><span class="line">    .build();</span><br></pre></td></tr></table></figure>
+
+<p>要点：</p>
+<ul>
+<li>关键区别：参数 schema **不看方法签名，看 <code>inputType</code>**——指定一个 record&#x2F;POJO 类，框架按它的字段生成 JSON Schema，调用时把模型返回的 JSON 反序列化成该对象再交给函数；</li>
+<li>函数只有一个入参（即 <code>inputType</code> 对象）；需要 <code>ToolContext</code>（租户 ID、用户 ID 等不给模型看的数据）时，可用 <code>BiFunction</code> 形式接收上下文。</li>
+</ul>
+<p>适用场景：</p>
+<ol>
+<li>工具逻辑本来就是 lambda、方法引用或现成的 <code>Function</code>（如示例的 <code>weatherService::getWeather</code>）；</li>
+<li>想用一个 record 集中描述入参（配合 <code>@JsonClassDescription</code> &#x2F; <code>@JsonPropertyDescription</code> 写字段说明）；</li>
+<li>想把工具注册成 <code>@Bean</code> 全局复用——Spring AI 自动发现容器中的 <code>ToolCallback</code> Bean，注入后直接传给 <code>tools(...)</code>。</li>
+</ol>
+<h4 id="选择建议（决策树）"><a href="#选择建议（决策树）" class="headerlink" title="选择建议（决策树）"></a>选择建议（决策树）</h4><ol>
+<li>方法是你自己写的类，且不想折腾 → <code>@Tool</code>（默认首选，能覆盖九成场景）</li>
+<li>方法在别人的类里 &#x2F; 改不了源码，或 name、description 要从配置、数据库动态生成 → <code>MethodToolCallback</code></li>
+<li>逻辑是 lambda、方法引用或现成的 <code>Function</code>，或想用 record 定义入参 → <code>FunctionToolCallback</code></li>
+<li>同一个工具想在多处复用 → 注册成 <code>ToolCallback</code> Bean（<code>@Bean</code> 返回上面任意一种），Spring AI 自动发现</li>
+</ol>
+<p>拿不准时不用纠结：三者可以混着传，先用 <code>@Tool</code>，遇到它覆盖不了的场景再换成对应方式。</p>
+<h3 id="编写-Controller"><a href="#编写-Controller" class="headerlink" title="编写 Controller"></a>编写 Controller</h3><p>构建 ChatClient 时，通过 <code>defaultTools()</code> 来设置默认的工具</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 调用 ChatClient.builder 并指定模型，生成对应的 ChatClient 实例</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> chatModel AI 聊天模型</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="type">public</span> <span class="title function_">ChatController</span><span class="params">(OpenAiChatModel chatModel)</span> &#123;</span><br><span class="line">    <span class="built_in">this</span>.chatClient = ChatClient.builder(chatModel).defaultSystem(DEFAULT_SYSTEM).defaultTools(<span class="keyword">new</span> <span class="title class_">DateTimeTools</span>()).build();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>或者在本次调用时通过 <code>tools</code> 方法为该请求添加工具对象：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping(value = &quot;/chat&quot;, produces = &quot;text/html;charset=utf-8&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="type">Flux</span>&lt;String&gt; <span class="title function_">chat</span><span class="params">(<span class="meta">@RequestParam(value = &quot;message&quot;, defaultValue = &quot;你好&quot;)</span> String message)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> chatClient.prompt().user(message).tools(<span class="keyword">new</span> <span class="title class_">DateTimeTools</span>()).stream().content();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意：per-call 的 <code>tools(...)</code> 是在 <code>defaultTools(...)</code> 基础上<strong>追加</strong>而不是替换——最终发给模型的工具列表是两者之和。另外 <code>defaultTools(...)</code> 对同一 <code>ChatClient</code> 构建出的所有请求都生效，破坏性、高危类工具更适合按请求用 <code>tools(...)</code> 传递。</p>
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><p>访问 <code>http://localhost:8080/ai/chat?message=你知道现在的时间么？你是如何知道的</code></p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">现在的时间是 <span class="strong">**2026年9月29日 20:06:22**</span>（东八区，上海时区）。 我是通过调用系统提供的 <span class="code">`getCurrentDateTime`</span> 工具来获取当前时间的。这个工具会返回用户所在时区的实时日期和时间，所以我不需要自己“猜测”时间，而是直接从系统获取准确数据。这样无论你在哪个时区，我都能告诉你正确的时间哦！😊</span><br></pre></td></tr></table></figure>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://example.com">Lasyc</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2026/09/29/springai/SpringAI04/">http://example.com/2026/09/29/springai/SpringAI04/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="http://example.com" target="_blank">Lasyc の Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Spring-AI/">Spring AI</a><a class="post-meta__tags" href="/tags/%E5%B7%A5%E5%85%B7%E8%B0%83%E7%94%A8/">工具调用</a><a class="post-meta__tags" href="/tags/Tool/">@Tool</a><a class="post-meta__tags" href="/tags/ToolCallback/">ToolCallback</a><a class="post-meta__tags" href="/tags/Function-Calling/">Function Calling</a></div><div class="post-share"><div class="social-share" data-image="/img/avatar.webp" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/09/29/springai/SpringAI05/" title="Spring AI Ollama"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">Spring AI Ollama</div></div><div class="info-2"><div class="info-item-1">Ollama官网地址 安装步骤略 拉取本例使用的模型（已安装可跳过）： 1ollama pull deepseek-r1:1.5b  添加依赖之前使用的是 OpenAI，这次需要修改为 Ollama 1234&lt;dependency&gt;    &lt;groupId&gt;org.springframework.ai&lt;/groupId&gt;    &lt;artifactId&gt;spring-ai-starter-model-ollama&lt;/artifactId&gt;&lt;/dependency&gt;   注意是替换而不是新增：如果 OpenAI 和 Ollama 的启动器同时存在，容器里会出现多个 ChatModel Bean，按类型注入时会报错。  配置文件1234567spring:  ai:    ollama:      base-url: http://localhost:11434      chat:        options:          model: deepseek-r1:1.5b  编写 Controller123...</div></div></div></a><a class="pagination-related" href="/2026/09/28/springai/SpringAI03/" title="Spring AI 聊天模型"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Spring AI 聊天模型</div></div><div class="info-2"><div class="info-item-1">ChatClient 接口ChatClient 是 Spring AI 提供的与 AI 模型交互的客户端接口，通过 ChatClient.builder 创建实例，用链式（Fluent）风格构建请求，用法上类似于 WebClient &#x2F; RestClient。 实现简单的对话123456789101112131415161718192021222324@RestController@RequestMapping(&quot;/ai&quot;)public class ChatController &#123;    private final ChatClient chatClient;    /**     * 调用 ChatClient.builder 并指定模型，生成对应的 ChatClient 实例     *     * @param chatModel AI 聊天模型     */    public ChatController(OpenAiChatModel chatModel) &#123;        this.chatClient = Chat...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/09/28/springai/SpringAI02/" title="Spring AI 快速入门"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-09-28</div><div class="info-item-2">Spring AI 快速入门</div></div><div class="info-2"><div class="info-item-1">准备工作什么是 MiMo略，这里使用 MiMo（也可以换成 DeepSeek 等其他兼容 OpenAI 接口的大模型服务，只需更换 base-url、api-key、model 配置） 获取 API Key略 创建 Spring Boot 工程引入依赖12345678910&lt;!-- MVC 依赖 --&gt;&lt;dependency&gt;    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;    &lt;artifactId&gt;spring-boot-starter-webmvc&lt;/artifactId&gt;&lt;/dependency&gt;&lt;!-- OpenAI 依赖 --&gt;&lt;dependency&gt;    &lt;groupId&gt;org.springframework.ai&lt;/groupId&gt;    &lt;artifactId&gt;spring-ai-starter-model-openai&lt;/artifactId&gt;&lt;/d...</div></div></div></a><a class="pagination-related" href="/2026/09/28/springai/SpringAI03/" title="Spring AI 聊天模型"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-09-28</div><div class="info-item-2">Spring AI 聊天模型</div></div><div class="info-2"><div class="info-item-1">ChatClient 接口ChatClient 是 Spring AI 提供的与 AI 模型交互的客户端接口，通过 ChatClient.builder 创建实例，用链式（Fluent）风格构建请求，用法上类似于 WebClient &#x2F; RestClient。 实现简单的对话123456789101112131415161718192021222324@RestController@RequestMapping(&quot;/ai&quot;)public class ChatController &#123;    private final ChatClient chatClient;    /**     * 调用 ChatClient.builder 并指定模型，生成对应的 ChatClient 实例     *     * @param chatModel AI 聊天模型     */    public ChatController(OpenAiChatModel chatModel) &#123;        this.chatClient = Chat...</div></div></div></a><a class="pagination-related" href="/2026/09/24/springai/SpringAI01/" title="Spring AI 简介"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-09-24</div><div class="info-item-2">Spring AI 简介</div></div><div class="info-2"><div class="info-item-1">Spring AI 是什么中文文档 Spring AI 是一个用于 AI 工程的应用框架。其目标是将 Spring 生态系统的设计原则应用于 AI 领域（如可移植性、模块化设计），并把「POJO 作为应用构建块」这一理念推广到人工智能领域。 Spring AI 的主要功能Spring AI 提供以下功能：  支持所有主流的人工智能模型提供商，如 Anthropic、OpenAI、Microsoft、Amazon、Google 和 Ollama。支持的模型类型包括： 聊天补全（Chat Completion） 嵌入（Embedding） 文本转图像（Text to Image） 音频转录（Audio Transcription） 文本转语音（Text to Speech） 内容审核（Moderation）   提供跨 AI 提供商的可移植 API，支持同步和流式两种调用方式，同时也能访问模型专属功能。 结构化输出——将 AI 模型的输出自动映射到 POJO。 支持所有主流的向量数据库提供商，如 Apache Cassandra、Azure Vector Search、Chroma、...</div></div></div></a><a class="pagination-related" href="/2026/09/29/springai/SpringAI05/" title="Spring AI Ollama"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-09-29</div><div class="info-item-2">Spring AI Ollama</div></div><div class="info-2"><div class="info-item-1">Ollama官网地址 安装步骤略 拉取本例使用的模型（已安装可跳过）： 1ollama pull deepseek-r1:1.5b  添加依赖之前使用的是 OpenAI，这次需要修改为 Ollama 1234&lt;dependency&gt;    &lt;groupId&gt;org.springframework.ai&lt;/groupId&gt;    &lt;artifactId&gt;spring-ai-starter-model-ollama&lt;/artifactId&gt;&lt;/dependency&gt;   注意是替换而不是新增：如果 OpenAI 和 Ollama 的启动器同时存在，容器里会出现多个 ChatModel Bean，按类型注入时会报错。  配置文件1234567spring:  ai:    ollama:      base-url: http://localhost:11434      chat:        options:          model: deepseek-r1:1.5b  编写 Controller123...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Lasyc</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">192</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">504</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">17</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/lasyc"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/lasyc" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0"><span class="toc-number">1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B7%A5%E5%85%B7%E8%B0%83%E7%94%A8%E5%AE%9E%E7%8E%B0"><span class="toc-number">2.</span> <span class="toc-text">工具调用实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E8%87%AA%E5%AE%9A%E4%B9%89%E7%9A%84-Tool"><span class="toc-number">2.1.</span> <span class="toc-text">创建自定义的 Tool</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Tool"><span class="toc-number">2.1.1.</span> <span class="toc-text">@Tool</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#MethodToolCallback"><span class="toc-number">2.1.2.</span> <span class="toc-text">MethodToolCallback</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#FunctionToolCallback"><span class="toc-number">2.1.3.</span> <span class="toc-text">FunctionToolCallback</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%80%89%E6%8B%A9%E5%BB%BA%E8%AE%AE%EF%BC%88%E5%86%B3%E7%AD%96%E6%A0%91%EF%BC%89"><span class="toc-number">2.1.4.</span> <span class="toc-text">选择建议（决策树）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%96%E5%86%99-Controller"><span class="toc-number">2.2.</span> <span class="toc-text">编写 Controller</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B5%8B%E8%AF%95"><span class="toc-number">2.3.</span> <span class="toc-text">测试</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/29/springai/SpringAI05/" title="Spring AI Ollama">Spring AI Ollama</a><time datetime="2026-09-29T12:30:49.000Z" title="发表于 2026-09-29 20:30:49">2026-09-29</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/29/springai/SpringAI04/" title="Spring AI 工具调用">Spring AI 工具调用</a><time datetime="2026-09-29T11:42:55.000Z" title="发表于 2026-09-29 19:42:55">2026-09-29</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/28/springai/SpringAI03/" title="Spring AI 聊天模型">Spring AI 聊天模型</a><time datetime="2026-09-28T12:06:50.000Z" title="发表于 2026-09-28 20:06:50">2026-09-28</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/28/springai/SpringAI02/" title="Spring AI 快速入门">Spring AI 快速入门</a><time datetime="2026-09-28T11:48:41.000Z" title="发表于 2026-09-28 19:48:41">2026-09-28</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/24/springai/SpringAI01/" title="Spring AI 简介">Spring AI 简介</a><time datetime="2026-09-24T14:38:26.000Z" title="发表于 2026-09-24 22:38:26">2026-09-24</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/top_img.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Lasyc</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.7.0</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.7.0"></script><script src="/js/main.js?v=5.7.0"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.7.0"></script></div></div></body></html>

@@ -1,0 +1,280 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Spring AI Tools | Lasyc の Blog</title><meta name="author" content="Lasyc"><meta name="copyright" content="Lasyc"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Tool在前面的示例中，AI 大模型的能力都仅限于聊天，为了让 AI 大模型具有更多的能力，我们可以让 AI 大模型调用我们提供的 API 以此来让 AI 具备一些额外的能力，比如：文件的创建、读写，数据库的增删改查，电子邮件的发送等等 工程搭建搭建一个简易的对话工程 访问 http:&#x2F;&#x2F;localhost:8080&#x2F;chat?message&#x3D;现在是几月几号几点几分&amp;conversatio">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring AI Tools">
+<meta property="og:url" content="http://example.com/2026/10/04/springai/SpringAI10/index.html">
+<meta property="og:site_name" content="Lasyc の Blog">
+<meta property="og:description" content="Tool在前面的示例中，AI 大模型的能力都仅限于聊天，为了让 AI 大模型具有更多的能力，我们可以让 AI 大模型调用我们提供的 API 以此来让 AI 具备一些额外的能力，比如：文件的创建、读写，数据库的增删改查，电子邮件的发送等等 工程搭建搭建一个简易的对话工程 访问 http:&#x2F;&#x2F;localhost:8080&#x2F;chat?message&#x3D;现在是几月几号几点几分&amp;conversatio">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/avatar.webp">
+<meta property="article:published_time" content="2026-10-04T10:37:47.000Z">
+<meta property="article:modified_time" content="2026-10-04T16:37:57.759Z">
+<meta property="article:author" content="Lasyc">
+<meta property="article:tag" content="Spring AI">
+<meta property="article:tag" content="Tools">
+<meta property="article:tag" content="工具调用">
+<meta property="article:tag" content="@Tool">
+<meta property="article:tag" content="@ToolParam">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/avatar.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Spring AI Tools",
+  "url": "http://example.com/2026/10/04/springai/SpringAI10/",
+  "image": "http://example.com/img/avatar.webp",
+  "datePublished": "2026-10-04T10:37:47.000Z",
+  "dateModified": "2026-10-04T16:37:57.759Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Lasyc",
+      "url": "http://example.com"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2026/10/04/springai/SpringAI10/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.7.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.3.1/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        const data = { value }
+
+        if (ttl != null) {
+          data.expiry = Date.now() + ttl * 86400000
+        }
+
+        localStorage.setItem(key, JSON.stringify(data))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return
+
+        try {
+          const data = JSON.parse(itemStr)
+
+          if (data.expiry && Date.now() > data.expiry) {
+            localStorage.removeItem(key)
+            return
+          }
+
+          return data.value
+        } catch {
+          localStorage.removeItem(key)
+        }
+      }
+    }
+
+    const scriptCache = new Map()
+    const cssCache = new Map()
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => {
+        if (scriptCache.has(url)) {
+          return scriptCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+
+          script.src = url
+          script.async = true
+
+          for (const key in attr) {
+            script.setAttribute(key, attr[key])
+          }
+
+          script.onload = resolve
+          script.onerror = reject
+
+          document.head.appendChild(script)
+        })
+
+        scriptCache.set(url, promise)
+
+        return promise
+      },
+      getCSS: (url, id) => {
+        if (cssCache.has(url)) {
+          return cssCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const link = document.createElement('link')
+
+          link.rel = 'stylesheet'
+          link.href = url
+
+          if (id) {
+            link.id = id
+          }
+
+          link.onload = resolve
+          link.onerror = reject
+
+          document.head.appendChild(link)
+        })
+
+        cssCache.set(url, promise)
+
+        return promise
+      },
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+      const activateDarkMode = () => {
+        document.documentElement.dataset.theme = 'dark'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.dataset.theme = 'light'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.json","preload":true,"top_n_per_article":-1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":200,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":10,"languages":{"author":"作者: Lasyc","link":"链接: ","source":"来源: Lasyc の Blog","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Spring AI Tools',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">198</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">519</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">17</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 图库</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/top_img.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Lasyc の Blog</span></a><a class="nav-page-title" href="/"><span class="site-name">Spring AI Tools</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 图库</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Spring AI Tools</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-10-04T10:37:47.000Z" title="发表于 2026-10-04 18:37:47">2026-10-04</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-10-04T16:37:57.759Z" title="更新于 2026-10-05 00:37:57">2026-10-05</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%90%8E%E7%AB%AF/">后端</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%90%8E%E7%AB%AF/%E6%A1%86%E6%9E%B6/">框架</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%90%8E%E7%AB%AF/%E6%A1%86%E6%9E%B6/Spring-AI/">Spring AI</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">1.3k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>4分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h2 id="Tool"><a href="#Tool" class="headerlink" title="Tool"></a>Tool</h2><p>在前面的示例中，AI 大模型的能力都仅限于聊天，为了让 AI 大模型具有更多的能力，我们可以让 AI 大模型调用我们提供的 API 以此来让 AI 具备一些额外的能力，比如：文件的创建、读写，数据库的增删改查，电子邮件的发送等等</p>
+<h2 id="工程搭建"><a href="#工程搭建" class="headerlink" title="工程搭建"></a>工程搭建</h2><p>搭建一个简易的对话工程</p>
+<p>访问 <code>http://localhost:8080/chat?message=现在是几月几号几点几分&amp;conversationId=123456</code>，等待 AI 回复：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">抱歉，我无法获取实时的日期和时间信息。我是一个语言模型，没有连接到实时时钟或网络，因此不知道现在具体的日期和时间。</span><br><span class="line"></span><br><span class="line">建议您通过以下方式查看当前时间：</span><br><span class="line"></span><br><span class="line"><span class="bullet">-</span> 📱 查看您的手机或电脑右下角/顶部的时间显示</span><br><span class="line"><span class="bullet">-</span> 🌐 在搜索引擎中搜索&quot;现在几点&quot;或&quot;what time is it&quot;</span><br><span class="line"></span><br><span class="line">如果您有其他问题，我很乐意帮忙！😊</span><br></pre></td></tr></table></figure>
+
+<h2 id="工具调用"><a href="#工具调用" class="headerlink" title="工具调用"></a>工具调用</h2><p>使用 <code>@Tool</code> 注解来声明一个工具函数</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">DateTimeTools</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Tool(description = &quot;Get the current date and time in the user&#x27;s timezone&quot;)</span></span><br><span class="line">    <span class="type">String</span> <span class="title function_">getCurrentDateTime</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> LocalDateTime.now().atZone(LocaleContextHolder.getTimeZone().toZoneId()).toString();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="type">DateTimeTools</span> <span class="title function_">build</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">DateTimeTools</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过 <code>defaultTools</code> 方法将该工具函数交给 AI 大模型调用</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">public</span> <span class="title function_">ChatController</span><span class="params">(OpenAiChatModel openAiChatModel,</span></span><br><span class="line"><span class="params">                        ChatMemory chatMemory)</span> &#123;</span><br><span class="line">    <span class="built_in">this</span>.chatClient = ChatClient</span><br><span class="line">            .builder(openAiChatModel)</span><br><span class="line">            .defaultAdvisors(</span><br><span class="line">                    MessageChatMemoryAdvisor.builder(chatMemory).build(),</span><br><span class="line">                    SimpleLoggerAdvisor.builder().build())</span><br><span class="line">            .defaultTools(DateTimeTools.build())</span><br><span class="line">            .build();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>再次访问 <code>http://localhost:8080/chat?message=现在是几月几号几点几分&amp;conversationId=123456</code>，等待 AI 回复：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">让我来帮您查一下当前的时间！现在是 <span class="strong">**2026年10月4日**</span>（星期日），<span class="strong">**18点57分**</span>（北京时间）。</span><br></pre></td></tr></table></figure>
+
+<p>通过日志也可以看到，AI 调用了提供的方法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">toolCalls=[ToolCall[id=call_1d4e9248868b4fc8a8c77b3e, type=function, name=getCurrentDateTime, arguments=&#123;&#125;]],</span><br></pre></td></tr></table></figure>
+
+<p>此外，我们所提供的方法也可以有<code>参数</code>，需要使用 <code>@ToolParam</code> 来描述</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Tool(description = &quot;Get the current date and time for a specific timezone&quot;)</span></span><br><span class="line"><span class="type">String</span> <span class="title function_">getCurrentDateTimeByTimeZone</span><span class="params">(<span class="meta">@ToolParam(description = &quot;Time zone ID, for example: America/New_York&quot;)</span> String timeZone)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> LocalDateTime.now().atZone(TimeZone.getTimeZone(timeZone).toZoneId()).toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>访问 <code>http://localhost:8080/chat?message=美国现在的时间&amp;conversationId=123456</code></p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">美国有多个时区，我为您查询几个主要城市的时间：以下是美国主要时区的当前时间（均为 <span class="strong">**2026年10月4日 星期日**</span>）：</span><br><span class="line"></span><br><span class="line">| 时区                | 主要城市               | 当前时间                 |</span><br><span class="line">| ------------------- | ---------------------- | ------------------------ |</span><br><span class="line">| 🕖 东部时间（ET）   | 纽约、华盛顿、迈阿密   | <span class="strong">**19:05**</span>（晚上7点05分） |</span><br><span class="line">| 🕕 中部时间（CT）   | 芝加哥、休斯顿         | <span class="strong">**18:05**</span>（下午6点05分） |</span><br><span class="line">| 🕔 山地时间（MT）   | 丹佛、凤凰城\*         | <span class="strong">**17:05**</span>（下午5点05分） |</span><br><span class="line">| 🕓 太平洋时间（PT） | 洛杉矶、旧金山、西雅图 | <span class="strong">**16:05**</span>（下午4点05分） |</span><br><span class="line"></span><br><span class="line">💡 相比北京时间，美国东部时间<span class="strong">**慢12小时**</span>，西部太平洋时间<span class="strong">**慢15小时**</span>。</span><br><span class="line"></span><br><span class="line">\<span class="emphasis">*注：凤凰城（亚利桑那州）不实行夏令时，实际时间可能与丹佛不同。</span></span><br></pre></td></tr></table></figure>
+
+<p>查看日志</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">toolCalls=[ToolCall[id=call_555a8e7ff5e34614a334b4eb, type=function, name=getCurrentDateTimeByTimeZone, arguments=&#123;&quot;timeZone&quot;: &quot;America/New_York&quot;&#125;]</span><br></pre></td></tr></table></figure>
+
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>基本原理和之前的结构化输出同理，都是根据注解将 Tool 方法解析为 JSON 格式，发送请求时一起发送给大模型，大模型会根据提供的方法来决定是否要调用方法、调用哪个方法。</p>
+<h2 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h2><ol>
+<li><p>参数或者返回值要使用常用的基本数据类型</p>
+<ul>
+<li>建议：基本数据类型、String、POJO、Record、List、Map</li>
+<li>不建议：Optional、Future、Flux、Function 等</li>
+</ul>
+</li>
+<li><p>问题和工具之间关联性不强，或者 AI 的温度过低、性能差都会导致 AI 无法选择工具</p>
+<ul>
+<li>比如<code>通过经纬度获取地区天气</code>，但是问题是<code>北京的天气怎么样</code>，<code>经纬度</code>和<code>北京</code>关联性不强，AI 就不会调用该方法</li>
+</ul>
+</li>
+<li><p>参数幻觉，AI 在调用工具时，如果存在参数缺失或者不准确的情况下，它会<code>编造</code>一个参数</p>
+<ul>
+<li>通过 description 属性强调参数的必要性和要求，禁止 AI 推测参数</li>
+<li>后端代码加强校验和兜底保护，对 AI 传递的参数做检查</li>
+<li>在系统提示词中添加限制</li>
+<li>如果是高风险接口，需要添加<code>人工审核</code>步骤</li>
+</ul>
+</li>
+<li><p>工具的方法名、description 要尽可能的有意义，描述清晰，不要缩写</p>
+<ul>
+<li>建议：getCurrentTime</li>
+<li>不建议：getCurTime、abc</li>
+</ul>
+</li>
+<li><p>在工具内部，不建议做耗时操作，工具调用也是算在 AI 响应时间内的</p>
+<ul>
+<li>能异步就异步，能查缓存就不要查数据库</li>
+</ul>
+</li>
+<li><p>权限控制</p>
+<ul>
+<li><p>Spring Security，在工具函数上通过 <code>@PreAuthorize</code>注解校验权限和身份</p>
+</li>
+<li><p>在构建 ChatClient 时不要设置任何工具，在发送请求时，根据权限和身份动态的设置工具</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="type">ToolCallback</span> <span class="title function_">toolCallback</span><span class="params">()</span> &#123;</span><br><span class="line">   <span class="type">Method</span> <span class="variable">method</span> <span class="operator">=</span> ReflectionUtils.findMethod(DateTimeTools.class, <span class="string">&quot;getCurrentDateTime&quot;</span>);</span><br><span class="line"></span><br><span class="line">   <span class="type">MethodToolCallback</span> <span class="variable">callback</span> <span class="operator">=</span> MethodToolCallback.builder()</span><br><span class="line">           .toolDefinition(ToolDefinitions.builder(method)</span><br><span class="line">                   .description(<span class="string">&quot;Get the current date and time in the user&#x27;s timezone&quot;</span>)</span><br><span class="line">                   .build())</span><br><span class="line">           .toolMethod(method)</span><br><span class="line">           .toolObject(<span class="keyword">new</span> <span class="title class_">DateTimeTools</span>())</span><br><span class="line">           .build();</span><br><span class="line"></span><br><span class="line">   <span class="keyword">return</span> callback;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>工具选择困难症，当工具数量过多时，AI 可能会陷入选择困难症</p>
+<ul>
+<li>将工具信息存入向量数据库，根据用户信息，检索与之相关的工具，然后通过动态设置让 AI 调用</li>
+</ul>
+</li>
+</ol>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://example.com">Lasyc</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2026/10/04/springai/SpringAI10/">http://example.com/2026/10/04/springai/SpringAI10/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="http://example.com" target="_blank">Lasyc の Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Spring-AI/">Spring AI</a><a class="post-meta__tags" href="/tags/Tools/">Tools</a><a class="post-meta__tags" href="/tags/%E5%B7%A5%E5%85%B7%E8%B0%83%E7%94%A8/">工具调用</a><a class="post-meta__tags" href="/tags/Tool/">@Tool</a><a class="post-meta__tags" href="/tags/ToolParam/">@ToolParam</a></div><div class="post-share"><div class="social-share" data-image="/img/avatar.webp" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/10/04/springai/SpringAI11/" title="Spring AI 实战练习"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">Spring AI 实战练习</div></div><div class="info-2"><div class="info-item-1">引入依赖123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979899100101102103104105106107108109110111112113114115116117118119120121122123124125&lt;properties&gt;    &lt;java.version&gt;21&lt;/java.version&gt;    &lt;spring-ai.version&gt;2.0.1&lt;/spring-ai.version&gt;&lt;/properties&gt;&lt;dependencies&gt;    &lt;dependency&gt;        &lt;groupId&gt;org.springframewo...</div></div></div></a><a class="pagination-related" href="/2026/10/04/springai/SpringAI09/" title="Spring AI 多 Agent"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Spring AI 多 Agent</div></div><div class="info-2"><div class="info-item-1">多 Agent根据前边所学的知识，我们可以做一个简单的小案例 通过结构化输出，让 AI 分析用户所提出的问题，根据分析结果再交给不同的 AI 大模型处理 配置类在配置类中注册多个 AI 大模型的 ChatClient 123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979899100101102103104105106107108109110111112113114115package org.lasyc.config;import org.springframework.ai.chat.client.ChatClient;import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdviso...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/10/04/springai/SpringAI11/" title="Spring AI 实战练习"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-10-04</div><div class="info-item-2">Spring AI 实战练习</div></div><div class="info-2"><div class="info-item-1">引入依赖123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979899100101102103104105106107108109110111112113114115116117118119120121122123124125&lt;properties&gt;    &lt;java.version&gt;21&lt;/java.version&gt;    &lt;spring-ai.version&gt;2.0.1&lt;/spring-ai.version&gt;&lt;/properties&gt;&lt;dependencies&gt;    &lt;dependency&gt;        &lt;groupId&gt;org.springframewo...</div></div></div></a><a class="pagination-related" href="/2026/10/03/springai/SpringAI07/" title="Spring AI 对话记忆"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-10-03</div><div class="info-item-2">Spring AI 对话记忆</div></div><div class="info-2"><div class="info-item-1">对话记忆大模型是无状态的，即不会保留之前的交互信息，每一次对话都是一次新的对话 因此，在实际开发时，我们需要自己维护对话记录，每次有新的对话时，需要连同历史对话一起发送给 AI 大模型，基于历史对话来对新的问题做出回答 参照之前的案例搭建一个简易的工程 1234567891011121314151617@RestController@RequestMapping(&quot;/chat&quot;)public class ChatController &#123;    private final ChatClient chatClient;    public ChatController(OpenAiChatModel openAiChatModel) &#123;        this.chatClient = ChatClient.builder(openAiChatModel)                .defaultAdvisors(SimpleLoggerAdvisor.builder().build())                .build();...</div></div></div></a><a class="pagination-related" href="/2026/09/28/springai/SpringAI02/" title="Spring AI 快速入门"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-09-28</div><div class="info-item-2">Spring AI 快速入门</div></div><div class="info-2"><div class="info-item-1">准备工作大模型选型 自研 大模型 API 开源大模型（本地部署）  略，这里使用 MiMo（也可以换成 DeepSeek 等其他兼容 OpenAI 接口的大模型服务，只需更换 base-url、api-key、model 配置） 获取 API Key略 创建 Spring Boot 工程环境要求：JDK 17+ + Spring Boot 4.x 引入依赖Spring 针对各个大模型提供了不同的 starter，使用时只需引入对应的依赖即可。 Spring 并未提供 MiMo 的 starter，但由于 MiMo 兼容 OpenAI 的接口，因此可以直接使用 spring-ai-starter-model-openai。 1234567891011121314151617181920212223242526272829303132&lt;properties&gt;    &lt;java.version&gt;27&lt;/java.version&gt;    &lt;spring-ai.version&gt;2.0.1&lt;/spring-ai.version&gt;&l...</div></div></div></a><a class="pagination-related" href="/2026/09/24/springai/SpringAI01/" title="Spring AI 简介"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-09-24</div><div class="info-item-2">Spring AI 简介</div></div><div class="info-2"><div class="info-item-1">Spring AI 是什么中文文档 Spring AI 是一个用于 AI 工程的应用框架。其目标是将 Spring 生态系统的设计原则应用于 AI 领域（如可移植性、模块化设计），并把「POJO 作为应用构建块」这一理念推广到人工智能领域。 Spring AI 的主要功能Spring AI 提供以下功能：  支持所有主流的人工智能模型提供商，如 Anthropic、OpenAI、Microsoft、Amazon、Google 和 Ollama。支持的模型类型包括： 聊天补全（Chat Completion） 嵌入（Embedding） 文本转图像（Text to Image） 音频转录（Audio Transcription） 文本转语音（Text to Speech） 内容审核（Moderation）   提供跨 AI 提供商的可移植 API，支持同步和流式两种调用方式，同时也能访问模型专属功能。 结构化输出——将 AI 模型的输出自动映射到 POJO。 支持所有主流的向量数据库提供商，如 Apache Cassandra、Azure Vector Search、Chroma、...</div></div></div></a><a class="pagination-related" href="/2026/10/02/springai/SpringAI06/" title="Spring AI Advisor"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-10-02</div><div class="info-item-2">Spring AI Advisor</div></div><div class="info-2"><div class="info-item-1">AdvisorAdvisor 是一个接口，用于在向 AI 大模型发送请求之前或者之后，对请求和响应进行拦截，其子接口分别为：  MemoryAdvisor CallAdvisor ToolAdvisor StreamAdvisor  上述四个仍是接口，不过已经可以看出大致的分类，再往下就是具体的实现了。其中 CallAdvisor 对应阻塞式调用，StreamAdvisor 对应流式调用，大多数实现类会同时实现这两个接口：  SimpleLoggerAdvisor：打印请求&#x2F;响应日志，调试神器，性能开销最小，生产可关。 MessageChatMemoryAdvisor：把历史对话以 Message 列表形式注入 prompt（最常用，最忠实于原始消息角色）。 ToolCallingAdvisor：把已注册的 ToolCallback 织入调用链并驱动多轮工具调用。 StructuredOutputValidationAdvisor：配合结构化输出使用，对模型输出做 JSON Schema 校验，不通过就带上错误反馈重试（默认最多 3 次）或抛异常。 SafeGuardA...</div></div></div></a><a class="pagination-related" href="/2026/10/03/springai/SpringAI08/" title="Spring AI 结构化输出"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-10-03</div><div class="info-item-2">Spring AI 结构化输出</div></div><div class="info-2"><div class="info-item-1">结构化输出在前面的示例中，AI 大模型的返回值永远都是一段字符串，但是如果我们需要的是一个 Boolean、JSON 等等指定类型的结果呢？此时就需要给大模型指定返回值的结构 通过 entity 方法可以设置返回值的类型结构，以此来让 AI 大模型实现结构化输出 1234567891011@GetMapping(produces = &quot;text/html;charset=utf-8&quot;)public String chat(@RequestParam(&quot;message&quot;) String message,                    @RequestParam(&quot;conversationId&quot;) String conversationId) &#123;    return chatClient            .prompt()            .user(message)            .advisors(advisorSpec -&gt; advisorSpec.param(ChatMem...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Lasyc</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">198</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">519</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">17</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/lasyc"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/lasyc" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Tool"><span class="toc-number">1.</span> <span class="toc-text">Tool</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B7%A5%E7%A8%8B%E6%90%AD%E5%BB%BA"><span class="toc-number">2.</span> <span class="toc-text">工程搭建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B7%A5%E5%85%B7%E8%B0%83%E7%94%A8"><span class="toc-number">3.</span> <span class="toc-text">工具调用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8E%9F%E7%90%86"><span class="toc-number">4.</span> <span class="toc-text">原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="toc-number">5.</span> <span class="toc-text">注意事项</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/04/springai/SpringAI11/" title="Spring AI 实战练习">Spring AI 实战练习</a><time datetime="2026-10-04T12:48:59.000Z" title="发表于 2026-10-04 20:48:59">2026-10-04</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/04/springai/SpringAI10/" title="Spring AI Tools">Spring AI Tools</a><time datetime="2026-10-04T10:37:47.000Z" title="发表于 2026-10-04 18:37:47">2026-10-04</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/04/springai/SpringAI09/" title="Spring AI 多 Agent">Spring AI 多 Agent</a><time datetime="2026-10-04T03:34:36.000Z" title="发表于 2026-10-04 11:34:36">2026-10-04</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/03/springai/SpringAI08/" title="Spring AI 结构化输出">Spring AI 结构化输出</a><time datetime="2026-10-03T12:33:04.000Z" title="发表于 2026-10-03 20:33:04">2026-10-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/03/springai/SpringAI07/" title="Spring AI 对话记忆">Spring AI 对话记忆</a><time datetime="2026-10-03T01:51:20.000Z" title="发表于 2026-10-03 09:51:20">2026-10-03</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/top_img.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Lasyc</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.7.0</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.7.0"></script><script src="/js/main.js?v=5.7.0"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.7.0"></script></div></div></body></html>
